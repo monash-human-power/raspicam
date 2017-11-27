@@ -22,14 +22,14 @@ while os.path.exists("video%s.h264" % j):
    j += 1
    
 #filename = "video" + str(j) + + ".h264"
-filename = "video%s.h264" %j
-
+filename = "/home/pi/Documents/MHP/MHP_raspicam/Video/video%s.h264" %j
 
 i = 0
 with picamera.PiCamera() as camera:
    camera.resolution = (VIDEO_WIDTH, VIDEO_HEIGHT)
+   camera.vflip = True
    camera.framerate = 45
-   camera.led = False
+   camera.led = True
    camera.start_preview()
    camera.start_recording(filename)
    camera.wait_recording(0.9)
@@ -71,7 +71,7 @@ with picamera.PiCamera() as camera:
       
       camera.stop_preview()
 
-      print ("Cancelled")
+      print ("\nCancelled")
 
    finally:
       
