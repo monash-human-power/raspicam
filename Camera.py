@@ -18,11 +18,11 @@ textPad2 = Image.new('RGB', (128, 64), "#298")
 textPadImage2 = textPad2.copy()
 
 j = 0
-while os.path.exists("video%s.h264" % j):
+while os.path.exists("/home/pi/Documents/MHP/MHP_raspicam/Video/Recording_%s.h264" % j):
    j += 1
    
 #filename = "video" + str(j) + + ".h264"
-filename = "/home/pi/Documents/MHP/MHP_raspicam/Video/video%s.h264" %j
+filename = "/home/pi/Documents/MHP/MHP_raspicam/Video/Recording_%s.h264" %j
 
 i = 0
 with picamera.PiCamera() as camera:
