@@ -35,6 +35,8 @@ import datetime
 import smbus
 bus = smbus.SMBus(1)
 
+# COMMANDS TO WRITE ON I2C BUS
+
 
 def writeACC(register, value):
     bus.write_byte_data(ACC_ADDRESS, register, value)
@@ -50,28 +52,39 @@ def writeGRY(register, value):
     bus.write_byte_data(GYR_ADDRESS, register, value)
     return -1
 
+# COMMANDS TO READ FROM I2C BUS
+
 
 def readACCx():
-    acc_l = bus.read_byte_data(ACC_ADDRESS, OUT_X_L_A)
-    acc_h = bus.read_byte_data(ACC_ADDRESS, OUT_X_H_A)
+    if MAG_ADDRESS == 0x1E:
+        acc_l = bus.read_byte_data(ACC_ADDRESS, OUT_X_L_A)
+        acc_h = bus.read_byte_data(ACC_ADDRESS, OUT_X_H_A)
+    else:
+        acc_l = bus.read_byte_data(ACC_ADDRESS, OUT_X_L_XL)
+        acc_h = bus.read_byte_data(ACC_ADDRESS, OUT_X_H_XL)
     acc_combined = (acc_l | acc_h << 8)
-
     return acc_combined if acc_combined < 32768 else acc_combined - 65536
 
 
 def readACCy():
-    acc_l = bus.read_byte_data(ACC_ADDRESS, OUT_Y_L_A)
-    acc_h = bus.read_byte_data(ACC_ADDRESS, OUT_Y_H_A)
+    if MAG_ADDRESS == 0x1E:
+        acc_l = bus.read_byte_data(ACC_ADDRESS, OUT_Y_L_A)
+        acc_h = bus.read_byte_data(ACC_ADDRESS, OUT_Y_H_A)
+    else:
+        acc_l = bus.read_byte_data(ACC_ADDRESS, OUT_Y_H_XL)
+        acc_h = bus.read_byte_data(ACC_ADDRESS, OUT_Y_H_XL)
     acc_combined = (acc_l | acc_h << 8)
-
     return acc_combined if acc_combined < 32768 else acc_combined - 65536
 
 
 def readACCz():
-    acc_l = bus.read_byte_data(ACC_ADDRESS, OUT_Z_L_A)
-    acc_h = bus.read_byte_data(ACC_ADDRESS, OUT_Z_H_A)
+	if MAG_ADDRESS == 0x1E:
+        acc_l = bus.read_byte_data(ACC_ADDRESS, OUT_Z_L_A)
+        acc_h = bus.read_byte_data(ACC_ADDRESS, OUT_Z_H_A)
+    else:
+        acc_l = bus.read_byte_data(ACC_ADDRESS, OUT_Z_L_XL)
+        acc_h = bus.read_byte_data(ACC_ADDRESS, OUT_Z_H_XL)
     acc_combined = (acc_l | acc_h << 8)
-
     return acc_combined if acc_combined < 32768 else acc_combined - 65536
 
 
@@ -149,9 +162,9 @@ if MAG_ADDRESS == 0x1E:
     writeMAG(CTRL_REG6_XM, 0b01100000)  # +/-12gauss
     writeMAG(CTRL_REG7_XM, 0b00000000)  # Continuous-conversion mode
 else:
-    writeMAG(CTRL_REG1_M, 0b11110000)  # Temp enable, High Resolution, M data rate = 50Hz
-    writeMAG(CTRL_REG2_M, 0b01100000)  # +/-12gauss
-    writeMAG(CTRL_REG3_M, 0b00000000)  # Continuous-conversion mode
+    writeMAG(CTRL_REG1_XM, 0b11110000)  # Temp enable, High Resolution, M data rate = 50Hz
+    writeMAG(CTRL_REG2_XM, 0b01100000)  # +/-12gauss
+    writeMAG(CTRL_REG3_XM, 0b00000000)  # Continuous-conversion mode
 
 # initialise the gyroscope
 if MAG_ADDRESS == 0x1E:
