@@ -1,11 +1,11 @@
-#!/usr/bin/python
+# ---------------------------------------------------------------------
+#    This program  reads the angles from the acceleromter, gyrscope
+#    and mangnetometeron a BerryIMU connected to a Raspberry Pi.
 #
-#       This program  reads the angles from the acceleromter, gyrscope
-#       and mangnetometeron a BerryIMU connected to a Raspberry Pi.
-#
-#       http://ozzmaker.com/
+#       		http://ozzmaker.com/
 #
 #    Copyright (C) 2015  Mark Williams
+# ---------------------------------------------------------------------
 #    This library is free software; you can redistribute it and/or
 #    modify it under the terms of the GNU Library General Public
 #    License as published by the Free Software Foundation; either
@@ -18,12 +18,12 @@
 #    License along with this library; if not, write to the Free
 #    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 #    MA 02111-1307, USA
-# HELLO THIS IS THE CHANGE
+# ---------------------------------------------------------------------
 
 import smbus
 from time import localtime, strftime
 import math
-from LSM9DS0 import *
+from LSM9DS1 import *
 import datetime
 bus = smbus.SMBus(1)
 
