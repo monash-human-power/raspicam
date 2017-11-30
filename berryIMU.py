@@ -25,15 +25,16 @@ ACC_ADDRESS = MAG_ADDRESS
 GYR_ADDRESS = 0x6A
 
 if MAG_ADDRESS == 0x1E:
-	from LSM9DS0 import *
+    from LSM9DS0 import *
 else:
-	from LSM9DS1 import * 
+    from LSM9DS1 import *
 
 from time import localtime, strftime
 import math
 import datetime
 import smbus
 bus = smbus.SMBus(1)
+
 
 def writeACC(register, value):
     bus.write_byte_data(ACC_ADDRESS, register, value)
@@ -121,6 +122,7 @@ def readGYRz():
 
     return gyr_combined if gyr_combined < 32768 else gyr_combined - 65536
 
+
 filename = "/home/pi/Documents/MHP_raspicam/Data/Data on #.txt"
 filename = filename.replace("#", strftime("%d-%m-%Y at %H:%M:%S", localtime()))
 file = open(filename, 'w')
@@ -133,17 +135,30 @@ LP = 0.041      # Loop period = 41ms.   This needs to match the time it takes ea
 AA = 0.80      # Complementary filter constant
 
 # initialise the accelerometer
-writeACC(CTRL_REG1_XM, 0b01100111)  # z,y,x axis enabled, continuous update,  100Hz data rate
-writeACC(CTRL_REG2_XM, 0b00100000)  # +/- 16G full scale
+if MAG_ADDRESS == 0x1E:
+    writeACC(CTRL_REG1_XM, 0b01100111)  # z,y,x axis enabled, continuous update,  100Hz data rate
+    writeACC(CTRL_REG2_XM, 0b00100000)  # +/- 16G full scale, 773 Hz Anti-Aliasing Bandwidth
+else:
+    # 119 Hz data rate, +/- 16G full scale, 408 Hz Anti-Aliasing Bandwidth
+    writeACC(CTRL_REG6_XL, 0b01101000)
+    writeACC(CTRL_REG2_XM, 0b00100000)  # +/- 16G full scale
 
-# initialise the magnetometer
-writeMAG(CTRL_REG5_XM, 0b11110000)  # Temp enable, M data rate = 50Hz
-writeMAG(CTRL_REG6_XM, 0b01100000)  # +/-12gauss
-writeMAG(CTRL_REG7_XM, 0b00000000)  # Continuous-conversion mode
+    # initialise the magnetometer
+if MAG_ADDRESS == 0x1E:
+    writeMAG(CTRL_REG5_XM, 0b11110000)  # Temp enable, M data rate = 50Hz
+    writeMAG(CTRL_REG6_XM, 0b01100000)  # +/-12gauss
+    writeMAG(CTRL_REG7_XM, 0b00000000)  # Continuous-conversion mode
+else:
+    writeMAG(CTRL_REG1_M, 0b11110000)  # Temp enable, High Resolution, M data rate = 50Hz
+    writeMAG(CTRL_REG2_M, 0b01100000)  # +/-12gauss
+    writeMAG(CTRL_REG3_M, 0b00000000)  # Continuous-conversion mode
 
 # initialise the gyroscope
-writeGRY(CTRL_REG1_G, 0b00001111)  # Normal power mode, all axes enabled
-writeGRY(CTRL_REG4_G, 0b00110000)  # Continuous update, 2000 dps full scale
+if MAG_ADDRESS == 0x1E:
+    writeGRY(CTRL_REG1_G, 0b00001111)  # ODR = 95 Hz, Cutoff = 12.5 Hz
+    writeGRY(CTRL_REG4_G, 0b00110000)  # Continuous update, 2000 dps full scale
+else:
+    writeGRY(CTRL_REG1_G, 0b01111000)  # ODR = 119 Hz, Cutoff = 14 Hz, 2000 dps
 
 gyroXangle = 0.0
 gyroYangle = 0.0
