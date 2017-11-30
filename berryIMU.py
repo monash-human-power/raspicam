@@ -78,7 +78,7 @@ def readACCy():
 
 
 def readACCz():
-	if MAG_ADDRESS == 0x1E:
+    if MAG_ADDRESS == 0x1E:
         acc_l = bus.read_byte_data(ACC_ADDRESS, OUT_Z_L_A)
         acc_h = bus.read_byte_data(ACC_ADDRESS, OUT_Z_H_A)
     else:
