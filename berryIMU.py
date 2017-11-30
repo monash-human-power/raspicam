@@ -20,24 +20,20 @@
 #    MA 02111-1307, USA
 # ---------------------------------------------------------------------
 
-import smbus
+MAG_ADDRESS = 0x1E
+ACC_ADDRESS = MAG_ADDRESS
+GYR_ADDRESS = 0x6A
+
+if MAG_ADDRESS == 0x1E:
+	from LSM9DS0 import *
+else:
+	from LSM9DS1 import * 
+
 from time import localtime, strftime
 import math
-from LSM9DS1 import *
 import datetime
+import smbus
 bus = smbus.SMBus(1)
-
-filename = "/home/pi/Documents/MHP_raspicam/Data/Data on #.txt"
-filename = filename.replace("#", strftime("%d-%m-%Y at %H:%M:%S", localtime()))
-file = open(filename, 'w')
-
-RAD_TO_DEG = 57.29578
-M_PI = 3.14159265358979323846
-# [deg/s/LSB]  If you change the dps for gyro, you need to update this value accordingly
-G_GAIN = 0.070
-LP = 0.041      # Loop period = 41ms.   This needs to match the time it takes each loop to run
-AA = 0.80      # Complementary filter constant
-
 
 def writeACC(register, value):
     bus.write_byte_data(ACC_ADDRESS, register, value)
@@ -125,9 +121,19 @@ def readGYRz():
 
     return gyr_combined if gyr_combined < 32768 else gyr_combined - 65536
 
+filename = "/home/pi/Documents/MHP_raspicam/Data/Data on #.txt"
+filename = filename.replace("#", strftime("%d-%m-%Y at %H:%M:%S", localtime()))
+file = open(filename, 'w')
+
+RAD_TO_DEG = 57.29578
+M_PI = 3.14159265358979323846
+# [deg/s/LSB]  If you change the dps for gyro, you need to update this value accordingly
+G_GAIN = 0.070
+LP = 0.041      # Loop period = 41ms.   This needs to match the time it takes each loop to run
+AA = 0.80      # Complementary filter constant
 
 # initialise the accelerometer
-writeACC(CTRL_REG1_XM, 0b01100111)  # z,y,x axis enabled, continuos update,  100Hz data rate
+writeACC(CTRL_REG1_XM, 0b01100111)  # z,y,x axis enabled, continuous update,  100Hz data rate
 writeACC(CTRL_REG2_XM, 0b00100000)  # +/- 16G full scale
 
 # initialise the magnetometer
