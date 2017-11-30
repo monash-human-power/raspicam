@@ -20,7 +20,7 @@
 #    MA 02111-1307, USA
 # ---------------------------------------------------------------------
 
-MAG_ADDRESS = 0x1E
+MAG_ADDRESS = 0x1C
 ACC_ADDRESS = MAG_ADDRESS
 GYR_ADDRESS = 0x6A
 
