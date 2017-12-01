@@ -188,7 +188,7 @@ while True:
         ACCz = readACCz()
 	
 	now = datetime.datetime.now()
-        data = "%s,%5.2f,%5.2f,%5.2f" % (now.strftime("\n%H:%M:%S.%f"),ACCx,ACCy,ACCz)
+        data = "%s,%5.2f,%5.2f,%5.2f" % (now.strftime("\n%S.%f"),ACCx,ACCy,ACCz)
         file.write(data)
 
     except KeyboardInterrupt:
