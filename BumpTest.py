@@ -30,7 +30,6 @@ if MAG_ADDRESS == 0x1E:
 else:
     from LSM9DS1 import *
 
-import i2c.py
 from time import localtime, strftime
 import math
 import datetime
@@ -47,6 +46,12 @@ M_PI = 3.14159265358979323846
 G_GAIN = 0.070
 LP = 0.041      # Loop period = 41ms.   This needs to match the time it takes each loop to run
 AA = 0.80      # Complementary filter constant
+
+gyroXangle = 0.0
+gyroYangle = 0.0
+gyroZangle = 0.0
+CFangleX = 0.0
+CFangleY = 0.0
 
 # COMMANDS TO WRITE ON I2C BUS
 
@@ -148,7 +153,6 @@ def readGYRz():
 
     return gyr_combined if gyr_combined < 32768 else gyr_combined - 65536
 
-
 # initialise the accelerometer
 if MAG_ADDRESS == 0x1E:
     writeACC(CTRL_REG1_XM, 0b01100111)  # z,y,x axis enabled, continuous update,  100Hz data rate
@@ -175,16 +179,8 @@ if MAG_ADDRESS == 0x1E:
 else:
     writeGRY(CTRL_REG1_G, 0b01111000)  # ODR = 119 Hz, Cutoff = 14 Hz, 2000 dps
 
-gyroXangle = 0.0
-gyroYangle = 0.0
-gyroZangle = 0.0
-CFangleX = 0.0
-CFangleY = 0.0
-
 while True:
     try:
-        a = datetime.datetime.now()
-
         # Read our accelerometer,gyroscope and magnetometer  values
         ACCx = readACCx()
         ACCy = readACCy()
@@ -196,7 +192,7 @@ while True:
         MAGy = readMAGy()
         MAGz = readMAGz()
 
-        print "\n%5.2f" % a
+        print "\n%5.2f" % datetime.datetime.now()
         #data = "\n%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f" % (ACCx,ACCy,ACCz,GYRx,GYRy,GYRz,MAGx,MAGy,MAGz)
         # file.write(data)
 
