@@ -20,6 +20,7 @@
 #    MA 02111-1307, USA
 # ---------------------------------------------------------------------
 
+# Run sudo i2cdetect -y 1 to check if address is 0x1C or 0x1E, then change below
 MAG_ADDRESS = 0x1C
 ACC_ADDRESS = MAG_ADDRESS
 GYR_ADDRESS = 0x6A
