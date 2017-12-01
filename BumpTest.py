@@ -30,6 +30,7 @@ if MAG_ADDRESS == 0x1E:
 else:
     from LSM9DS1 import *
 
+import datetime
 from time import localtime, strftime
 import math
 import datetime
@@ -188,13 +189,10 @@ while True:
         GYRx = readGYRx()
         GYRy = readGYRx()
         GYRz = readGYRx()
-        MAGx = readMAGx()
-        MAGy = readMAGy()
-        MAGz = readMAGz()
-
-        print "\n%5.2f" % datetime.datetime.now()
-        #data = "\n%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f" % (ACCx,ACCy,ACCz,GYRx,GYRy,GYRz,MAGx,MAGy,MAGz)
-        # file.write(data)
+	
+	now = datetime.datetime.now()
+        data = "%s,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f" % (now.strftime("\n%H:%M:%S.%f"),ACCx,ACCy,ACCz,GYRx,GYRy,GYRz)
+        file.write(data)
 
     except KeyboardInterrupt:
 
