@@ -186,12 +186,9 @@ while True:
         ACCx = readACCx()
         ACCy = readACCy()
         ACCz = readACCz()
-        GYRx = readGYRx()
-        GYRy = readGYRx()
-        GYRz = readGYRx()
 	
 	now = datetime.datetime.now()
-        data = "%s,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f" % (now.strftime("\n%H:%M:%S.%f"),ACCx,ACCy,ACCz,GYRx,GYRy,GYRz)
+        data = "%s,%5.2f,%5.2f,%5.2f" % (now.strftime("\n%H:%M:%S.%f"),ACCx,ACCy,ACCz)
         file.write(data)
 
     except KeyboardInterrupt:
