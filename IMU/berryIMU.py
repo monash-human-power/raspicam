@@ -63,7 +63,7 @@ CFangleX = 0.0
 CFangleY = 0.0
 
 # Open file to print too
-filename = "/home/pi/Documents/MHP_raspicam/Data/Data on #.txt"
+filename = "/home/pi/Documents/MHP_raspicam/IMU/Data/Data on #.txt"
 filename = filename.replace("#", strftime("%d-%m-%Y at %H:%M:%S", localtime()))
 file = open(filename, 'w')
 
