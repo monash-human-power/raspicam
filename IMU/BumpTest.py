@@ -22,7 +22,7 @@ else:
 
 # initialise the accelerometer
 if MAG_ADDRESS == 0x1E:
-    writeACC(CTRL_REG1_XM, 0b01100111)  # z,y,x axis enabled, continuous update,  100Hz data rate
+    writeACC(CTRL_REG1_XM, 0b10100111)  # z,y,x axis enabled, continuous update,  100Hz data rate
     writeACC(CTRL_REG2_XM, 0b00100000)  # +/- 16G full scale, 773 Hz Anti-Aliasing Bandwidth
 else:
     # 119 Hz data rate, +/- 16G full scale, 408 Hz Anti-Aliasing Bandwidth
