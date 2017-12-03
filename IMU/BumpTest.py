@@ -22,7 +22,7 @@ else:
 
 # initialise the accelerometer
 if MAG_ADDRESS == 0x1E:
-    writeACC(CTRL_REG1_XM, 0b10100111)  # z,y,x axis enabled, continuous update,  100Hz data rate
+    writeACC(CTRL_REG1_XM, 0b10100111)  # z,y,x axis enabled, continuous update,  1600 Hz data rate
     writeACC(CTRL_REG2_XM, 0b00100000)  # +/- 16G full scale, 773 Hz Anti-Aliasing Bandwidth
 else:
     # 119 Hz data rate, +/- 16G full scale, 408 Hz Anti-Aliasing Bandwidth
@@ -31,7 +31,7 @@ else:
 
     # initialise the magnetometer
 if MAG_ADDRESS == 0x1E:
-    writeMAG(CTRL_REG5_XM, 0b11110000)  # Temp enable, M data rate = 50Hz
+    writeMAG(CTRL_REG5_XM, 0b11110100)  # Temp enable, M data rate = 100Hz
     writeMAG(CTRL_REG6_XM, 0b01100000)  # +/-12gauss
     writeMAG(CTRL_REG7_XM, 0b00000000)  # Continuous-conversion mode
 else:
@@ -41,7 +41,7 @@ else:
 
 # initialise the gyroscope
 if MAG_ADDRESS == 0x1E:
-    writeGRY(CTRL_REG1_G, 0b00001111)  # ODR = 95 Hz, Cutoff = 12.5 Hz
+    writeGRY(CTRL_REG1_G, 0b11001111)  # ODR = 760 Hz, Cutoff = 12.5 Hz
     writeGRY(CTRL_REG4_G, 0b00110000)  # Continuous update, 2000 dps full scale
 else:
     writeGRY(CTRL_REG1_G, 0b01111000)  # ODR = 119 Hz, Cutoff = 14 Hz, 2000 dps
