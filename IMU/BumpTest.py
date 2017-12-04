@@ -32,8 +32,8 @@ init_time = time.time()
 
 while True:
     try:
-        # Record time when i2c read starts
-        start_read = time.time()
+        ## Record time when i2c read starts
+        #start_read = time.time()
 
         # Read our accelerometer,gyroscope and magnetometer  values
         ACCx = IMU.readACCx()
@@ -49,11 +49,11 @@ while True:
         file.write(data)
 
         # Record time when file write ends
-        end_write = time.time()
+        #end_write = time.time()
 
-        # Output loop frequency
-        write_freq = 1 / (end_write - start_read)
-        print "%5.5f" % write_freq
+        ## Output loop frequency
+        #write_freq = 1 / (end_write - start_read)
+        #print "%5.5f" % write_freq
 
     except KeyboardInterrupt:
 
