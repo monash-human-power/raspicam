@@ -8,6 +8,7 @@
 # ---------------------------------------------------------------------
 
 # ---------------------- Import required libraries --------------------
+from time import localtime, strftime
 import time
 import math
 import IMU
