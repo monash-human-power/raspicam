@@ -271,32 +271,32 @@ def initIMU():
     if (LSM9DS0):  # For BerryIMUv1
 
         # initialise the accelerometer
-        # z,y,x axis enabled, continuos update,  100Hz data rate
-        writeACC(LSM9DS0_CTRL_REG1_XM, 0b01100111)
+        # z,y,x axis enabled, continuos update,  1600Hz data rate
+        writeACC(LSM9DS0_CTRL_REG1_XM, 0b10100111)
         writeACC(LSM9DS0_CTRL_REG2_XM, 0b00100000)  # +/- 16G full scale
 
         # initialise the magnetometer
-        writeMAG(LSM9DS0_CTRL_REG5_XM, 0b11110000)  # Temp enable, M data rate = 50Hz
+        writeMAG(LSM9DS0_CTRL_REG5_XM, 0b11110100)  # Temp enable, M data rate = 100Hz
         writeMAG(LSM9DS0_CTRL_REG6_XM, 0b01100000)  # +/-12gauss
         writeMAG(LSM9DS0_CTRL_REG7_XM, 0b00000000)  # Continuous-conversion mode
 
         # initialise the gyroscope
-        writeGRY(LSM9DS0_CTRL_REG1_G, 0b00001111)  # Normal power mode, all axes enabled
+        writeGRY(LSM9DS0_CTRL_REG1_G, 0b11001111)  # 760 Hz, Normal power mode, all axes enabled
         writeGRY(LSM9DS0_CTRL_REG4_G, 0b00110000)  # Continuos update, 2000 dps full scale
 
     else:  # For BerryIMUv2
         # initialise the gyroscope
         writeGRY(LSM9DS1_CTRL_REG4, 0b00111000)  # z, y, x axis enabled for gyro
-        writeGRY(LSM9DS1_CTRL_REG1_G, 0b10111000)  # Gyro ODR = 476Hz, 2000 dps
+        writeGRY(LSM9DS1_CTRL_REG1_G, 0b11011000)  # Gyro ODR = 952 Hz, 2000 dps
         writeGRY(LSM9DS1_ORIENT_CFG_G, 0b10111000)  # Swap orientation
 
         # initialise the accelerometer
         writeACC(LSM9DS1_CTRL_REG5_XL, 0b00111000)  # z, y, x axis enabled for accelerometer
-        writeACC(LSM9DS1_CTRL_REG6_XL, 0b00101000)  # +/- 16g
+        writeACC(LSM9DS1_CTRL_REG6_XL, 0b11001000)  # 952 Hz, +/- 16g
 
         # initialise the magnetometer
         # Temp compensation enabled,Low power mode mode,80Hz ODR
-        writeMAG(LSM9DS1_CTRL_REG1_M, 0b10011100)
+        writeMAG(LSM9DS1_CTRL_REG1_M, 0b10011100)  # 80 Hz Output
         writeMAG(LSM9DS1_CTRL_REG2_M, 0b01000000)  # +/-12gauss
         writeMAG(LSM9DS1_CTRL_REG3_M, 0b00000000)  # continuos update
         writeMAG(LSM9DS1_CTRL_REG4_M, 0b00000000)  # lower power mode for Z axis
