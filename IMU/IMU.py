@@ -23,7 +23,7 @@ def detectIMU():
         print ''  # need to do something here, so we just print a space
     else:
         if (LSM9DS0_WHO_G_response == 0xd4) and (LSM9DS0_WHO_XM_response == 0x49):
-            print "Found LSM9DS0"
+            print "\nFound LSM9DS0"
             LSM9DS0 = 1
 
     try:
@@ -37,7 +37,7 @@ def detectIMU():
         print ''  # need to do something here, so we just print a space
     else:
         if (LSM9DS1_WHO_XG_response == 0x68) and (LSM9DS1_WHO_M_response == 0x3d):
-            print "Found LSM9DS1"
+            print "\nFound LSM9DS1"
             LSM9DS0 = 0
 
     time.sleep(1)
