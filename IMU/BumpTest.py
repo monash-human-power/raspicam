@@ -8,12 +8,9 @@
 # ---------------------------------------------------------------------
 
 # ---------------------- Import required libraries --------------------
-from time import localtime, strftime
-import time
-import math
 import IMU
-import datetime
-import os
+import time
+import csv
 
 # ---------------------- Initialise berryIMU --------------------------
 
@@ -23,16 +20,17 @@ IMU.initIMU()  # Initialise the accelerometer, gyroscope and compass
 # ---------------------- Start Program --------------------------------
 
 # Open file to print too
-filename = "/home/pi/Documents/MHP_raspicam/IMU/Data/Data on #.txt"
-filename = filename.replace("#", strftime("%d-%m-%Y at %H:%M:%S", localtime()))
+filename = "/home/pi/Documents/MHP_raspicam/IMU/Data/Data on #.csv"
+filename = filename.replace("#", time.strftime("%d-%m-%Y at %H:%M:%S", time.localtime()))
 file = open(filename, 'w')
+filewrite = csv.writer(file, delimiter=",", lineterminator="\n")
 
 # Record program start time
 init_time = time.time()
 
 while True:
     try:
-        ## Record time when i2c read starts
+        # Record time when i2c read starts
         #start_read = time.time()
 
         # Read our accelerometer,gyroscope and magnetometer  values
@@ -46,14 +44,14 @@ while True:
 
         # Write information to file
         data = "\n%5.20f,%5.2f,%5.2f,%5.2f" % (time_elapsed, ACCx, ACCy, ACCz)
-        file.write(data)
+        filewrite.writerow(data)
 
         # Record time when file write ends
         #end_write = time.time()
 
-        ## Output loop frequency
+        # Output loop frequency
         #write_freq = 1 / (end_write - start_read)
-        #print "%5.5f" % write_freq
+        # print "%5.5f" % write_freq
 
     except KeyboardInterrupt:
 
