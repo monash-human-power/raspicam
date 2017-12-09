@@ -12,7 +12,7 @@ import matplotlib.animation as animation
 
 # ---------------------- Start Program --------------------------------
 
-filename = "/home/pi/Documents/MHP_raspicam/IMU/Data/Data.csv"
+filename = "/home/pi/Documents/MHP_raspicam/IMU/Testing/Test_Data/Data.csv"
 fig = plt.figure()
 ax1 = fig.add_subplot(1, 1, 1)
 
