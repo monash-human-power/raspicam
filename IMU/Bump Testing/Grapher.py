@@ -14,23 +14,21 @@ import matplotlib.animation as animation
 
 filename = "/home/pi/Documents/MHP_raspicam/IMU/Data/Data.csv"
 fig = plt.figure()
+ax1 = fig.add_subplot(1, 1, 1)
 
 
 def animate(i):
-    file = open(filename)
-    graphX = list()
-    t = list()
-    for line in file:
-        fragmented_line = line.split(",")
-        time_elapsed = fragmented_line[0]
-        ACCx = fragmented_line[1]
-
-        t.append(float(time_elapsed))
-        graphX.append(float(ACCx))
-
-        ax1 = fig.add_subplot(1, 1, 1, axisbg="white")
+    graph_data = open(filename, 'r').read()
+    lines = graph_data.split("\n")
+    xs = []
+    ys = []
+    for line in lines:
+        if len(line) > 1:
+            x, y = line.split(",")
+            xs.append(x)
+            ys.append(y)
         ax1.clear()
-        ax1.plot(t, graphX)
+        ax1.plot(xs, ys)
 
 
 ani = animation.FuncAnimation(fig, animate, interval=1000)
