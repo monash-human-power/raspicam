@@ -11,6 +11,7 @@
 import IMU
 import time
 import csv
+import matplotlib
 
 # ---------------------- Initialise berryIMU --------------------------
 
@@ -25,14 +26,26 @@ filename = filename.replace("#", time.strftime("%d-%m-%Y at %H:%M:%S", time.loca
 file = open(filename, 'w')
 filewrite = csv.writer(file, delimiter=',', lineterminator='\n')
 
+# Initialise Graph
+fig = matplotlib.pyplot.figure()
+ax1 = fig.add_subplot(1, 1, 1)
+ax1.xlabel("Time (s)")
+ax1.ylabel("Acceleration (Raw Values)")
+ax1.title("Acceleration over Time")
+
+
+def animate(i):
+    ax1.clear()
+    ax1.plot(time_elapsed, ACCx, label="ACCx")
+    ax1.plot(time_elapsed, ACCy, label="ACCx")
+    ax1.plot(time_elapsed, ACCz, label="ACCx")
+
+
 # Record program start time
 init_time = time.time()
 
 while True:
     try:
-        # Record time when i2c read starts
-        #start_read = time.time()
-
         # Read our accelerometer,gyroscope and magnetometer  values
         ACCx = IMU.readACCx()
         ACCy = IMU.readACCy()
@@ -46,15 +59,22 @@ while True:
         data = "\n%5.20f,%5.2f,%5.2f,%5.2f" % (time_elapsed, ACCx, ACCy, ACCz)
         filewrite.writerow([time_elapsed, ACCx, ACCy, ACCz])
 
-        # Record time when file write ends
-        #end_write = time.time()
-
-        # Output loop frequency
-        #write_freq = 1 / (end_write - start_read)
-        # print "%5.5f" % write_freq
+        # Plot information
+        ani = matplotlib.animation.FuncAnimation(fig, animate, interval=1000)
+        matplotlib.pyplot.show()
 
     except KeyboardInterrupt:
 
         # End program
         file.close()
         break
+
+        # Record time when i2c read starts
+        #start_read = time.time()
+
+        # Record time when file write ends
+        #end_write = time.time()
+
+        # Output loop frequency
+        #write_freq = 1 / (end_write - start_read)
+        # print "%5.5f" % write_freq
