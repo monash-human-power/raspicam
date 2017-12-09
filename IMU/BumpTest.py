@@ -23,7 +23,7 @@ IMU.initIMU()  # Initialise the accelerometer, gyroscope and compass
 filename = "/home/pi/Documents/MHP_raspicam/IMU/Data/Data on #.csv"
 filename = filename.replace("#", time.strftime("%d-%m-%Y at %H:%M:%S", time.localtime()))
 file = open(filename, 'w')
-filewrite = csv.writer(file, delimiter=",", lineterminator="\n")
+filewrite = csv.writer(file, delimiter=',', lineterminator='\n')
 
 # Record program start time
 init_time = time.time()
@@ -44,7 +44,7 @@ while True:
 
         # Write information to file
         data = "\n%5.20f,%5.2f,%5.2f,%5.2f" % (time_elapsed, ACCx, ACCy, ACCz)
-        filewrite.writerow(data)
+        filewrite.writerow([time_elapsed, ACCx, ACCy, ACCz])
 
         # Record time when file write ends
         #end_write = time.time()
