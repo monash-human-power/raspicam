@@ -20,8 +20,7 @@ IMU.initIMU()  # Initialise the accelerometer, gyroscope and compass
 # ---------------------- Start Program --------------------------------
 
 # Open file to print too
-filename = "/home/pi/Documents/MHP_raspicam/IMU/Data/Data on #.csv"
-filename = filename.replace("#", time.strftime("%d-%m-%Y at %H:%M:%S", time.localtime()))
+filename = "/home/pi/Documents/MHP_raspicam/IMU/Bump Testing/Test Data/Data.csv"
 file = open(filename, 'w')
 filewrite = csv.writer(file, delimiter=',', lineterminator='\n')
 
@@ -44,7 +43,6 @@ while True:
     except KeyboardInterrupt:
 
         # End program
-	print("\n\nEnding Test\n")
+        print("\n\nEnding Test\n")
         file.close()
         break
-
