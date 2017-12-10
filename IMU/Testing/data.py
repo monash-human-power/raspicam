@@ -42,8 +42,6 @@ while True:
         filewrite.writerow([time_elapsed, ACCx, ACCy, ACCz])
 
     except KeyboardInterrupt:
-
         # End program
-        print("\n\nEnding Test\n")
         file.close()
         break
