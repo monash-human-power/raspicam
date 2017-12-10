@@ -13,6 +13,7 @@ import matplotlib.animation as animation
 # ---------------------- Start Program --------------------------------
 
 plt.close('all')
+win = 200 # window length
 
 filename = "/home/pi/Documents/MHP_raspicam/IMU/Testing/Test_Data/Data.csv"
 fig, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, sharey = True)
@@ -37,15 +38,12 @@ def animate(i):
     ax1.clear()
     ax2.clear()
     ax3.clear()
-    ax1.plot(ts[-200:-1], xs[-200:-1],color='r',label="ACCx")
-    ax1.legend()
-    ax2.plot(ts[-200:-1], ys[-200:-1],color='b',label="ACCy")
-    ax2.legend()
-    ax3.plot(ts[-200:-1], zs[-200:-1],color='k',label="ACCz")
-    ax3.legend()
-    ax1.set_title("Raw Acceleration Values Over Time")
-    ax3.set_xlabel("Time (s)")
-    ax2.set_ylabel("Acceleration (g)")
+    ax1.plot(ts[-win:-1], xs[-win:-1],color='r')
+    ax2.plot(ts[-win:-1], ys[-win:-1],color='b')
+    ax3.plot(ts[-win:-1], zs[-win:-1],color='k')
 
 ani = animation.FuncAnimation(fig, animate, interval=1000)
+mng = plt.get_current_fig_manager()
+mng.resize(*mng.window.maxsize())
+#mng.full_screen_toggle()
 plt.show()
