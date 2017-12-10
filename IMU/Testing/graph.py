@@ -29,7 +29,7 @@ def animate(i):
                 ts.append(parts[0])
                 xs.append(parts[1])
     ax1.clear()
-    ax1.plot(ts, xs)
+    ax1.plot(ts[-100:-1], xs[-100:-1])
 
 
 ani = animation.FuncAnimation(fig, animate, interval=1000)
