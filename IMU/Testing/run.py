@@ -9,9 +9,9 @@
 import subprocess
 from time import sleep
 
-p1 = subprocess.Popen(["python", "Data.py"])
+p1 = subprocess.Popen(["python", "data.py"])
 sleep(0.1)
-p2 = subprocess.Popen(["python", "Grapher.py"])
+p2 = subprocess.Popen(["python", "graph.py"])
 sleep(0.1)
 
 while True:
@@ -21,5 +21,5 @@ while True:
     except KeyboardInterrupt:
         p1.terminate()
         p2.terminate()
-	print("\nExecution Terminated\n")
+	print("\n\nExecution Terminated\n")
 	break
