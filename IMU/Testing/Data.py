@@ -10,6 +10,7 @@
 # ---------------------- Import required libraries --------------------
 import IMU
 import time
+import math
 import csv
 
 # ---------------------- Initialise berryIMU --------------------------
@@ -35,7 +36,7 @@ while True:
         ACCz = IMU.readACCz()
 
         # Record time when i2c read ends, calculate difference
-        time_elapsed = time.time() - init_time
+        time_elapsed = round(time.time() - init_time,5)
 
         # Write information to file
         filewrite.writerow([time_elapsed, ACCx, ACCy, ACCz])
