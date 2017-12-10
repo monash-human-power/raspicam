@@ -23,11 +23,11 @@ def animate(i):
     ts = []
     xs = []
     for line in lines:
-	print(len(line))
-        if len(line) >= 8:
-            t, x, y, z = line.split(",")
-            ts.append(t)
-            xs.append(x)
+        if len(line) > 0:
+            parts = line.split(",")
+            if len(parts) == 4:
+                ts.append(parts[0])
+                xs.append(parts[1])
     ax1.clear()
     ax1.plot(ts, xs)
 
