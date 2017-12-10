@@ -10,13 +10,13 @@ import subprocess
 from time import sleep
 
 p1 = subprocess.Popen(["python", "data.py"])
-sleep(0.1)
+sleep(1)
+
+print("Setting up graphs\n")
 p2 = subprocess.Popen(["python", "graph.py"])
-sleep(0.1)
 
 while True:
     try:
-        print("Executing...")
         sleep(1)
     except KeyboardInterrupt:
         p1.terminate()
