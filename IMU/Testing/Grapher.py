@@ -20,15 +20,15 @@ ax1 = fig.add_subplot(1, 1, 1)
 def animate(i):
     graph_data = open(filename, 'r').read()
     lines = graph_data.split("\n")
-    ts = []
     xs = []
+    ys = []
     for line in lines:
         if len(line) > 1:
-            components = line.split(",")
-            ts.append(components[0])
-            xs.append(components[1])
+            x, y = line.split(",")
+            xs.append(x)
+            ys.append(y)
     ax1.clear()
-    ax1.plot(ts, xs)
+    ax1.plot(xs, ys)
 
 
 ani = animation.FuncAnimation(fig, animate, interval=1000)
