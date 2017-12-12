@@ -9,12 +9,13 @@
 import subprocess
 from time import sleep
 
-p1 = subprocess.Popen(["python", "data.py"])
-print("\nStarting Data Recording...")
+p1 = subprocess.Popen(["python", "datav1.py"])
+print("\nStarting Data Recording v1...")
 sleep(1)
 
-print("Setting Up Graphs...\n")
-p2 = subprocess.Popen(["python", "graph.py"])
+p2 = subprocess.Popen(["python", "datav2.py"])
+print("\nStarting Data Recording v2...")
+sleep(1)
 
 while True:
     try:
