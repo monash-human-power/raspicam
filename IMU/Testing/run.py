@@ -13,15 +13,15 @@ p1 = subprocess.Popen(["python", "datav1.py"])
 print("\nStarting Data Recording v1...")
 sleep(1)
 
-p2 = subprocess.Popen(["python", "datav2.py"])
-print("\nStarting Data Recording v2...")
-sleep(1)
+#p2 = subprocess.Popen(["python", "datav2.py"])
+#print("\nStarting Data Recording v2...")
+#sleep(1)
 
 while True:
     try:
         sleep(1)
     except KeyboardInterrupt:
         p1.terminate()
-        p2.terminate()
+        #p2.terminate()
 	print("\n\nExecution Terminated.\n")
 	break
