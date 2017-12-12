@@ -29,7 +29,7 @@ Sensy = 1374.8
 Sensz = 1387
 
 # Open file to print too
-filename = "/home/pi/Documents/MHP_raspicam/IMU/Testing/Test_Data/Data_v1.csv"
+filename = "/home/pi/Documents/MHP_raspicam/IMU/Testing/Test_Data/Pi_Front.csv"
 file = open(filename, 'w')
 filewrite = csv.writer(file, delimiter=',', lineterminator='\n')
 
@@ -39,9 +39,9 @@ init_time = time.time()
 while True:
     try:
         # Read our accelerometer,gyroscope and magnetometer  values
-        ACCx = (IMUv1.readACCx() - ZeroGx*g)/Sensx
-        ACCy = (IMUv1.readACCy() - ZeroGy*g)/Sensy
-        ACCz = (IMUv1.readACCz() - ZeroGz*g)/Sensz
+        ACCx = IMUv1.readACCx()
+        ACCy = IMUv1.readACCy()
+        ACCz = IMUv1.readACCz()
 
         # Record time when i2c read ends, calculate difference
         time_elapsed = round(time.time() - init_time,5)

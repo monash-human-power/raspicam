@@ -19,17 +19,8 @@ IMUv2.initIMU()  # Initialise the accelerometer, gyroscope and compass
 
 # ---------------------- Start Program --------------------------------
 
-# Calibration Variables
-g = 1
-ZeroGx = -97.8495
-ZeroGy = 35.6995
-ZeroGz = -91.919
-Sensx = 1349
-Sensy = 1374.8
-Sensz = 1387
-
 # Open file to print too
-filename = "/home/pi/Documents/MHP_raspicam/IMU/Testing/Test_Data/Data_v2.csv"
+filename = "/home/pi/Documents/MHP_raspicam/IMU/Testing/Test_Data/Pi_Back.csv"
 file = open(filename, 'w')
 filewrite = csv.writer(file, delimiter=',', lineterminator='\n')
 
@@ -39,9 +30,9 @@ init_time = time.time()
 while True:
     try:
         # Read our accelerometer,gyroscope and magnetometer  values
-        ACCx = (IMUv2.readACCx() - ZeroGx*g)/Sensx
-        ACCy = (IMUv2.readACCy() - ZeroGy*g)/Sensy
-        ACCz = (IMUv2.readACCz() - ZeroGz*g)/Sensz
+        ACCx = IMUv2.readACCx()
+        ACCy = IMUv2.readACCy()
+        ACCz = IMUv2.readACCz()
 
         # Record time when i2c read ends, calculate difference
         time_elapsed = round(time.time() - init_time,5)
