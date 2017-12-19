@@ -13,7 +13,7 @@ from time import sleep
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-convert = False
+convert = True
 rec_num = 0
 recording = 0
 
