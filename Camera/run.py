@@ -19,7 +19,7 @@ recording = 0
 
 GPIO.setup(22,GPIO.OUT) #Green LED
 GPIO.setup(23,GPIO.OUT) #Red LED
-GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(25, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 try:
     print("")
@@ -28,7 +28,7 @@ try:
     while True:
         print("Ready!\n")
         while True:
-            button_state = GPIO.input(24)
+            button_state = GPIO.input(25)
             if button_state == False:
                 print("Starting Camera Recording...\n")
                 recording = 1
@@ -41,7 +41,7 @@ try:
         sleep(1)
 
         while True:
-            button_state = GPIO.input(24)
+            button_state = GPIO.input(25)
             if button_state == False:
                 print("\nStopping Camera Recording...\n\n")
                 subprocess.Popen.kill(p1)
