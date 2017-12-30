@@ -15,7 +15,7 @@ import matplotlib.animation as animation
 plt.close('all')
 win = 200  # window length
 
-filename = "/home/pi/Documents/MHP_raspicam/IMU/Testing/Field_Testing/Pi_Back.csv"
+filename = "/home/pi/Documents/MHP_raspicam/IMU/Testing/Test_Data/Pi_Back.csv"
 fig, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, sharey=True)
 fig.subplots_adjust(hspace=0)
 plt.setp([a.get_xticklabels() for a in fig.axes[:-1]], visible=False)
