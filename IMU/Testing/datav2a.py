@@ -8,14 +8,14 @@
 # ---------------------------------------------------------------------
 
 # ---------------------- Import required libraries --------------------
-import IMUv2
+import IMUv2a
 import time
 import math
 import csv
 
 # ---------------------- Initialise berryIMU --------------------------
-IMUv2.detectIMU()
-IMUv2.initIMU()  # Initialise the accelerometer, gyroscope and compass
+IMUv2a.detectIMU()
+IMUv2a.initIMU()  # Initialise the accelerometer, gyroscope and compass
 
 # ---------------------- Start Program --------------------------------
 
@@ -30,9 +30,9 @@ init_time = time.time()
 while True:
     try:
         # Read our accelerometer,gyroscope and magnetometer  values
-        ACCx = IMUv2.readACCx()
-        ACCy = IMUv2.readACCy()
-        ACCz = IMUv2.readACCz()
+        ACCx = IMUv2a.readACCx()
+        ACCy = IMUv2a.readACCy()
+        ACCz = IMUv2a.readACCz()
 
         # Record time when i2c read ends, calculate difference
         time_elapsed = round(time.time() - init_time,5)
