@@ -21,6 +21,5 @@ while True:
 	print("\n\nExecution Terminated.\n")
 	break
 
-p3 = subprocess.Popen(["python", "graph.py"])
-print("\nPlotting Graphs!\n\n")
+p3 = subprocess.call('./sendcsv.sh')
 sleep(1)
