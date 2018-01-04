@@ -8,6 +8,7 @@
 USERNAME=pi # all pi's have same username
 PiZero1MAC=b8:27:eb:b3:52:f
 PiZero2MAC=b8:27:eb:8d:cd:e5
+PiZero3MAC=b8:27:eb:3b:26:bb
 
 # Select Target Pi (either manually or through user input)
 #TargetPi = 1 # Assign manually in script
@@ -15,6 +16,7 @@ printf "\nKNOWN PI'S";
 printf "\n\tName:\t\tID:\tMAC Address:"
 printf "\n\tPi Zero 1\t1\t$PiZero1MAC"
 printf "\n\tPi Zero 2\t2\t$PiZero2MAC\n"
+printf "\n\tPi Zero 3\t2\t$PiZero3MAC\n"
 printf "\nSelect target Pi ID = "; read TargetPi # Read from user input
 
 # Choose MAC Address to Search for
@@ -24,6 +26,9 @@ then
 elif [ $TargetPi == 2 ]
 then
     SearchMAC=$PiZero2MAC
+elif [ $TargetPi == 3 ]
+then
+    SearchMAC=$PiZero3MAC
 else
     printf "\nInvalid Input. Program Terminated.\n\n"
     exit 0
@@ -63,6 +68,8 @@ do
             printf "Found Pi Zero 1\n"
         elif [ "$MAC" == "$PiZero2MAC" ]; then
             printf "Found Pi Zero 2\n"
+        elif [ "$MAC" == "$PiZero3MAC" ]; then
+            printf "Found Pi Zero 3\n"
         fi
 
         # Check to see if MAC Address is that of Target Pi
