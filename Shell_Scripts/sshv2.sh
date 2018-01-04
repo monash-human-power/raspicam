@@ -15,8 +15,8 @@ PiZero3MAC=b8:27:eb:3b:26:bb
 printf "\nKNOWN PI'S";
 printf "\n\tName:\t\tID:\tMAC Address:"
 printf "\n\tPi Zero 1\t1\t$PiZero1MAC"
-printf "\n\tPi Zero 2\t2\t$PiZero2MAC\n"
-printf "\n\tPi Zero 3\t2\t$PiZero3MAC\n"
+printf "\n\tPi Zero 2\t2\t$PiZero2MAC"
+printf "\n\tPi Zero 3\t3\t$PiZero3MAC\n"
 printf "\nSelect target Pi ID = "; read TargetPi # Read from user input
 
 # Choose MAC Address to Search for
