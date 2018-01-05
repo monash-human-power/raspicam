@@ -58,7 +58,9 @@ ax2.legend()
 ax3.plot(ts, zs, color='k', label = 'z')
 ax3.legend()
 
-ax1.set_title('Bump Test Plot')
+ts = map(float, ts)
+fs = len(ts)/ts[-1]
+ax1.set_title('Bump Test Plot - %.2f Hz' % fs)
 ax3.set_xlabel('Time (secs)')
 ax2.set_ylabel('Acceleration (Gs)')
 plt.show()
