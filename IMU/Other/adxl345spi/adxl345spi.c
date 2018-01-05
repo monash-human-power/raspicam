@@ -14,8 +14,8 @@
 #define DATAX0        0x32
 
 const char codeVersion[3] = "0.2";  // code version number
-const int timeDefault = 5;  // default duration of data stream, seconds
-const int freqDefault = 5;  // default sampling rate of data stream, Hz
+const int timeDefault = 2;  // default duration of data stream, seconds
+const int freqDefault = 3200;  // default sampling rate of data stream, Hz
 const int freqMax = 3200;  // maximal allowed cmdline arg sampling rate of data stream, Hz
 const int speedSPI = 2000000;  // SPI communication speed, bps
 const int freqMaxSPI = 100000;  // maximal possible communication sampling rate through SPI, Hz (assumption)
@@ -70,8 +70,8 @@ int main(int argc, char *argv[]) {
 
     // handling command-line arguments
 
-    int bSave = 0;
-    char vSave[256] = "";
+    int bSave = 1;
+    char vSave[256] = "/Desktop/text.txt";
     double vTime = timeDefault;
     double vFreq = freqDefault;
     for (i = 1; i < argc; i++) {  // skip argv[0] (program name)
