@@ -47,7 +47,7 @@ SDA : SPI_MISO (pin 21)
 SCL : SPI_CLK (pin 23)
 ```
 
-Some of the ADXL345 breadboards have `VCC` pin marked as `3V3`. 
+Some of the ADXL345 breadboards have `VCC` pin marked as `3V3`.
 
 ## Build
 
@@ -70,7 +70,7 @@ More information can be found on the [download page][pigpio_download].
 
 ### Compilation
 
-`gcc -Wall -pthread -o adxl345spi adxl345spi.c -lpigpio -lrt`
+'gcc -Wall -pthread -o adxl345spi adxl345spi.c -lpigpio -lrt'
 
 **Build is only tested on Raspbian OS.**
 
@@ -93,4 +93,3 @@ which provides a stable sampling rate and reliable time steps.
 [pigpio_download]: http://abyz.co.uk/rpi/pigpio/download.html
 [adxl345spi_bb_png]: adxl345spi_bb.png
 [adxl345spi_schem_png]: adxl345spi_schem.png
-

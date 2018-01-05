@@ -26,11 +26,11 @@ fig, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, sharey=True)
 mng = plt.get_current_fig_manager()
 mng.resize(*mng.window.maxsize())
 # mng.full_screen_toggle()
-#fig.subplots_adjust(hspace=0.15)
+# fig.subplots_adjust(hspace=0.15)
 #plt.setp([a.get_xticklabels() for a in fig.axes[:-1]], visible=False)
 
 # Init data vectors
-Sensitivity= 0.244/1000
+Sensitivity = 0.488281 / 1000  # 2 * 16g / 2^16 (+-16G, 16 bit resolution)
 ts = []
 xs = []
 ys = []
@@ -42,24 +42,24 @@ for line in lines:
         parts = line.split(",")
         if len(parts) == 4:
             # Rescale Data into g's
-            parts[1]=int(parts[1])*Sensitivity
-            parts[2]=int(parts[2])*Sensitivity
-            parts[3]=int(parts[3])*Sensitivity
-            
+            parts[1] = int(parts[1]) * Sensitivity
+            parts[2] = int(parts[2]) * Sensitivity
+            parts[3] = int(parts[3]) * Sensitivity
+
             ts.append(parts[0])
             xs.append(parts[1])
             ys.append(parts[2])
             zs.append(parts[3])
 
-ax1.plot(ts, xs, color='r', label = 'x')
+ax1.plot(ts, xs, color='r', label='x')
 ax1.legend()
-ax2.plot(ts, ys, color='b', label = 'y')
+ax2.plot(ts, ys, color='b', label='y')
 ax2.legend()
-ax3.plot(ts, zs, color='k', label = 'z')
+ax3.plot(ts, zs, color='k', label='z')
 ax3.legend()
 
 ts = map(float, ts)
-fs = len(ts)/ts[-1]
+fs = len(ts) / ts[-1]
 ax1.set_title('Bump Test Plot - %.2f Hz' % fs)
 ax3.set_xlabel('Time (secs)')
 ax2.set_ylabel('Acceleration (Gs)')
