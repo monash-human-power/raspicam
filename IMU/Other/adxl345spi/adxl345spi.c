@@ -279,7 +279,7 @@ int main(int argc, char *argv[]) {
             at[i] = tCurrent;
         }
         FILE *f;
-        f = fopen("/Desktop/text.txt", "w");
+        f = fopen("text.txt", "w");
         fprintf(f, "time, x, y, z\n");
         for (i = 0; i < samples; i++) {
             fprintf(f, "%.5f, %.5f, %.5f, %.5f \n", at[i], ax[i], ay[i], az[i]);
