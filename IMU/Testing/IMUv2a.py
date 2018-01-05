@@ -47,4 +47,4 @@ def readACCz():
 def initIMU():
     # initialise the accelerometer
     writeACC(LSM9DS1_CTRL_REG5_XL, 0b00111000)  # z, y, x axis enabled for accelerometer
-    writeACC(LSM9DS1_CTRL_REG6_XL, 0b11001000)  # 952 Hz, +/- 16g
+    writeACC(LSM9DS1_CTRL_REG6_XL, 0b11011000)  # 952 Hz, +/- 16g
