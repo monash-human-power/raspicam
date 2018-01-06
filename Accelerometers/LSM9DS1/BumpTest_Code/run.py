@@ -21,6 +21,5 @@ while True:
         print("\n\nExecution Terminated.\n")
         break
 
-p3 = subprocess.call(
-    '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/sendcsv')
+p3 = subprocess.call('/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/sendcsv_pz3.sh')
 sleep(1)
