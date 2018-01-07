@@ -13,6 +13,7 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(11, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 #Variable setups
+global textPadImage 
 global count 
 count = 0
 global j
@@ -51,7 +52,7 @@ def camera_Start():
 
     global overlay
     overlay = camera.add_overlay(textPadImage.tobytes(), size=(512, 64), alpha = 128, layer = 3, fullscreen = False, window = (0,20,512,64))
-    global textPadImage 
+    
     textPadImage = textPad.copy()
     drawTextImage = ImageDraw.Draw(textPadImage)
     drawTextImage.text((75, 18),"SECONDARY" , font=fontBold, fill=("Red"))

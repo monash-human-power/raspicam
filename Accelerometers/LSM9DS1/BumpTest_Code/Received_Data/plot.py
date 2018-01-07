@@ -17,7 +17,7 @@ win = 200  # window length
 
 #name = raw_input("Enter the filename you wish to graph (with file extension): ")
 #filename = "/home/pi/Documents/Received_Data/"+name
-filename = "/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Received_Data/Pi_Zero_3_17-45-26.csv"
+filename = "/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Received_Data/Pi_Zero_3_17-47-31.csv"
 graph_data = open(filename, 'r').read()
 lines = graph_data.split("\n")
 
