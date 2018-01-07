@@ -5,11 +5,11 @@ GPIO.setmode(GPIO.BCM)
 #GPIO.setwarnings(False)
 
 GPIO.setup(18,GPIO.OUT)
-GPIO.setup(23,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(24,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 try:
 	while True:
-		button_state = GPIO.input(23)
+		button_state = GPIO.input(24)
 		if button_state == False:
 			print "Button Pressed, LED on"
 			GPIO.output(18,GPIO.HIGH)
