@@ -17,6 +17,7 @@ GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 try:
     while True:
+        print("\nReady!\n")
         while True:
             button_state = GPIO.input(24)
             if button_state == False:
@@ -36,6 +37,7 @@ try:
                 recording = 0
                 p3 = subprocess.call(
                     '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/sendcsv.sh')
+                print("\nWaiting.....\n")
                 sleep(3)
                 break
 except KeyboardInterrupt:
