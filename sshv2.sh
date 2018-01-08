@@ -97,7 +97,7 @@ done
 if [ $ssh == 1 ]
 then
     printf "\nStarting ssh connection @ $PI_IP...\n\n"
-    ssh ${USERNAME}@${PI_IP} # SSH session begins
+    ssh -o StrictHostKeyChecking=no ${USERNAME}@${PI_IP} # SSH session begins
 else
     printf "\nFailed to find target Pi. Check to see if Pi is online.\n"
 fi
