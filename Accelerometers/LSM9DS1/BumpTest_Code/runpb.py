@@ -28,17 +28,17 @@ try:
 
         p1 = subprocess.Popen(["python", "datav2a.py"])
         sleep(1)
-        print("\nRecording!")
+        print("Recording!")
 
         while True:
             button_state = GPIO.input(24)
             if button_state == False:
-                print("\n\nStopping Data Recording v2a...\n")
+                print("\nStopping Data Recording v2a...\n")
                 subprocess.Popen.kill(p1)
                 recording = 0
                 p3 = subprocess.call(
                     '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/sendcsv.sh')
-                print("\nWaiting.....\n")
+                print("Waiting.....")
                 sleep(3)
                 break
 except KeyboardInterrupt:
