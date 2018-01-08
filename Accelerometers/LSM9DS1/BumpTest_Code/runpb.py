@@ -15,34 +15,36 @@ GPIO.setwarnings(False)
 
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+print("\n")
 try:
     while True:
-        print("\nReady!")
+        print("Ready!\n")
         while True:
             button_state = GPIO.input(24)
             if button_state == False:
-                print("\nStarting Data Recording v2a...")
+                print("Starting Data Recording v2a...")
                 recording = 1
                 break
             sleep(0.2)
 
         p1 = subprocess.Popen(["python", "datav2a.py"])
         sleep(1)
-        print("Recording!")
+        print("Recording!\n")
 
         while True:
             button_state = GPIO.input(24)
             if button_state == False:
-                print("\nStopping Data Recording v2a...")
+                print("Stopping Data Recording v2a...")
                 subprocess.Popen.kill(p1)
                 recording = 0
                 p3 = subprocess.call(
                     '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/sendcsv.sh')
-                print("Waiting.....\n")
+                print("Waiting.....\n\n")
                 sleep(3)
                 break
 except KeyboardInterrupt:
     if recording == 1:
+        print("\n\nStopping Data Recording v2a...\n")
         subprocess.Popen.kill(p1)
     print("\n\nProgram Ended.\n")
     GPIO.cleanup()
