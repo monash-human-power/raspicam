@@ -13,8 +13,10 @@ from time import sleep
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
+recording = 0
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+print("")
 try:
     while True:
         print("Ready!\n")
