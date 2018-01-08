@@ -17,7 +17,7 @@ GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 try:
     while True:
-        print("\nReady!\n")
+        print("\nReady!")
         while True:
             button_state = GPIO.input(24)
             if button_state == False:
@@ -28,6 +28,7 @@ try:
 
         p1 = subprocess.Popen(["python", "datav2a.py"])
         sleep(1)
+        print("\nRecording!")
 
         while True:
             button_state = GPIO.input(24)
