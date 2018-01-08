@@ -15,7 +15,6 @@ GPIO.setwarnings(False)
 
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-print("\n")
 try:
     while True:
         print("Ready!\n")
@@ -46,5 +45,7 @@ except KeyboardInterrupt:
     if recording == 1:
         print("\n\nStopping Data Recording v2a...\n")
         subprocess.Popen.kill(p1)
-    print("\n\nProgram Ended.\n")
+        print("Program Ended.\n")
+    else:
+        print("\n\nProgram Ended.\n")
     GPIO.cleanup()
