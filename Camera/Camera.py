@@ -3,6 +3,7 @@ import picamera
 import time
 from PIL import Image, ImageDraw, ImageFont
 import os
+from time import sleep
 
 # Video Resolution
 VIDEO_HEIGHT = 480
