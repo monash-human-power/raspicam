@@ -25,7 +25,7 @@ try:
                 break
             sleep(0.2)
 
-        p1 = subprocess.Popen(["python", "Camera.py"])
+        p1 = subprocess.Popen(["python", "/home/pi/Documents/MHP_raspicam/Camera/Camera.py"])
         sleep(1)
 
         while True:
@@ -34,7 +34,8 @@ try:
                 print("\n\nStopping Camera Recording...\n")
                 subprocess.Popen.kill(p1)
                 recording = 0
-                time.sleep(3)
+		#subprocess.Popen()
+                sleep(3)
                 break
             sleep(0.2)
 except KeyboardInterrupt:
