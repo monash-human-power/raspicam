@@ -1,6 +1,8 @@
+# MODEL B SIDE
+
 import socket
 
-UDP_IP = "PatPi.local"  # CHANGE TO DESTINATION IP ADDRESS
+UDP_IP =
 UDP_PORT = 5005
 
 MESSAGE = "Hello!"

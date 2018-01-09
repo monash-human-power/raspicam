@@ -1,6 +1,6 @@
 import socket
 
-UDP_IP = "PatPi.local"  # CHANGE TO DESTINATION IP ADDRESS
+UDP_IP = socket.gethostbyname(socket.gethostname())
 UDP_PORT = 5005
 
 sock = socket.socket(socket.AF_INET,  # Internet
