@@ -38,8 +38,6 @@ try:
                 print("Stopping Data Recording v2a...")
                 subprocess.call(["python", "send.py"])
                 recording = 0
-                subprocess.call(
-                    '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/sendcsv.sh')
                 print("Waiting.....\n\n")
                 sleep(3)
                 break
