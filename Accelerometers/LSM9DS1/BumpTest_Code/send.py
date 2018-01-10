@@ -1,5 +1,6 @@
 # MODEL B SIDE
 
+from time import sleep
 import subprocess
 import socket
 import RPi.GPIO as GPIO
@@ -10,6 +11,7 @@ GPIO.setwarnings(False)
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 start = 1
+print("\nConfiguring Pi Networking\n")
 
 PatPiMAC = 'b8:27:eb:d0:ac:d8'
 # PatMacbookMAC='6c:40:08:99:ce:b0'
@@ -24,20 +26,41 @@ Online_List = [0] * len(MAC_List)
 path = '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/piscan.sh'
 for MAC in MAC_List:
     IP = subprocess.check_output([path, MAC])
-    if IP != 0:
-        Online_List[index] = IP
+    Online_List[index] = IP
+    if IP != '0':
+        print("Found Pi @ %s\n" % IP)
     index = index + 1
 
-while True:
-    button_state = GPIO.input(24)
-    if button_state == False:
-        if start == 1:
-            print("Starting Data Recording!\n")
-            start = 0
-        else:
-            print("Stopping Data Recording!\n")
-            start = 1
+print("Ready!\n")
 
+try:
+    while True:
+        button_state = GPIO.input(24)
+        if button_state == False:
+            if start == 1:
+                print("Starting Data Recording!\n")
+                start = 0
+            else:
+                print("Stopping Data Recording!\n")
+                start = 1
+
+            for IP in Online_List:
+                if IP == '0':
+                    continue
+
+                UDP_IP = IP
+                UDP_PORT = 5005
+
+                MESSAGE = "Hello!"
+
+                sock = socket.socket(socket.AF_INET,  # Internet
+                                 socket.SOCK_DGRAM)  # UDP
+                sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+        sleep(0.2)
+except KeyboardInterrupt:
+    GPIO.cleanup()
+    if start == 0:
+        print("\n\nStopping Data Recording!\n")
         for IP in Online_List:
             if IP == '0':
                 continue
@@ -48,6 +71,9 @@ while True:
             MESSAGE = "Hello!"
 
             sock = socket.socket(socket.AF_INET,  # Internet
-                                 socket.SOCK_DGRAM)  # UDP
+                             socket.SOCK_DGRAM)  # UDP
             sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
-    sleep(0.2)
+        print("Program Ended.\n")
+    else:
+        print("\n\nProgram Ended.\n")
+
