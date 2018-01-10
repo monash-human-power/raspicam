@@ -2,35 +2,52 @@
 
 import subprocess
 import socket
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 start = 1
 
-PatPiMAC='b8:27:eb:d0:ac:d8'
-#PatMacbookMAC='6c:40:08:99:ce:b0'
-PiZero1MAC='b8:27:eb:b3:52:f'
-PiZero2MAC='b8:27:eb:8d:cd:e5'
-PiZero3MAC='b8:27:eb:3b:26:bb'
+PatPiMAC = 'b8:27:eb:d0:ac:d8'
+# PatMacbookMAC='6c:40:08:99:ce:b0'
+PiZero1MAC = 'b8:27:eb:b3:52:f'
+PiZero2MAC = 'b8:27:eb:8d:cd:e5'
+PiZero3MAC = 'b8:27:eb:3b:26:bb'
 
-MAC_List = [PatPiMAC,PiZero1MAC,PiZero2MAC,PiZero3MAC]
+MAC_List = [PatPiMAC, PiZero1MAC, PiZero2MAC, PiZero3MAC]
 
 index = 0
-Online_List=[0] * len(MAC_List)
+Online_List = [0] * len(MAC_List)
 path = '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/piscan.sh'
 for MAC in MAC_List:
-    IP=subprocess.check_output([path,MAC])
+    IP = subprocess.check_output([path, MAC])
     if IP != 0:
-        Online_List[index]=IP
+        Online_List[index] = IP
     index = index + 1
 
-for IP in Online_List:
-    if IP == '0':
-        continue
+while True:
+    button_state = GPIO.input(24)
+    if button_state == False:
+        if start == 1:
+            print("Starting Data Recording!\n")
+            start = 0
+        else:
+            print("Stopping Data Recording!\n")
+            start = 1
 
-    UDP_IP = IP
-    UDP_PORT = 5005
+        for IP in Online_List:
+            if IP == '0':
+                continue
 
-    MESSAGE = "Hello!"
+            UDP_IP = IP
+            UDP_PORT = 5005
 
-    sock = socket.socket(socket.AF_INET,  # Internet
-                 socket.SOCK_DGRAM)  # UDP
-    sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+            MESSAGE = "Hello!"
+
+            sock = socket.socket(socket.AF_INET,  # Internet
+                                 socket.SOCK_DGRAM)  # UDP
+            sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+    sleep(0.2)

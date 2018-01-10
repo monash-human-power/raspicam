@@ -6,6 +6,7 @@
 
 # Known and recognised Target Pi's.
 USERNAME=pi # all pi's have same username
+PatMacbookMAC=6c:40:8:99:ce:b0
 PatPiMAC=b8:27:eb:d0:ac:d8
 PiZero1MAC=b8:27:eb:b3:52:f
 PiZero2MAC=b8:27:eb:8d:cd:e5
@@ -68,7 +69,10 @@ do
         printf "MAC Address = $MAC\n" # Print MAC Address
 
         # Check to see if MAC Address is one of list of known Pi's.
-        if [ "$MAC" == "$PatPiMAC" ]
+        if [ "$MAC" == "$PatMacbookMAC" ]
+        then
+            printf "Found Pat's Macbook Pro.\n"
+        elif [ "$MAC" == "$PatPiMAC" ]
         then
             printf "Found Pat Pi\n"
         elif [ "$MAC" == "$PiZero1MAC" ]
@@ -97,7 +101,7 @@ done
 if [ $ssh == 1 ]
 then
     printf "\nStarting ssh connection @ $PI_IP...\n\n"
-    ssh ${USERNAME}@${PI_IP} # SSH session begins
+    ssh -o StrictHostKeyChecking=no ${USERNAME}@${PI_IP} # SSH session begins
 else
     printf "\nFailed to find target Pi. Check to see if Pi is online.\n"
 fi
