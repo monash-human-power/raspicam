@@ -2,8 +2,8 @@
 import socket
 import subprocess
 
-#UDP_IP = subprocess.check_output(['hostname','-I'])
-UDP_IP = "192.168.1.101"
+UDP_IP = subprocess.check_output(['hostname','-I'])
+#UDP_IP = "192.168.1.101"
 UDP_PORT = 5005
 start = 1
 
