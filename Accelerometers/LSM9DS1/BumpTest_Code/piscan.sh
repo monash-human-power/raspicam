@@ -39,12 +39,13 @@ do
         if [ "$MAC" == "$inputMAC" ]
         then
             #printf "Found Target Pi\n"
-	    exit 1
+	    printf "$addr"
+	    exit 
 	fi
     fi
     lsv=$(( $lsv + 1 )) # Increment lower end of ip address count
     ip_scan_range=$(( $ip_scan_range - 1 )) # decrement ip address scan range
 done
 
-printf "\n"
+printf "0"
 exit 0
