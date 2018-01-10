@@ -30,7 +30,7 @@ do
         printf "\nFound Active Host\n"
 
         # Find the MAC address associated with that IP Address
-        MAC=$(arp -n $addr | awk '{print $4}')
+        MAC=$(arp-scan -n $addr | awk '{print $4}')
         printf "MAC Address = $MAC\n" # Print MAC Address
 
         # Check to see if MAC Address is one of list of known Pi's.
