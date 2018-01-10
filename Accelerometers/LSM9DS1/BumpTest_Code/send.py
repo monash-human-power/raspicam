@@ -3,6 +3,8 @@
 import subprocess
 import socket
 
+start = 1
+
 PatPiMAC='b8:27:eb:d0:ac:d8'
 #PatMacbookMAC='6c:40:08:99:ce:b0'
 PiZero1MAC='b8:27:eb:b3:52:f'
@@ -22,16 +24,12 @@ for MAC in MAC_List:
 for IP in Online_List:
     if IP == '0':
         continue
-    
+
     UDP_IP = IP
     UDP_PORT = 5005
-    
+
     MESSAGE = "Hello!"
-    
-    print "UDP target IP:", UDP_IP
-    print "UDP target port:", UDP_PORT
-    print "message:", MESSAGE
-    
+
     sock = socket.socket(socket.AF_INET,  # Internet
                  socket.SOCK_DGRAM)  # UDP
     sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
