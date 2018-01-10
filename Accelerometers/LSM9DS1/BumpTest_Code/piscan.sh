@@ -1,10 +1,6 @@
 #!/bin/bash
 
-PatPiMAC=b8:27:eb:d0:ac:d8
-PatMacbookMAC=6c:40:08:99:ce:b0
-PiZero1MAC=b8:27:eb:b3:52:f
-PiZero2MAC=b8:27:eb:8d:cd:e5
-PiZero3MAC=b8:27:eb:3b:26:bb
+inputMAC=$1
 
 # Scan Criteria (Based on Router dhcp allocation range)
 start_ip=192.168.1.100
@@ -34,29 +30,21 @@ do
 		continue
 	fi
 	
-	# Notify host has been found
-        printf "\nFound Active Host\n"
-        printf "MAC Address = $MAC\n" # Print MAC Address
-	printf "IP Address = $addr\n" # Print MAC Address
+	## Notify host has been found
+        #printf "\nFound Active Host\n"
+        #printf "MAC Address = $MAC\n" # Print MAC Address
+	#printf "IP Address = $addr\n" # Print MAC Address
 	
         # Check to see if MAC Address is one of list of known Pi's.
-        if [ "$MAC" == "$PatMacbookMAC" ]
+        if [ "$MAC" == "$inputMAC" ]
         then
-            printf "Found Pat's Macbook.\n"
-	elif [ "$MAC" == "$PatPiMAC" ]
-        then
-            printf "Found Pat Pi\n"
-        elif [ "$MAC" == "$PiZero1MAC" ]
-        then
-            printf "Found Pi Zero 1\n"
-        elif [ "$MAC" == "$PiZero2MAC" ]; then
-            printf "Found Pi Zero 2\n"
-        elif [ "$MAC" == "$PiZero3MAC" ]; then
-            printf "Found Pi Zero 3\n"
-        fi
+            #printf "Found Target Pi\n"
+	    exit 1
+	fi
     fi
     lsv=$(( $lsv + 1 )) # Increment lower end of ip address count
     ip_scan_range=$(( $ip_scan_range - 1 )) # decrement ip address scan range
 done
 
 printf "\n"
+exit 0
