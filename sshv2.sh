@@ -6,7 +6,7 @@
 
 # Known and recognised Target Pi's.
 USERNAME=pi # all pi's have same username
-PatMacMAC=6c:40:8:99:ce:b0
+PatMacbookMAC=6c:40:8:99:ce:b0
 PatPiMAC=b8:27:eb:d0:ac:d8
 PiZero1MAC=b8:27:eb:b3:52:f
 PiZero2MAC=b8:27:eb:8d:cd:e5
@@ -69,7 +69,7 @@ do
         printf "MAC Address = $MAC\n" # Print MAC Address
 
         # Check to see if MAC Address is one of list of known Pi's.
-        if [ "$MAC" == "$PatMacMAC" ]
+        if [ "$MAC" == "$PatMacbookMAC" ]
         then
             printf "Found Pat's Macbook Pro.\n"
         elif [ "$MAC" == "$PatPiMAC" ]
