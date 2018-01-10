@@ -10,7 +10,7 @@ GPIO.setwarnings(False)
 
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-start = 1
+MESSAGE = "STOP"
 print("\nConfiguring Pi Networking\n")
 
 PatPiMAC = 'b8:27:eb:d0:ac:d8'
@@ -31,18 +31,18 @@ for MAC in MAC_List:
         print("Found Pi @ %s\n" % IP)
     index = index + 1
 
-print("Ready!\n")
+print("Ready for button press!\n")
 
 try:
     while True:
         button_state = GPIO.input(24)
         if button_state == False:
-            if start == 1:
+            if MESSAGE == "STOP":
                 print("Starting Data Recording!\n")
-                start = 0
+                MESSAGE = "START"
             else:
                 print("Stopping Data Recording!\n")
-                start = 1
+                MESSAGE = "STOP"
 
             for IP in Online_List:
                 if IP == '0':
@@ -51,29 +51,32 @@ try:
                 UDP_IP = IP
                 UDP_PORT = 5005
 
-                MESSAGE = "Hello!"
+                #MESSAGE = "Hello!"
 
                 sock = socket.socket(socket.AF_INET,  # Internet
                                  socket.SOCK_DGRAM)  # UDP
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+
+                print("Ready for button press!\n")
         sleep(0.2)
 except KeyboardInterrupt:
     GPIO.cleanup()
-    if start == 0:
-        print("\n\nStopping Data Recording!\n")
-        for IP in Online_List:
-            if IP == '0':
-                continue
+    print("\n\nProgram Ended.\n")
+    #if MESSAGE == "START":
+    #    print("\n\nStopping Data Recording!\n")
+    #    for IP in Online_List:
+    #        if IP == '0':
+    #            continue
 
-            UDP_IP = IP
-            UDP_PORT = 5005
+    #        UDP_IP = IP
+    #        UDP_PORT = 5005
 
-            MESSAGE = "Hello!"
+    #        MESSAGE = "Hello!"
 
-            sock = socket.socket(socket.AF_INET,  # Internet
-                             socket.SOCK_DGRAM)  # UDP
-            sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
-        print("Program Ended.\n")
-    else:
-        print("\n\nProgram Ended.\n")
+    #        sock = socket.socket(socket.AF_INET,  # Internet
+    #                         socket.SOCK_DGRAM)  # UDP
+    #        sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+    #    print("Program Ended.\n")
+    #else:
+    #    print("\n\nProgram Ended.\n")
 
