@@ -1,0 +1,14 @@
+rho = 0.978; %Air Density, kg/m^3
+CdA = 0.03;
+m = 113; % Total Mass
+g = 9.81; %Gravity
+mu = 0.004; %Co-efficient of Rolling Resistance
+grad = -0.369; %Road Gradient
+intensityfactor = 1; %Percent of P_GET in inrun
+P_GET = 400; %Max Aerobic Power
+P_MAX = 500; %Max Anaerobic Power
+rateconst = -0.153; %Rate of increase for In-run Power
+srateconst = -0.0494; %Rate of increase for Sprint Power
+ts = 270; %Time when sprint starts
+P_IN = 200; %Constant 
+DTEffLoss = 0;
