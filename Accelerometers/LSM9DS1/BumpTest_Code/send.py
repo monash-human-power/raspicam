@@ -15,8 +15,9 @@ MAC_List = [PatPiMAC,PiZero1MAC,PiZero2MAC,PiZero3MAC]
 
 index = 0
 Online_List=[0] * len(MAC_List)
+path = '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/piscan.sh'
 for MAC in MAC_List:
-    IP=subprocess.check_output(['./piscan.sh',MAC])
+    IP=subprocess.check_output([path,MAC])
     if IP != 0:
         Online_List[index]=IP
     index = index + 1
