@@ -12,7 +12,7 @@ from time import sleep
 
 send = 0
 
-p1 = call(['sudo', '/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/data.c'])
+p1 = call(['sudo', '/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/data'])
 print("\nStarting Data Recording..")
 sleep(1)
 

@@ -22,8 +22,7 @@ try:
 
         if data == "START" and recording == 0:
             print "Received Start Command!"
-            p1 = call(
-                ['sudo', '/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/data.c'])
+            p1 = call(['sudo', '/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/data'])
             recording = 1
             sleep(1)
             print("Recording!\n")
