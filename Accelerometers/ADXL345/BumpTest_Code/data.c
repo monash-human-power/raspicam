@@ -49,15 +49,15 @@ int writeBytes(int handle, char *data, int count) {
     return spiWrite(handle, data, count);
 }
 
-void sigintHandler(int sig_num)
+/*void sigintHandler(int sig_num)
 {
-    /* Reset handler to catch SIGINT next time.
-       Refer http://en.cppreference.com/w/c/program/signal */
+     //Reset handler to catch SIGINT next time.
+       //Refer http://en.cppreference.com/w/c/program/signal
     signal(SIGINT, sigintHandler);
     printf("\n Terminating after Ctr C \n");
     fflush(stdout);
     exit(0);
-}
+}*/
 
 // =========================== FUNCTION MAIN =================================
 int main(int argc, char const *argv[])
@@ -65,10 +65,11 @@ int main(int argc, char const *argv[])
     //char save_dir[256] = "/Desktop/text.txt";
     FILE *f;
     f = fopen("text.txt", "w");
+    fprintf(f, "Hey Pat\n");
     fprintf(f, "time, x, y, z\n");
     //int samples = fs * t;
     double tStart;
-    signal(SIGINT, sigintHandler);
+    //signal(SIGINT, sigintHandler);
 
     // SPI Variables
     int i;
