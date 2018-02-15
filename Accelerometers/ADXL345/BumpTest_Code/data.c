@@ -82,7 +82,7 @@ int main(int argc, char const *argv[])
     char filename[40];
     struct tm *timenow;
     time_t now = time(NULL);
-    printf("the current time is %s",ctime(&time_t));
+    printf("the current time is %s",ctime(&now));
     //sprintf(filename, "%H", (int)now);
     //strftime(filename, "/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/%d.txt", (int)now);
     f = fopen(filename,"w");
