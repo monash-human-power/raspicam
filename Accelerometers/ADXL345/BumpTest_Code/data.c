@@ -80,12 +80,13 @@ int main(int argc, char const *argv[])
     int16_t x, y, z;
 
     char filename[40];
-    struct tm *timenow;
     time_t now = time(NULL);
-    printf("the current time is %s",ctime(&now));
+    strftime(filename,sizeof(filename), "%d_%m_%Y", gmtime(&now));
+    //printf("the current time is %s",ctime(&now));
     //sprintf(filename, "%H", (int)now);
     //strftime(filename, "/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/%d.txt", (int)now);
     f = fopen(filename,"w");
+    
 
     // Intialize gpio pins
     if (gpioInitialise() < 0)
