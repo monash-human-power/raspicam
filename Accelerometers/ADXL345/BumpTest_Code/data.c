@@ -83,7 +83,7 @@ int main(int argc, char const *argv[])
     char buffer[255];
 
     time(&rawtime);
-    sprintf(buffer,"/home/pi/Documents/MHP_raspicam/Acceleromters/ADXL345/BumpTest_Code/%s",ctime(&rawtime))
+    sprintf(buffer,"/home/pi/Documents/MHP_raspicam/Acceleromters/ADXL345/BumpTest_Code/%s",ctime(&rawtime));
     char *p = buffer;
     for(; *p; ++p)
     {
