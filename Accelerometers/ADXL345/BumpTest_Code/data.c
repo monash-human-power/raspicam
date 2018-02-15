@@ -34,6 +34,7 @@ double t = 2;
 const double accConversion = 2 * 16.0 / 8192.0;  // +/- 16g range, 13-bit resolution (2^13 = 8192)
 const int coldStartSamples = 2;  // number of samples to be read before outputting data to console (cold start delays)
 const double coldStartDelay = 0.1;  // time delay between cold start reads
+const int speedSPI = 5000000;  // SPI communication speed, bps
 
 
 // =========================== FUNCTION MAIN =================================
@@ -84,7 +85,7 @@ int main(int argc, char const *argv[])
     // Need a warm up segment to initialize readings
     for (i = 0; i < coldStartSamples; i++) {
         data[0] = DATAX0;
-        bytes = readBytes(h, data, 7);
+        bytes = readBytes(ADXL345, data, 7);
         if (bytes != 7) {
             success = 0;
         }
