@@ -49,14 +49,14 @@ int writeBytes(int handle, char *data, int count) {
     return spiWrite(handle, data, count);
 }
 
-int sigintHandler(int sig_num)
+void sigintHandler(int sig_num)
 {
     /* Reset handler to catch SIGINT next time.
        Refer http://en.cppreference.com/w/c/program/signal */
     signal(SIGINT, sigintHandler);
-    printf("\n Cannot be terminated using Ctrl+C \n");
+    printf("\n Terminating after Ctr C \n");
     fflush(stdout);
-    return 1
+    exit(0);
 }
 
 // =========================== FUNCTION MAIN =================================
