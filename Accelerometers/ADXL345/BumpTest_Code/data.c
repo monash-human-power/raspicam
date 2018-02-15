@@ -12,7 +12,7 @@
 #include <time.h>
 
 // Print to screen?
-int screen = 0;
+int screen = 1;
 
 // KEY ACCELEROMETER INFORMATION
 // - 3.9mg/LSB resolution
