@@ -1,6 +1,7 @@
 
 import socket
 import subprocess
+from subprocess import call
 from time import sleep
 
 UDP_IP = subprocess.check_output(['hostname', '-I'])
@@ -21,8 +22,8 @@ try:
 
         if data == "START" and recording == 0:
             print "Received Start Command!"
-            p1 = subprocess.call(
-                "sudo /home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/data.c")
+            p1 = call(
+                ['sudo', '/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/data.c'])
             recording = 1
             sleep(1)
             print("Recording!\n")
