@@ -84,7 +84,7 @@ int main(int argc, char const *argv[])
     time_t now = time(NULL);
     timenow = gmtime(&now);
     sprintf(filename, "/var/log/SA_TEST_%d", (int)now);
-    strftime(filename, "/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/%d.txt", (int)now);
+    //strftime(filename, "/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/%d.txt", (int)now);
     f = fopen(filename,"w");
 
     // Intialize gpio pins
