@@ -150,7 +150,7 @@ int main(int argc, char const *argv[])
             z = (data[6]<<8)|data[5];
             t = time_time() - tStart;
             //printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
-                   t, x * accConversion, y * accConversion, z * accConversion);
+                   //t, x * accConversion, y * accConversion, z * accConversion);
             fprintf(f, "%.5f, %.5f, %.5f, %.5f \n", t, x * accConversion, y * accConversion, z * accConversion);
         }
         else
