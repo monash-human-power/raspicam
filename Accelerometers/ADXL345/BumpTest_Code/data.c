@@ -36,6 +36,17 @@ const int coldStartSamples = 2;  // number of samples to be read before outputti
 const double coldStartDelay = 0.1;  // time delay between cold start reads
 const int speedSPI = 5000000;  // SPI communication speed, bps
 
+// SPI FUNCTIONS
+int readBytes(int handle, char *data, int count) {
+    data[0] |= READ_BIT;
+    if (count > 1) data[0] |= MULTI_BIT;
+    return spiXfer(handle, data, data, count);
+}
+
+int writeBytes(int handle, char *data, int count) {
+    if (count > 1) data[0] |= MULTI_BIT;
+    return spiWrite(handle, data, count);
+}
 
 // =========================== FUNCTION MAIN =================================
 int main(int argc, char const *argv[])
