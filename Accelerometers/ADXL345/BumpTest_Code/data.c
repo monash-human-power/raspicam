@@ -8,6 +8,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <signal.h>
 
 // KEY ACCELEROMETER INFORMATION
 // - 3.9mg/LSB resolution
@@ -48,15 +49,29 @@ int writeBytes(int handle, char *data, int count) {
     return spiWrite(handle, data, count);
 }
 
+int sigintHandler(int sig_num)
+{
+    /* Reset handler to catch SIGINT next time.
+       Refer http://en.cppreference.com/w/c/program/signal */
+    signal(SIGINT, sigintHandler);
+    printf("\n Cannot be terminated using Ctrl+C \n");
+    fflush(stdout);
+    return 1
+}
+
 // =========================== FUNCTION MAIN =================================
 int main(int argc, char const *argv[])
 {
     //char save_dir[256] = "/Desktop/text.txt";
-    int samples = fs * t;
+    FILE *f;
+    f = fopen("text.txt", "w");
+    fprintf(f, "time, x, y, z\n");
+    //int samples = fs * t;
     double tStart;
+    signal(SIGINT, sigintHandler);
 
     // SPI Variables
-    int i;
+    //int i;
     int success = 1;
     char data[7];
     int ADXL345, bytes;
@@ -111,7 +126,8 @@ int main(int argc, char const *argv[])
     tStart = time_time();
 
     // Begin reads
-    for (i = 0; i < samples; i++)
+    //for (i = 0; i < samples; i++)
+    while(1)
     {
         // Read bytes
         data[0] = DATAX0;
@@ -126,6 +142,7 @@ int main(int argc, char const *argv[])
             t = time_time() - tStart;
             printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
                    t, x * accConversion, y * accConversion, z * accConversion);
+            fprintf(f, "%.5f, %.5f, %.5f, %.5f \n", t, x * accConversion, y * accConversion, z * accConversion);
         }
         else
         {
@@ -136,6 +153,7 @@ int main(int argc, char const *argv[])
     }
 
     // End read
+    fclose(f);
     gpioTerminate();
 
     // Check for error state
