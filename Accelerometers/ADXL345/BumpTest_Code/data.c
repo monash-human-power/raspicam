@@ -149,7 +149,7 @@ int main(int argc, char const *argv[])
             y = (data[4]<<8)|data[3];
             z = (data[6]<<8)|data[5];
             t = time_time() - tStart;
-            printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
+            //printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
                    t, x * accConversion, y * accConversion, z * accConversion);
             fprintf(f, "%.5f, %.5f, %.5f, %.5f \n", t, x * accConversion, y * accConversion, z * accConversion);
         }
