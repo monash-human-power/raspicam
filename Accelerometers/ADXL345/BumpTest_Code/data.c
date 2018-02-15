@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <time.h>
 
 // KEY ACCELEROMETER INFORMATION
 // - 3.9mg/LSB resolution
@@ -64,9 +65,8 @@ int main(int argc, char const *argv[])
 {
     //char save_dir[256] = "/Desktop/text.txt";
     FILE *f;
-    f = fopen("text.txt", "w");
-    fprintf(f, "Hey Pat\n");
-    fprintf(f, "time, x, y, z\n");
+    //f = fopen("text.txt", "w");
+    //fprintf(f, "time, x, y, z\n");
     //int samples = fs * t;
     double tStart;
     //signal(SIGINT, sigintHandler);
@@ -78,6 +78,13 @@ int main(int argc, char const *argv[])
     int ADXL345, bytes;
 
     int16_t x, y, z;
+
+    time_t rawtime;
+    char buffer [255];
+    time (&rawtime);
+    sprintf(buffer,"%s.txt",ctime(&rawtime) );
+    f = fopen("text.txt", "w");
+    fprintf(f, "time, x, y, z\n");
 
     // Intialize gpio pins
     if (gpioInitialise() < 0)
