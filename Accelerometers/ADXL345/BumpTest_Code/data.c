@@ -83,7 +83,8 @@ int main(int argc, char const *argv[])
     struct tm *timenow;
     time_t now = time(NULL);
     timenow = gmtime(&now);
-    strftime(filename, sizeof(filename), "/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/%Y-%m-%d_%H:%M:%S.txt", timenow);
+    sprintf(filename, "/var/log/SA_TEST_%d", (int)now);
+    strftime(filename, "/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/%d.txt", (int)now);
     f = fopen(filename,"w");
 
     // Intialize gpio pins
