@@ -65,10 +65,12 @@ int main(int argc, char const *argv[])
 {
     //char save_dir[256] = "/Desktop/text.txt";
     FILE *f;
-    //f = fopen("text.txt", "w");
-    //fprintf(f, "time, x, y, z\n");
-    //int samples = fs * t;
+    //char filename[40];
+    //time_t now = time(NULL);
+    //strftime(filename,sizeof(filename), "%d-%m-%Y_@_%H-%M-%S", localtime(&now));
+    f = fopen("Pi_Data.txt","w");
     double tStart;
+    //int samples = fs * t;
     //signal(SIGINT, sigintHandler);
 
     // SPI Variables
@@ -79,14 +81,8 @@ int main(int argc, char const *argv[])
 
     int16_t x, y, z;
 
-    char filename[40];
-    time_t now = time(NULL);
-    strftime(filename,sizeof(filename), "%d-%m-%Y_@_%H-%M-%S", localtime(&now));
-    //printf("the current time is %s",ctime(&now));
-    //sprintf(filename, "%H", (int)now);
-    //strftime(filename, "/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/%d.txt", (int)now);
-    f = fopen(filename,"w");
 
+    f = fopen(filename,"w");
 
     // Intialize gpio pins
     if (gpioInitialise() < 0)
