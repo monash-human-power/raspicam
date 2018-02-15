@@ -71,7 +71,7 @@ int main(int argc, char const *argv[])
     signal(SIGINT, sigintHandler);
 
     // SPI Variables
-    //int i;
+    int i;
     int success = 1;
     char data[7];
     int ADXL345, bytes;
