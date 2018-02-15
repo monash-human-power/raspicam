@@ -79,23 +79,12 @@ int main(int argc, char const *argv[])
 
     int16_t x, y, z;
 
-    time_t rawtime;
-    char buffer[255];
-
-    time(&rawtime);
-    sprintf(buffer,"/home/pi/Documents/MHP_raspicam/Acceleromters/ADXL345/BumpTest_Code/%s",ctime(&rawtime));
-    char *p = buffer;
-    for(; *p; ++p)
-    {
-        if(*p == ' ')
-        {
-            *p = '_';
-        }
-    }
-
-    printf("%s",buffer);
-    f = fopen(buffer,"w");
-    fprintf(f, "time, x, y, z\n");
+    char filename[40];
+    struct tm *timenow;
+    time_t now = time(NULL);
+    timenow = gmtime(&now);
+    strftime(filename, sizeof(filename), "/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/%Y-%m-%d_%H:%M:%S.txt", timenow);
+    f = fopen(filename,"w")
 
     // Intialize gpio pins
     if (gpioInitialise() < 0)
