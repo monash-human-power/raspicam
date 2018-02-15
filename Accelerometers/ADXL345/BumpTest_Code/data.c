@@ -94,7 +94,7 @@ int main(int argc, char const *argv[])
     }
 
     printf("%s",buffer);
-    f = open(buffer,"w");
+    f = fopen(buffer,"w");
     fprintf(f, "time, x, y, z\n");
 
     // Intialize gpio pins
