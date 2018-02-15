@@ -11,6 +11,9 @@
 #include <signal.h>
 #include <time.h>
 
+// Print to screen?
+screen = 0;
+
 // KEY ACCELEROMETER INFORMATION
 // - 3.9mg/LSB resolution
 // - Measurement +-2g (10 bits), +-4g (11 bits), +-8g (12 bits), +-16g (13 bits)
@@ -50,28 +53,15 @@ int writeBytes(int handle, char *data, int count) {
     return spiWrite(handle, data, count);
 }
 
-/*void sigintHandler(int sig_num)
-{
-     //Reset handler to catch SIGINT next time.
-       //Refer http://en.cppreference.com/w/c/program/signal
-    signal(SIGINT, sigintHandler);
-    printf("\n Terminating after Ctr C \n");
-    fflush(stdout);
-    exit(0);
-}*/
-
 // =========================== FUNCTION MAIN =================================
 int main(int argc, char const *argv[])
 {
-    //char save_dir[256] = "/Desktop/text.txt";
     FILE *f;
     //char filename[40];
     //time_t now = time(NULL);
     //strftime(filename,sizeof(filename), "%d-%m-%Y_@_%H-%M-%S", localtime(&now));
     f = fopen("Pi_Data.csv","w");
     double tStart;
-    //int samples = fs * t;
-    //signal(SIGINT, sigintHandler);
 
     // SPI Variables
     int i;
@@ -143,8 +133,11 @@ int main(int argc, char const *argv[])
             y = (data[4]<<8)|data[3];
             z = (data[6]<<8)|data[5];
             t = time_time() - tStart;
-            //printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
-                   //t, x * accConversion, y * accConversion, z * accConversion);
+
+            if(screen)
+            {
+                    printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",t, x * accConversion, y * accConversion, z * accConversion);
+            }
             fprintf(f, "%.5f, %.5f, %.5f, %.5f \n", t, x * accConversion, y * accConversion, z * accConversion);
         }
         else
