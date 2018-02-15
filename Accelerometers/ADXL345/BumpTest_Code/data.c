@@ -84,7 +84,7 @@ int main(int argc, char const *argv[])
     time_t now = time(NULL);
     timenow = gmtime(&now);
     strftime(filename, sizeof(filename), "/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/%Y-%m-%d_%H:%M:%S.txt", timenow);
-    f = fopen(filename,"w")
+    f = fopen(filename,"w");
 
     // Intialize gpio pins
     if (gpioInitialise() < 0)
