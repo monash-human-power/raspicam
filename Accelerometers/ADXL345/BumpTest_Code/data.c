@@ -51,11 +51,13 @@ int writeBytes(int handle, char *data, int count) {
 // =========================== FUNCTION MAIN =================================
 int main(int argc, char const *argv[])
 {
-    char save_dir[256] = "/Desktop/text.txt";
+    //char save_dir[256] = "/Desktop/text.txt";
     int samples = fs * t;
+    double tStart;
 
     // SPI Variables
     int i;
+    int success = 1;
     char data[7];
     int ADXL345, bytes;
 
