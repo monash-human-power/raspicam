@@ -81,7 +81,7 @@ int main(int argc, char const *argv[])
 
     char filename[40];
     time_t now = time(NULL);
-    strftime(filename,sizeof(filename), "%d-%m-%Y_@_%H-%M-%S", gmtime(&now));
+    strftime(filename,sizeof(filename), "%d-%m-%Y_@_%H-%M-%S", localtime(&now));
     //printf("the current time is %s",ctime(&now));
     //sprintf(filename, "%H", (int)now);
     //strftime(filename, "/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/%d.txt", (int)now);
