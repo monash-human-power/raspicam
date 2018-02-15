@@ -81,9 +81,6 @@ int main(int argc, char const *argv[])
 
     int16_t x, y, z;
 
-
-    f = fopen(filename,"w");
-
     // Intialize gpio pins
     if (gpioInitialise() < 0)
     {
