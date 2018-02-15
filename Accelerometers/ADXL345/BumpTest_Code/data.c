@@ -68,7 +68,7 @@ int main(int argc, char const *argv[])
     //char filename[40];
     //time_t now = time(NULL);
     //strftime(filename,sizeof(filename), "%d-%m-%Y_@_%H-%M-%S", localtime(&now));
-    f = fopen("Pi_Data.txt","w");
+    f = fopen("Pi_Data.csv","w");
     double tStart;
     //int samples = fs * t;
     //signal(SIGINT, sigintHandler);
