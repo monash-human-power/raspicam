@@ -21,17 +21,13 @@ int screen = 1;
 // - The 800 Hz output data rate is recommended only for communication speeds greater than or equal to 400 kHz
 
 // ACCELEROMETER REGISTERS
-#define DATA_FORMAT     0x31    // Data_Format register address (influences 3 or 4 wire SPI, +-2g, +-4g, +-8g, +-16g)
-#define BW_RATE         0x2C    // BW_Rate register address (influences ODR)
-#define POWER_CTL       0x2D    // Power_CTL register address (influences Auto-sleep, Standby, Sleep, Wakup functions)
-#define DATAX0          0x32    // Start address for reading accelerometer registers
+#define CTRL1_XL    0x10    // Linear acceleration sensor control register 1
+#define DATAX0          0x28    // Start address for reading accelerometer registers
 double fs = 3200;
 double t = 2;
 
 // ACCELEROMETER SETTINGS
-#define FORMAT_CONTENTS 0x0B    // bits to write to data format register = +/- 16g range, 13-bit resolution (p. 26 of ADXL345 datasheet)
-#define BW_CONTENTS     0x0F    // Normal operation, 3200Hz
-#define POWER_CONTENTS  0x08    // Measurement mode, 2Hz readings in sleep mode
+#define CTRL1_XL_CONTENTS   0xA4    // +/-16 g, 6667 Hz
 
 // SPI COMMUNICATION BYTES
 #define MULTI_BIT       0x40    // SPI multi-bit communication
@@ -67,7 +63,7 @@ int main(int argc, char const *argv[])
     int i;
     int success = 1;
     char data[7];
-    int ADXL345, bytes;
+    int LSM6DS3, bytes;
 
     int16_t x, y, z;
 
@@ -81,22 +77,12 @@ int main(int argc, char const *argv[])
     // -------------------------- SET UP SPI DEVICE --------------------------
 
     // Define new spi device
-    ADXL345 = spiOpen(0, speedSPI, 3);
+    LSM6DS3 = spiOpen(0, speedSPI, 3);
 
     // Write to BW_RATE Register
-    data[0] = BW_RATE;
-    data[1] = BW_CONTENTS;
-    writeBytes(ADXL345, data, 2);
-
-    // Write to DATA_FORMAT Register
-    data[0] = DATA_FORMAT;
-    data[1] = FORMAT_CONTENTS;
-    writeBytes(ADXL345, data, 2);
-
-    // Write to POWER_MODE Register
-    data[0] = POWER_CTL;
-    data[1] = POWER_CONTENTS;
-    writeBytes(ADXL345, data, 2);
+    data[0] = CTRL1_XL;
+    data[1] = CTRL1_XL_CONTENTS;
+    writeBytes(LSM6DS3, data, 2);
 
     // --------------------------- INITIALIZE READ ---------------------------
 
@@ -106,7 +92,7 @@ int main(int argc, char const *argv[])
     // Need a warm up segment to initialize readings
     for (i = 0; i < coldStartSamples; i++) {
         data[0] = DATAX0;
-        bytes = readBytes(ADXL345, data, 7);
+        bytes = readBytes(LSM6DS3, data, 7);
         if (bytes != 7) {
             success = 0;
         }
@@ -124,7 +110,7 @@ int main(int argc, char const *argv[])
     {
         // Read bytes
         data[0] = DATAX0;
-        bytes = readBytes(ADXL345, data, 7);
+        bytes = readBytes(LSM6DS3, data, 7);
 
         // Process bytes on last read
         if (bytes == 7)
