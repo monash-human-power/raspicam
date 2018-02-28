@@ -35,7 +35,7 @@ int main()
     //count = readBytes(LSM6DS3, data, 1);
 
     printf("\n%d bytes were transferred\n\n",count);
-    printf("data was %d %d",send[0],receive[0]);
+    printf("data was %d %d\n\n",send[0],receive[0]);
 
     return 1;
 }
