@@ -1,4 +1,5 @@
 #include <pigpio.h>
+#include <stdio.h>
 
 #define WHO_AM_I 0x0f
 #define READ_BIT 0x80   // 0b10000000
@@ -14,7 +15,6 @@ int main()
 {
     int LSM6DS3;
     int result;
-    int bytes;
     const int baud = 5000000;  // SPI baudrate
     int count=0;
 
