@@ -13,7 +13,7 @@ int readBytes(int handle, char *data, int count)
 int main()
 {
     int LSM6DS3;
-    char data[7]; // comments
+    char send[0], receive[0];
     const int baud = 5000000;  // SPI baudrate
     int count=0;
 
@@ -29,15 +29,13 @@ int main()
         printf("spiOpen Failed.\n\n");
     }
 
-    //count=spiXfer(LSM6DS3,WHO_AM_I,result,1);
-    data[0]=WHO_AM_I;
-    count = readBytes(LSM6DS3, data, 1);
+    send[0]=WHO_AM_I;
+    count=spiXfer(LSM6DS3,send,receive,1);
+    //data[0]=WHO_AM_I;
+    //count = readBytes(LSM6DS3, data, 1);
 
     printf("\n%d bytes were transferred\n\n",count);
+    printf("data was %d %d",send[0],receive[0]);
 
-    if(data[1]==0x69)
-    {
-        printf("\nCommunication Successful!\n\n");
-    }
     return 1;
 }
