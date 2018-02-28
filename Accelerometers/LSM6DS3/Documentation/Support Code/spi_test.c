@@ -33,7 +33,7 @@ int main()
     data[0]=WHO_AM_I;
     count = readBytes(LSM6DS3, data, 1);
 
-    printf("%d bytes were transferred",count);
+    printf("\n%d bytes were transferred\n\n",count);
 
     if(data[1]==0x69)
     {
