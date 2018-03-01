@@ -58,13 +58,13 @@ int main()
     printf("ADXL345=%d,data[0]=%x,data[1]=%x\n\n",ADXL345,data[0],data[1]);
 
     for (i = 0; i < coldStartSamples; i++) {
-        data[0] = DATAX0 | MULTI_BIT;
+        data[0] = DATAX0 | MULTI_BIT | READ_BIT;
         spiXfer(ADXL345,data,data,7);
         printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
         time_sleep(coldStartDelay);
     }
 
-    data[0]=DATAX0 | MULTI_BIT;
+    data[0]=DATAX0 | MULTI_BIT | READ_BIT;
     count=spiXfer(ADXL345,data,data,7);
 
     printf("\n%d bytes were transferred\n\n",count);
