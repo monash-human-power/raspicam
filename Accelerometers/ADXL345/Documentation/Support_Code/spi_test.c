@@ -4,12 +4,6 @@
 
 #include <stdio.h>
 #include <pigpio.h>
-#include <time.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <time.h>
 
 // ACCELEROMETER REGISTERS
 #define DATA_FORMAT     0x31    // Data_Format register address (influences 3 or 4 wire SPI, +-2g, +-4g, +-8g, +-16g)
