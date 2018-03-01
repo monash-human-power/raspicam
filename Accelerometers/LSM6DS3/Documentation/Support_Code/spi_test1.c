@@ -41,20 +41,8 @@ int main(int argc, char const *argv[])
     printf("LSM6DS3=%d",LSM6DS3);
 
     // Write to BW_RATE Register
-    data[0] = BW_RATE | MULTI_BIT;
-    data[1] = BW_CONTENTS;
-    spiWrite(LSM6DS3, data, 2);
-    printf("LSM6DS3=%d,data[0]=%d,data[1]=%d\n\n",LSM6DS3,data[0],data[1]);
-
-    // Write to DATA_FORMAT Register
-    data[0] = DATA_FORMAT | MULTI_BIT;
-    data[1] = FORMAT_CONTENTS;
-    spiWrite(LSM6DS3, data, 2);
-    printf("LSM6DS3=%d,data[0]=%d,data[1]=%d\n\n",LSM6DS3,data[0],data[1]);
-
-    // Write to POWER_MODE Register
-    data[0] = POWER_CTL | MULTI_BIT;
-    data[1] = POWER_CONTENTS;
+    data[0] = CTRL1_XL | MULTI_BIT;
+    data[1] = CTRL1_XL_CONTENTS;
     spiWrite(LSM6DS3, data, 2);
     printf("LSM6DS3=%d,data[0]=%d,data[1]=%d\n\n",LSM6DS3,data[0],data[1]);
 
