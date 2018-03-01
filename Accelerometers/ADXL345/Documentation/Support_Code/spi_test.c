@@ -9,6 +9,7 @@
 #define BW_CONTENTS     0x0F    // Normal operation, 3200Hz
 #define POWER_CONTENTS  0x08    // Measurement mode, 2Hz readings in sleep mode
 #define READ_BIT 0x80   // 0b10000000
+#define MULTI_BIT 0x40
 
 int readBytes(int handle, char *data, int count) {
     data[0] |= READ_BIT;
