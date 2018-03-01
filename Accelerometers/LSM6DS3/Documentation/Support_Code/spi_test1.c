@@ -38,13 +38,12 @@ int main(int argc, char const *argv[])
 
     // Define new spi device
     LSM6DS3 = spiOpen(0, speedSPI, 3);
-    printf("LSM6DS3=%d",LSM6DS3);
 
     // Write to BW_RATE Register
     data[0] = CTRL1_XL | MULTI_BIT;
     data[1] = CTRL1_XL_CONTENTS;
     spiWrite(LSM6DS3, data, 2);
-    printf("LSM6DS3=%d,data[0]=%d,data[1]=%d\n\n",LSM6DS3,data[0],data[1]);
+    printf("\nLSM6DS3=%d,data[0]=%d,data[1]=%d\n\n",LSM6DS3,data[0],data[1]);
 
     // --------------------------- INITIALIZE READ ---------------------------
 
