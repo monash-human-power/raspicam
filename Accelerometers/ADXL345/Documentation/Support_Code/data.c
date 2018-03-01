@@ -121,52 +121,21 @@ int main(int argc, char const *argv[])
 
     // --------------------------- READ DATA ---------------------------
 
-    // Set start time
-    tStart = time_time();
+    data[0] = DATAX0;
+    bytes = readBytes(ADXL345, data, 7);
+    printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
 
-    // Begin reads
-    //for (i = 0; i < samples; i++)
-    while(1)
+    // Process bytes on last read
+    if (bytes == 7)
     {
-        // Read bytes
-        data[0] = DATAX0;
-        bytes = readBytes(ADXL345, data, 7);
-        printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
-
-        // Process bytes on last read
-        if (bytes == 7)
-        {
-            x = (data[2]<<8)|data[1];
-            y = (data[4]<<8)|data[3];
-            z = (data[6]<<8)|data[5];
-            t = time_time() - tStart;
-
-            if(screen)
-            {
-                    printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",t, x * accConversion, y * accConversion, z * accConversion);
-            }
-            if(record)
-            {
-                fprintf(f, "%.5f, %.5f, %.5f, %.5f \n", t, x * accConversion, y * accConversion, z * accConversion);
-            }
-        }
-        else
-        {
-            success = 0;
-        }
-
-        time_sleep(delay);  // pigpio sleep is accurate enough for console output, not necessary to use nanosleep
+        printf("Success!\n\n")
+    }
+    else
+    {
+        printf("Error!\n\n");
     }
 
-    // End read
-    fclose(f);
     gpioTerminate();
-
-    // Check for error state
-    if (success == 0) {
-        printf("Error occurred!");
-        return 1;
-    }
 
     return 0;
 }
