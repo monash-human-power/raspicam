@@ -57,20 +57,10 @@ int writeBytes(int handle, char *data, int count) {
 // =========================== FUNCTION MAIN =================================
 int main(int argc, char const *argv[])
 {
-    FILE *f;
-    //char filename[40];
-    //time_t now = time(NULL);
-    //strftime(filename,sizeof(filename), "%d-%m-%Y_@_%H-%M-%S", localtime(&now));
-    f = fopen("Pi_Data.csv","w");
-    double tStart;
-
     // SPI Variables
     int i;
-    int success = 1;
     char data[7];
     int ADXL345, bytes;
-
-    int16_t x, y, z;
 
     // Intialize gpio pins
     if (gpioInitialise() < 0)
@@ -105,17 +95,11 @@ int main(int argc, char const *argv[])
 
     // --------------------------- INITIALIZE READ ---------------------------
 
-    // Find delay between samples
-    double delay = 1.0 / fs;
-
     // Need a warm up segment to initialize readings
     for (i = 0; i < coldStartSamples; i++) {
         data[0] = DATAX0;
         bytes = readBytes(ADXL345, data, 7);
         printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
-        if (bytes != 7) {
-            success = 0;
-        }
         time_sleep(coldStartDelay);
     }
 
@@ -128,7 +112,7 @@ int main(int argc, char const *argv[])
     // Process bytes on last read
     if (bytes == 7)
     {
-        printf("Success!\n\n")
+        printf("Success!\n\n");
     }
     else
     {
