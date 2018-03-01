@@ -23,6 +23,9 @@ int main()
     char data[7];
     const int baud = 5000000;  // SPI baudrate
     int count=0;
+    int coldStartSamples=2;
+    int coldStartDelay=0.1;
+    int i;
 
     if (gpioInitialise() < 0)
     {
@@ -54,11 +57,16 @@ int main()
     spiWrite(ADXL345, data, 2);
     printf("ADXL345=%d,data[0]=%x,data[1]=%x\n\n",ADXL345,data[0],data[1]);
 
+    for (i = 0; i < coldStartSamples; i++) {
+        data[0] = DATAX0;
+        bytes = readBytes(ADXL345, data, 7);
+        printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+        time_sleep(coldStartDelay);
+    }
+
     data[0]=DATAX0;
     data[0] |= MULTI_BIT;
     count=spiXfer(ADXL345,data,data,7);
-    //data[0]=WHO_AM_I;
-    //count = readBytes(LSM6DS3, data, 1);
 
     printf("\n%d bytes were transferred\n\n",count);
     printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
