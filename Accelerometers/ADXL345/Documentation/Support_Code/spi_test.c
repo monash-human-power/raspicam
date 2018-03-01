@@ -99,15 +99,15 @@ int main(int argc, char const *argv[])
     for (i = 0; i < coldStartSamples; i++) {
         data[0] = DATAX0 | MULTI_BIT | READ_BIT;
         bytes = spiXfer(ADXL345, data, data, 7);
-        printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+        printf("bytes = %d,data was %x %x %x %x %x %x %x %x\n\n",bytes,data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
         time_sleep(coldStartDelay);
     }
 
     // --------------------------- READ DATA ---------------------------
 
     data[0] = DATAX0 | MULTI_BIT | READ_BIT;
-    bytes = spiXfer(ADXL345, data, data, 2);
-    printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+    bytes = spiXfer(ADXL345, data, data, 7);
+    printf("bytes=%d,data was %x %x %x %x %x %x %x %x\n\n",bytes,data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
 
     // Process bytes on last read
     if (bytes == 7)
