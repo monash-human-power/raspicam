@@ -2,11 +2,17 @@
 #include <stdio.h>
 
 #define DATAX0 0x32
+#define DATA_FORMAT     0x31    // Data_Format register address (influences 3 or 4 wire SPI, +-2g, +-4g, +-8g, +-16g)
+#define BW_RATE         0x2C    // BW_Rate register address (influences ODR)
+#define POWER_CTL       0x2D    // Power_CTL register address (influences Auto-sleep, Standby, Sleep, Wakup functions)
+#define FORMAT_CONTENTS 0x0B    // bits to write to data format register = +/- 16g range, 13-bit resolution (p. 26 of ADXL345 datasheet)
+#define BW_CONTENTS     0x0F    // Normal operation, 3200Hz
+#define POWER_CONTENTS  0x08    // Measurement mode, 2Hz readings in sleep mode
 #define READ_BIT 0x80   // 0b10000000
 
-int readBytes(int handle, char *data, int count)
-{
+int readBytes(int handle, char *data, int count) {
     data[0] |= READ_BIT;
+    if (count > 1) data[0] |= MULTI_BIT;
     return spiXfer(handle, data, data, count);
 }
 
@@ -30,6 +36,7 @@ int main()
     }
 
     data[0]=DATAX0;
+    data[0] |= MULTI_BIT;
     count=spiXfer(LSM6DS3,data,data,7);
     //data[0]=WHO_AM_I;
     //count = readBytes(LSM6DS3, data, 1);
