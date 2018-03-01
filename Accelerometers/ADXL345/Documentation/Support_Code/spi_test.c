@@ -36,6 +36,24 @@ int main()
         printf("spiOpen Failed.\n\n");
     }
 
+    // Write to BW_RATE Register
+    data[0] = BW_RATE;
+    data[1] = BW_CONTENTS;
+    writeBytes(ADXL345, data, 2);
+    printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
+
+    // Write to DATA_FORMAT Register
+    data[0] = DATA_FORMAT;
+    data[1] = FORMAT_CONTENTS;
+    writeBytes(ADXL345, data, 2);
+    printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
+
+    // Write to POWER_MODE Register
+    data[0] = POWER_CTL;
+    data[1] = POWER_CONTENTS;
+    writeBytes(ADXL345, data, 2);
+    printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
+
     data[0]=DATAX0;
     data[0] |= MULTI_BIT;
     count=spiXfer(LSM6DS3,data,data,7);
