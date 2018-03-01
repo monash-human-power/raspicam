@@ -12,7 +12,7 @@
 #include <time.h>
 
 // Print to screen?
-int screen = 0;
+int screen = 1;
 
 // KEY ACCELEROMETER INFORMATION
 // - 3.9mg/LSB resolution
@@ -82,7 +82,6 @@ int main(int argc, char const *argv[])
 
     // Define new spi device
     ADXL345 = spiOpen(0, speedSPI, 3);
-    printf("ADXL345=%d",ADXL345);
 
     // Write to BW_RATE Register
     data[0] = BW_RATE;

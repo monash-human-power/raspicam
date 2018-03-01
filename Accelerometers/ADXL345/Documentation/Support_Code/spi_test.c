@@ -1,7 +1,7 @@
 #include <pigpio.h>
 #include <stdio.h>
 
-#define WHO_AM_I 0x00
+#define DATAX0 0x32
 #define READ_BIT 0x80   // 0b10000000
 
 int readBytes(int handle, char *data, int count)
@@ -29,7 +29,7 @@ int main()
         printf("spiOpen Failed.\n\n");
     }
 
-    send[0]=WHO_AM_I;
+    send[0]=DATAX0;
     count=spiXfer(LSM6DS3,send,receive,1);
     //data[0]=WHO_AM_I;
     //count = readBytes(LSM6DS3, data, 1);
