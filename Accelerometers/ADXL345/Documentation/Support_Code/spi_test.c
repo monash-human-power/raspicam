@@ -19,7 +19,7 @@ int readBytes(int handle, char *data, int count) {
 
 int main()
 {
-    int LSM6DS3;
+    int ADXL345;
     char data[7];
     const int baud = 5000000;  // SPI baudrate
     int count=0;
@@ -30,38 +30,38 @@ int main()
         return 1;
     }
 
-    LSM6DS3 = spiOpen(0, baud, 3);
-    if (LSM6DS3 < 0)
+    ADXL345 = spiOpen(0, baud, 3);
+    if (ADXL345 < 0)
     {
         printf("spiOpen Failed.\n\n");
     }
 
     // Write to BW_RATE Register
-    data[0] = BW_RATE;
+    data[0] = BW_RATE | MULTI_BIT;
     data[1] = BW_CONTENTS;
-    writeBytes(ADXL345, data, 2);
-    printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
+    spiWrite(ADXL345, data, 2);
+    printf("\nADXL345=%d,data[0]=%x,data[1]=%x\n\n",ADXL345,data[0],data[1]);
 
     // Write to DATA_FORMAT Register
-    data[0] = DATA_FORMAT;
+    data[0] = DATA_FORMAT | MULTI_BIT;
     data[1] = FORMAT_CONTENTS;
-    writeBytes(ADXL345, data, 2);
-    printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
+    spiWrite(ADXL345, data, 2);
+    printf("ADXL345=%d,data[0]=%x,data[1]=%x\n\n",ADXL345,data[0],data[1]);
 
     // Write to POWER_MODE Register
-    data[0] = POWER_CTL;
+    data[0] = POWER_CTL | MULTI_BIT;
     data[1] = POWER_CONTENTS;
-    writeBytes(ADXL345, data, 2);
-    printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
+    spiWrite(ADXL345, data, 2);
+    printf("ADXL345=%d,data[0]=%x,data[1]=%x\n\n",ADXL345,data[0],data[1]);
 
     data[0]=DATAX0;
     data[0] |= MULTI_BIT;
-    count=spiXfer(LSM6DS3,data,data,7);
+    count=spiXfer(ADXL345,data,data,7);
     //data[0]=WHO_AM_I;
     //count = readBytes(LSM6DS3, data, 1);
 
     printf("\n%d bytes were transferred\n\n",count);
-    printf("data was %d %d %d %d %d %d %d %d\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+    printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
 
     return 1;
 }
