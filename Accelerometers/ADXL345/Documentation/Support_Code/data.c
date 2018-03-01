@@ -13,6 +13,7 @@
 
 // Print to screen?
 int screen = 0;
+int record = 0;
 
 // KEY ACCELEROMETER INFORMATION
 // - 3.9mg/LSB resolution
@@ -111,7 +112,7 @@ int main(int argc, char const *argv[])
     for (i = 0; i < coldStartSamples; i++) {
         data[0] = DATAX0;
         bytes = readBytes(ADXL345, data, 7);
-        printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
+        printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
         if (bytes != 7) {
             success = 0;
         }
@@ -130,7 +131,7 @@ int main(int argc, char const *argv[])
         // Read bytes
         data[0] = DATAX0;
         bytes = readBytes(ADXL345, data, 7);
-        printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
+        printf("data was %x %x %x %x %x %x %x %x\n\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
 
         // Process bytes on last read
         if (bytes == 7)
@@ -144,7 +145,10 @@ int main(int argc, char const *argv[])
             {
                     printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",t, x * accConversion, y * accConversion, z * accConversion);
             }
-            fprintf(f, "%.5f, %.5f, %.5f, %.5f \n", t, x * accConversion, y * accConversion, z * accConversion);
+            if(record)
+            {
+                fprintf(f, "%.5f, %.5f, %.5f, %.5f \n", t, x * accConversion, y * accConversion, z * accConversion);
+            }
         }
         else
         {
