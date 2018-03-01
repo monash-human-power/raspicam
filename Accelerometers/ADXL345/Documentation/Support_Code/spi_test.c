@@ -4,12 +4,6 @@
 
 #include <stdio.h>
 #include <pigpio.h>
-#include <time.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <time.h>
 
 // ACCELEROMETER REGISTERS
 #define DATA_FORMAT     0x31    // Data_Format register address (influences 3 or 4 wire SPI, +-2g, +-4g, +-8g, +-16g)
@@ -51,19 +45,19 @@ int main(int argc, char const *argv[])
     printf("ADXL345=%d",ADXL345);
 
     // Write to BW_RATE Register
-    data[0] = BW_RATE|MULTI_BIT;
+    data[0] = BW_RATE | MULTI_BIT;
     data[1] = BW_CONTENTS;
     spiWrite(ADXL345, data, 2);
     printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
 
     // Write to DATA_FORMAT Register
-    data[0] = DATA_FORMAT|MULTI_BIT;
+    data[0] = DATA_FORMAT | MULTI_BIT;
     data[1] = FORMAT_CONTENTS;
     spiWrite(ADXL345, data, 2);
     printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
 
     // Write to POWER_MODE Register
-    data[0] = POWER_CTL|MULTI_BIT;
+    data[0] = POWER_CTL | MULTI_BIT;
     data[1] = POWER_CONTENTS;
     spiWrite(ADXL345, data, 2);
     printf("ADXL345=%d,data[0]=%d,data[1]=%d\n\n",ADXL345,data[0],data[1]);
