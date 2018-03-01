@@ -24,9 +24,10 @@ int main()
     }
 
     LSM6DS3 = spiOpen(0, baud, 3);
-    if (LSM6DS3 < 0)
+    if (LSM6DS3 <= 0)
     {
-        printf("spiOpen Failed.\n\n");
+        printf("\nspiOpen Failed.\n\n");
+	return 1;
     }
 
     send[0]=WHO_AM_I;
