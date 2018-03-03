@@ -82,8 +82,8 @@ try:
             else:
                 print("Stopping Data Recording!\n")
                 MESSAGE = "STOP"
-                GPIO.output(17, GPIO.LOW)
-                GPIO.output(27, GPIO.HIGH)
+                GPIO.output(17, GPIO.HIGH)
+                GPIO.output(27, GPIO.LOW)
 
             for IP in Online_List:
                 if IP == '0':
@@ -98,7 +98,7 @@ try:
                                      socket.SOCK_DGRAM)  # UDP
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
 
-                print("Ready for button press!\n")
+            print("Ready for button press!\n")
         sleep(0.2)
 except KeyboardInterrupt:
     GPIO.cleanup()
