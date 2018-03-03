@@ -5,7 +5,7 @@ PatMacbookMAC=6c:40:8:99:ce:b0
 PatPiMAC=b8:27:eb:d0:ac:d8
 PiZero1MAC=b8:27:eb:3b:26:bb
 PiZero2MAC=b8:27:eb:19:78:4c
-PiZero3MAC=b8:27:eb:0f:69:e5
+PiZero3MAC=b8:27:eb:f:69:e5
 PiZero4MAC=b8:27:eb:5f:91:1a
 PiZero5MAC=b8:27:eb:3c:c9:14
 PiZero6MAC=b8:27:eb:21:f0:52
@@ -121,6 +121,9 @@ do
         elif [ "$MAC" == $PiSecondaryMAC ]
         then
             printf "Found Secondary Pi\n"
+        elif [ "$MAC" == $PatMacbookMAC ]
+        then
+            printf "Found Pat's Macbook\n"
         fi
 
         # Check to see if MAC Address is that of Target Pi
