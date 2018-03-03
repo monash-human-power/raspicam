@@ -29,33 +29,39 @@ printf "\n\tPi Zero 3\t3"
 printf "\n\tPi Zero 4\t4"
 printf "\n\tPi Zero 5\t5"
 printf "\n\tPi Zero 6\t6"
-printf "\n\tPrimary\t7\n"
+printf "\n\tPrimary\t\t7"
 printf "\n\tSecondary\t8\n"
 
 printf "\nSelect target Pi ID = "; read TargetPi # Read from user input
 
 # Choose MAC Address to Search for
-if [ $TargetPi == 0 ] then
+if [ $TargetPi == 0 ]
+then
     SearchMAC=$PatPiMAC
-elif [ $TargetPi == 1 ] then
+elif [ $TargetPi == 1 ]
+then
     SearchMAC=$PiZero1MAC
-elif [ $TargetPi == 2 ] then
+elif [ $TargetPi == 2 ]
+then
     SearchMAC=$PiZero2MAC
-elif [ $TargetPi == 3 ] then
+elif [ $TargetPi == 3 ]
+then
     SearchMAC=$PiZero3MAC
-elif [ $TargetPi == 4 ] then
+elif [ $TargetPi == 4 ]
+then
     SearchMAC=$PiZero4MAC
-elif [ $TargetPi == 5 ] then
+elif [ $TargetPi == 5 ]
+then
     SearchMAC=$PiZero5MAC
-elif [ $TargetPi == 6 ] then
+elif [ $TargetPi == 6 ]
+then
     SearchMAC=$PiZero6MAC
-elif [ $TargetPi == 7 ] then
+elif [ $TargetPi == 7 ]
+then
     SearchMAC=$PiPrimaryMAC
-elif [ $TargetPi == 8 ] then
+elif [ $TargetPi == 8 ]
+then
     SearchMAC=$PiSecondaryMAC
-else
-    printf "\nInvalid Input. Please choose a valid target pi ID.\n\n"
-    exit 0
 fi
 
 # Scan Criteria (Based on Router dhcp allocation range)
@@ -87,26 +93,33 @@ do
         printf "MAC Address = $MAC\n" # Print MAC Address
 
         # Check to see if MAC Address is one of list of known Pi's.
-        if [ "$MAC" == "$PatPiMAC" ] then
+        if [ "$MAC" == "$PatPiMAC" ]
+        then
             printf "Found Pat Pi\n"
-        elif [ "$MAC" == "$PiZero1MAC" ] then
+        elif [ "$MAC" == $PiZero1MAC ]
+        then
             printf "Found Pi Zero 1\n"
-        elif [ "$MAC" == "$PiZero2MAC" ]; then
+        elif [ "$MAC" == $PiZero2MAC ]
+        then
             printf "Found Pi Zero 2\n"
-        elif [ "$MAC" == "$PiZero3MAC" ]; then
+        elif [ "$MAC" == $PiZero3MAC ]
+        then
             printf "Found Pi Zero 3\n"
-        elif [ "$MAC" == "$PiZero4MAC" ]; then
+        elif [ "$MAC" == $PiZero4MAC ]
+        then
             printf "Found Pi Zero 4\n"
-        elif [ "$MAC" == "$PiZero5MAC" ]; then
+        elif [ "$MAC" == $PiZero5MAC ]
+        then
             printf "Found Pi Zero 5\n"
-        elif [ "$MAC" == "$PiZero6MAC" ]; then
+        elif [ "$MAC" == $PiZero6MAC ]
+        then
             printf "Found Pi Zero 6\n"
-        elif [ "$MAC" == "$PiPrimaryMAC" ]; then
+        elif [ "$MAC" == $PiPrimaryMAC ]
+        then
             printf "Found Primary Pi\n"
-        elif [ "$MAC" == "$PiSecondaryMAC" ]; then
+        elif [ "$MAC" == $PiSecondaryMAC ]
+        then
             printf "Found Secondary Pi\n"
-        elif [ "$MAC" == "$PatMacbookMAC" ]; then
-            printf "Found Pat's Macbook\n"
         fi
 
         # Check to see if MAC Address is that of Target Pi
