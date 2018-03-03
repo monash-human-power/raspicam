@@ -9,6 +9,32 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(17, GPIO.OUT)
+GPIO.setup(27, GPIO.OUT)
+
+print("Ready to initialise!\n")
+GPIO.output(17, GPIO.HIGH)
+GPIO.output(27, GPIO.LOW)
+
+hold = 1
+while hold:
+    button_state = GPIO.input(24)
+    if button_state == False:
+        GPIO.output(17, GPIO.LOW)
+        GPIO.output(27, GPIO.LOW)
+        sleep(0.5)
+        GPIO.output(17, GPIO.HIGH)
+        GPIO.output(27, GPIO.HIGH)
+        sleep(0.5)
+        GPIO.output(17, GPIO.LOW)
+        GPIO.output(27, GPIO.LOW)
+        sleep(0.5)
+        GPIO.output(17, GPIO.HIGH)
+        GPIO.output(27, GPIO.HIGH)
+        sleep(0.5)
+        GPIO.output(17, GPIO.LOW)
+        GPIO.output(27, GPIO.LOW)
+        hold = 0
 
 MESSAGE = "STOP"
 print("\nConfiguring Pi Networking\n")
@@ -38,6 +64,8 @@ for MAC in MAC_List:
     index = index + 1
 
 print("Ready for button press!\n")
+GPIO.output(17, GPIO.HIGH)
+GPIO.output(27, GPIO.LOW)
 
 try:
     while True:
@@ -46,9 +74,13 @@ try:
             if MESSAGE == "STOP":
                 print("Starting Data Recording!\n")
                 MESSAGE = "START"
+                GPIO.output(17, GPIO.LOW)
+                GPIO.output(27, GPIO.HIGH)
             else:
                 print("Stopping Data Recording!\n")
                 MESSAGE = "STOP"
+                GPIO.output(17, GPIO.LOW)
+                GPIO.output(27, GPIO.HIGH)
 
             for IP in Online_List:
                 if IP == '0':
@@ -57,7 +89,7 @@ try:
                 UDP_IP = IP
                 UDP_PORT = 5005
 
-                #MESSAGE = "Hello!"
+                # MESSAGE = "Hello!"
 
                 sock = socket.socket(socket.AF_INET,  # Internet
                                      socket.SOCK_DGRAM)  # UDP
@@ -68,20 +100,20 @@ try:
 except KeyboardInterrupt:
     GPIO.cleanup()
     print("\n\nProgram Ended.\n")
-    # if MESSAGE == "START":
-    #    print("\n\nStopping Data Recording!\n")
-    #    for IP in Online_List:
-    #        if IP == '0':
-    #            continue
+    if MESSAGE == "START":
+        print("\n\nStopping Data Recording!\n")
+        for IP in Online_List:
+            if IP == '0':
+                continue
 
-    #        UDP_IP = IP
-    #        UDP_PORT = 5005
+            UDP_IP = IP
+            UDP_PORT = 5005
 
-    #        MESSAGE = "Hello!"
+            MESSAGE = "Hello!"
 
-    #        sock = socket.socket(socket.AF_INET,  # Internet
-    #                         socket.SOCK_DGRAM)  # UDP
-    #        sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
-    #    print("Program Ended.\n")
-    # else:
-    #    print("\n\nProgram Ended.\n")
+            sock = socket.socket(socket.AF_INET,  # Internet
+                             socket.SOCK_DGRAM)  # UDP
+            sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+        print("Program Ended.\n")
+     else:
+        print("\n\nProgram Ended.\n")
