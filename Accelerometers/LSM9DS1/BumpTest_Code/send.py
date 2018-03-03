@@ -22,16 +22,16 @@ while hold:
     if button_state == False:
         GPIO.output(17, GPIO.LOW)
         GPIO.output(27, GPIO.LOW)
-        sleep(0.5)
+        sleep(0.2)
         GPIO.output(17, GPIO.HIGH)
         GPIO.output(27, GPIO.HIGH)
-        sleep(0.5)
+        sleep(0.2)
         GPIO.output(17, GPIO.LOW)
         GPIO.output(27, GPIO.LOW)
-        sleep(0.5)
+        sleep(0.2)
         GPIO.output(17, GPIO.HIGH)
         GPIO.output(27, GPIO.HIGH)
-        sleep(0.5)
+        sleep(0.2)
         GPIO.output(17, GPIO.LOW)
         GPIO.output(27, GPIO.LOW)
         hold = 0
@@ -62,7 +62,7 @@ for MAC in MAC_List:
     if IP != '0':
         print("Found Pi @ %s\n" % IP)
         GPIO.output(27, GPIO.HIGH)
-        sleep(1)
+        sleep(0.2)
         GPIO.output(27, GPIO.LOW)
     index = index + 1
 
