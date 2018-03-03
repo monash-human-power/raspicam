@@ -1,3 +1,4 @@
+import time
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
@@ -11,5 +12,5 @@ try:
         else:
             print "Switch open."
         time.sleep(0.01)
-except:
+except KeyboardInterrupt:
     GPIO.cleanup()

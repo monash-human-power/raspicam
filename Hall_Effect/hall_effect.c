@@ -21,7 +21,7 @@ int main()
     while(1)
     {
         // call aFunction whenever GPIO 4 changes state
-        gpioSetAlertFunc(4, aFunction);
+        gpioSetAlertFunc(24, aFunction);
 	time_sleep(0.1);
     }
     gpioTerminate();
