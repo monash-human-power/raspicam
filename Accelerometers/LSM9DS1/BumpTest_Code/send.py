@@ -17,6 +17,8 @@ GPIO.output(17, GPIO.HIGH)
 GPIO.output(27, GPIO.LOW)
 
 hold = 1
+online = 0
+
 while hold:
     button_state = GPIO.input(24)
     if button_state == False:
@@ -53,18 +55,20 @@ PiSecondaryMAC = 'b8:27:eb:85:52:20'
 MAC_List = [PiZero1MAC, PiZero2MAC, PiZero3MAC,
             PiZero4MAC, PiZero5MAC, PiZero6MAC]
 
-index = 0
-Online_List = [0] * len(MAC_List)
-path = '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/piscan.sh'
-for MAC in MAC_List:
-    IP = subprocess.check_output([path, MAC])
-    Online_List[index] = IP
-    if IP != '0':
-        print("Found Pi @ %s\n" % IP)
-        GPIO.output(27, GPIO.HIGH)
-        sleep(0.2)
-        GPIO.output(27, GPIO.LOW)
-    index = index + 1
+while online < 2:
+    index = 0
+    Online_List = [0] * len(MAC_List)
+    path = '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/piscan.sh'
+    for MAC in MAC_List:
+        IP = subprocess.check_output([path, MAC])
+        Online_List[index] = IP
+        if IP != '0':
+            print("Found Pi @ %s\n" % IP)
+            GPIO.output(27, GPIO.HIGH)
+            sleep(0.2)
+            GPIO.output(27, GPIO.LOW)
+            online = online + 1
+        index = index + 1
 
 print("Ready for button press!\n")
 GPIO.output(17, GPIO.HIGH)
@@ -91,8 +95,6 @@ try:
 
                 UDP_IP = IP
                 UDP_PORT = 5005
-
-                # MESSAGE = "Hello!"
 
                 sock = socket.socket(socket.AF_INET,  # Internet
                                      socket.SOCK_DGRAM)  # UDP
