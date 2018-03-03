@@ -37,7 +37,7 @@ while hold:
         hold = 0
 
 MESSAGE = "STOP"
-print("\nConfiguring Pi Networking\n")
+print("Configuring Pi Networking\n")
 
 PatMacbookMAC = '6c:40:8:99:ce:b0'
 PatPiMAC = 'b8:27:eb:d0:ac:d8'
@@ -50,8 +50,8 @@ PiZero6MAC = 'b8:27:eb:21:f0:52'
 PiPrimaryMAC = 'b8:27:eb:cb:70:a1'
 PiSecondaryMAC = 'b8:27:eb:85:52:20'
 
-MAC_List = [PatPiMAC, PiZero1MAC, PiZero2MAC, PiZero3MAC,
-            PiZero4MAC, PiZero5MAC, PiZero6MAC, PiPrimaryMAC, PiSecondaryMAC]
+MAC_List = [PiZero1MAC, PiZero2MAC, PiZero3MAC,
+            PiZero4MAC, PiZero5MAC, PiZero6MAC]
 
 index = 0
 Online_List = [0] * len(MAC_List)
