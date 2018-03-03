@@ -20,7 +20,7 @@ while True:
     try:
         sleep(1)
     except KeyboardInterrupt:
-        p1.terminate()
+        p1.kill()
         print("\n\nExecution Terminated.\n")
         break
 
