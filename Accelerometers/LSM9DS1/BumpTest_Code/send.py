@@ -29,6 +29,8 @@ MAC_List = [PiZero1MAC, PiZero2MAC, PiZero3MAC, PiZero4MAC, PiZero5MAC, PiZero6M
 
 while online < 2:
     online = 0
+    GPIO.output(17, GPIO.HIGH)
+    GPIO.output(27, GPIO.HIGH)
     button_state = GPIO.input(24)
     if button_state == False:
         GPIO.output(17, GPIO.LOW)
@@ -62,6 +64,10 @@ while online < 2:
                 GPIO.output(27, GPIO.LOW)
                 online = online + 1
             index = index + 1
+        if online == 2:
+            print("Successful configuration!\n")
+        else:
+            print("Try again....\n")
 
 print("Ready for button press!\n")
 GPIO.output(17, GPIO.HIGH)
