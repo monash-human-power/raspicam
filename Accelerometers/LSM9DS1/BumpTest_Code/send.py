@@ -13,13 +13,19 @@ GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 MESSAGE = "STOP"
 print("\nConfiguring Pi Networking\n")
 
+PatMacbookMAC = '6c:40:8:99:ce:b0'
 PatPiMAC = 'b8:27:eb:d0:ac:d8'
-# PatMacbookMAC='6c:40:08:99:ce:b0'
-PiZero1MAC = 'b8:27:eb:b3:52:f'
-PiZero2MAC = 'b8:27:eb:8d:cd:e5'
-PiZero3MAC = 'b8:27:eb:3b:26:bb'
+PiZero1MAC = 'b8:27:eb:3b:26:bb'
+PiZero2MAC = 'b8:27:eb:19:78:4c'
+PiZero3MAC = 'b8:27:eb:f:69:e5'
+PiZero4MAC = 'b8:27:eb:5f:91:1a'
+PiZero5MAC = 'b8:27:eb:3c:c9:14'
+PiZero6MAC = 'b8:27:eb:21:f0:52'
+PiPrimaryMAC = 'b8:27:eb:cb:70:a1'
+PiSecondaryMAC = 'b8:27:eb:85:52:20'
 
-MAC_List = [PatPiMAC, PiZero1MAC, PiZero2MAC, PiZero3MAC]
+MAC_List = [PatPiMAC, PiZero1MAC, PiZero2MAC, PiZero3MAC,
+            PiZero4MAC, PiZero5MAC, PiZero6MAC, PiPrimaryMAC, PiSecondaryMAC]
 
 index = 0
 Online_List = [0] * len(MAC_List)
@@ -54,7 +60,7 @@ try:
                 #MESSAGE = "Hello!"
 
                 sock = socket.socket(socket.AF_INET,  # Internet
-                                 socket.SOCK_DGRAM)  # UDP
+                                     socket.SOCK_DGRAM)  # UDP
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
 
                 print("Ready for button press!\n")
@@ -62,7 +68,7 @@ try:
 except KeyboardInterrupt:
     GPIO.cleanup()
     print("\n\nProgram Ended.\n")
-    #if MESSAGE == "START":
+    # if MESSAGE == "START":
     #    print("\n\nStopping Data Recording!\n")
     #    for IP in Online_List:
     #        if IP == '0':
@@ -77,6 +83,5 @@ except KeyboardInterrupt:
     #                         socket.SOCK_DGRAM)  # UDP
     #        sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
     #    print("Program Ended.\n")
-    #else:
+    # else:
     #    print("\n\nProgram Ended.\n")
-

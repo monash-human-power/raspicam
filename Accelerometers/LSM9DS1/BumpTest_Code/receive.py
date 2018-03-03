@@ -10,7 +10,7 @@ data = "START"
 recording = 0
 
 sock = socket.socket(socket.AF_INET,  # Internet
-                             socket.SOCK_DGRAM)  # UDP
+                     socket.SOCK_DGRAM)  # UDP
 sock.bind((UDP_IP, UDP_PORT))
 
 print ""
@@ -30,13 +30,15 @@ try:
             subprocess.Popen.kill(p1)
             recording = 0
             print("Execution Terminated.")
-            p3 = subprocess.call('/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/sendcsv.sh')
+            p3 = subprocess.call(
+                '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/sendcsv.sh')
             sleep(1)
 except KeyboardInterrupt:
     if recording == 1:
         subprocess.Popen.kill(p1)
         print("\n\nExecution Terminated.")
-        p3 = subprocess.call('/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/sendcsv.sh')
+        p3 = subprocess.call(
+            '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/sendcsv.sh')
         print("Program Ended.\n")
     else:
         print("\n\nProgram Ended.\n")
