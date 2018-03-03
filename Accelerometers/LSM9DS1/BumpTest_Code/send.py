@@ -111,9 +111,8 @@ except KeyboardInterrupt:
 
             MESSAGE = "Hello!"
 
-            sock = socket.socket(socket.AF_INET,  # Internet
-                             socket.SOCK_DGRAM)  # UDP
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
             sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
         print("Program Ended.\n")
-     else:
+    else:
         print("\n\nProgram Ended.\n")
