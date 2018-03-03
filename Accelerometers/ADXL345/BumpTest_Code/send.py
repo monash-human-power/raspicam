@@ -53,7 +53,7 @@ while online < 2:
 
         index = 0
         Online_List = [0] * len(MAC_List)
-        path = '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/piscan.sh'
+        path = '/home/pi/Documents/MHP_raspicam/Accelerometers/ADXL345/BumpTest_Code/Shell_Scripts/piscan.sh'
         for MAC in MAC_List:
             IP = subprocess.check_output([path, MAC])
             Online_List[index] = IP
