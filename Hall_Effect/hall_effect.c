@@ -22,7 +22,7 @@ int main()
     {
         // call aFunction whenever GPIO 4 changes state
         gpioSetAlertFunc(4, aFunction);
-	time_sleep(0.1);
+	    time_sleep(0.1);
     }
     gpioTerminate();
     return 1;
