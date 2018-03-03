@@ -61,6 +61,9 @@ for MAC in MAC_List:
     Online_List[index] = IP
     if IP != '0':
         print("Found Pi @ %s\n" % IP)
+        GPIO.output(27, GPIO.High)
+        sleep(1)
+        GPIO.output(27, GPIO.LOW)
     index = index + 1
 
 print("Ready for button press!\n")
