@@ -112,7 +112,7 @@ except KeyboardInterrupt:
             UDP_IP = IP
             UDP_PORT = 5005
 
-            MESSAGE = "Hello!"
+            MESSAGE = "STOP"
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
             sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
