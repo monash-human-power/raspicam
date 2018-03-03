@@ -1,11 +1,6 @@
-#!/bin/bash
-
-# This script automates ssh connection using the network ping utility. It is
-# appropriate only when a pi is attempting to connect to Telstra 4G USB Modem.
-# It should not be used in any other scenario.
+#!/bin/sh
 
 # Known and recognised Target Pi's.
-USERNAME=pi # all pi's have same username
 PatMacbookMAC=6c:40:8:99:ce:b0
 PatPiMAC=b8:27:eb:d0:ac:d8
 PiZero1MAC=b8:27:eb:3b:26:bb
@@ -69,7 +64,7 @@ start_ip=192.168.1.100
 ip_scan_range=10
 
 # Prepare for loop
-ssh=0 # do not initiate ssh connection
+init=0
 baseaddr="$(echo $start_ip | cut -d. -f1-3)"
 lsv="$(echo $start_ip | cut -d. -f4)"
 
@@ -81,6 +76,12 @@ do
 
     # Ping that address to check for host
     fping=$(fping -c 1 -t 500 $addr 2>/dev/null | sort)
+
+    # Clear any ssh-keygen credentials for that address
+    printf "\n ---------------------------------------------------"
+    printf "\nERASING SSH KEY FOR THIS ADDRESS (IF PRESENT):\n"
+    ssh-keygen -R $addr
+    printf " ---------------------------------------------------\n"
 
     # If ping returns non-empty information, host is online
     if [ ! -z "$fping" ]
@@ -125,7 +126,7 @@ do
         # Check to see if MAC Address is that of Target Pi
         if [ "$MAC" == "$SearchMAC" ]
         then
-            ssh=1 # initiate ssh connection once exited loop
+            init=1 # initiate ssh connection once exited loop
             PI_IP=$addr # assign ssh IP Address
             printf "Target Pi Found @ $PI_IP\n" # Notify found target pi
             break #break from loop
@@ -135,18 +136,17 @@ do
     ip_scan_range=$(( $ip_scan_range - 1 )) # decrement ip address scan range
 done
 
-# If statement will be activated if target pi is found
-if [ $ssh == 1 ]
+if [ $init == 1 ]
 then
-    printf "\nStarting ssh connection @ $PI_IP...\n\n"
-    ssh -o StrictHostKeyChecking=no ${USERNAME}@${PI_IP} # SSH session begins
-else
-    printf "\nFailed to find target Pi. Check to see if Pi is online.\n"
+    printf "\nGenerating ssh-keys....\n\n"
+
+    #printf "Creating directory (if does not already exist):\n"
+    #ssh -o StrictHostKeyChecking=no pi@$PI_IP "mkdir ~/.ssh && cat >> ~/.ssh/authorized_keys"
+
+    printf "\nAdding computer generated key to list of target pi authorized keys:\n"
+    cat ~/.ssh/id_rsa.pub | ssh -o StrictHostKeyChecking=no pi@$PI_IP "cat >> ~/.ssh/authorized_keys"
+    printf "\nSuccessfully generated ssh-keys\n"
 fi
 
-printf "\n" # add new line for neatness
-exit 0 # end of program
-
-## Code when looking for just any Pi
-#TempMAC=$(echo $MAC |rev|cut -d":" -f4-|rev)
-#echo "MAC Address begins with $TempMAC"
+printf "\n"
+exit 0
