@@ -12,7 +12,7 @@ GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(17, GPIO.OUT)
 GPIO.setup(27, GPIO.OUT)
 
-print("Ready to initialise!\n")
+print("\nReady to initialise!\n")
 GPIO.output(17, GPIO.HIGH)
 GPIO.output(27, GPIO.LOW)
 
