@@ -102,7 +102,6 @@ try:
         sleep(0.2)
 except KeyboardInterrupt:
     GPIO.cleanup()
-    print("\n\nProgram Ended.\n")
     if MESSAGE == "START":
         print("\n\nStopping Data Recording!\n")
         for IP in Online_List:
