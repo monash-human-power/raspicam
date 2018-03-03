@@ -16,10 +16,19 @@ print("\nReady to initialise!\n")
 GPIO.output(17, GPIO.HIGH)
 GPIO.output(27, GPIO.LOW)
 
-hold = 1
 online = 0
+MESSAGE = "STOP"
 
-while hold:
+PiZero1MAC = 'b8:27:eb:3b:26:bb'
+PiZero2MAC = 'b8:27:eb:19:78:4c'
+PiZero3MAC = 'b8:27:eb:f:69:e5'
+PiZero4MAC = 'b8:27:eb:5f:91:1a'
+PiZero5MAC = 'b8:27:eb:3c:c9:14'
+PiZero6MAC = 'b8:27:eb:21:f0:52'
+MAC_List = [PiZero1MAC, PiZero2MAC, PiZero3MAC, PiZero4MAC, PiZero5MAC, PiZero6MAC]
+
+while online < 2:
+    online = 0
     button_state = GPIO.input(24)
     if button_state == False:
         GPIO.output(17, GPIO.LOW)
@@ -38,37 +47,21 @@ while hold:
         GPIO.output(27, GPIO.LOW)
         hold = 0
 
-MESSAGE = "STOP"
-print("Configuring Pi Networking\n")
+        print("Configuring Pi Networking\n")
 
-PatMacbookMAC = '6c:40:8:99:ce:b0'
-PatPiMAC = 'b8:27:eb:d0:ac:d8'
-PiZero1MAC = 'b8:27:eb:3b:26:bb'
-PiZero2MAC = 'b8:27:eb:19:78:4c'
-PiZero3MAC = 'b8:27:eb:f:69:e5'
-PiZero4MAC = 'b8:27:eb:5f:91:1a'
-PiZero5MAC = 'b8:27:eb:3c:c9:14'
-PiZero6MAC = 'b8:27:eb:21:f0:52'
-PiPrimaryMAC = 'b8:27:eb:cb:70:a1'
-PiSecondaryMAC = 'b8:27:eb:85:52:20'
-
-MAC_List = [PiZero1MAC, PiZero2MAC, PiZero3MAC,
-            PiZero4MAC, PiZero5MAC, PiZero6MAC]
-
-while online < 2:
-    index = 0
-    Online_List = [0] * len(MAC_List)
-    path = '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/piscan.sh'
-    for MAC in MAC_List:
-        IP = subprocess.check_output([path, MAC])
-        Online_List[index] = IP
-        if IP != '0':
-            print("Found Pi @ %s\n" % IP)
-            GPIO.output(27, GPIO.HIGH)
-            sleep(0.2)
-            GPIO.output(27, GPIO.LOW)
-            online = online + 1
-        index = index + 1
+        index = 0
+        Online_List = [0] * len(MAC_List)
+        path = '/home/pi/Documents/MHP_raspicam/Accelerometers/LSM9DS1/BumpTest_Code/Shell_Scripts/piscan.sh'
+        for MAC in MAC_List:
+            IP = subprocess.check_output([path, MAC])
+            Online_List[index] = IP
+            if IP != '0':
+                print("Found Pi @ %s\n" % IP)
+                GPIO.output(27, GPIO.HIGH)
+                sleep(0.2)
+                GPIO.output(27, GPIO.LOW)
+                online = online + 1
+            index = index + 1
 
 print("Ready for button press!\n")
 GPIO.output(17, GPIO.HIGH)
