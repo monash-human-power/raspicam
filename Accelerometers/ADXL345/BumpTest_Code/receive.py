@@ -29,7 +29,7 @@ try:
             print("Recording!\n")
         elif data == "STOP" and recording == 1:
             print "Received Stop Command!\n"
-            subprocess.Popen.kill(p1)
+            p1.kill()
             recording = 0
             print("Execution Terminated.")
             p3 = subprocess.call(
