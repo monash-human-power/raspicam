@@ -7,10 +7,11 @@
 
 // ACCELEROMETER REGISTERS
 #define CTRL1_XL        0x10    // Linear acceleration sensor control register 1
+#define WHO_AM_I        0x0F
 #define DATAX0          0x28    // Start address for reading accelerometer registers
 
 // ACCELEROMETER SETTINGS
-#define CTRL1_XL_CONTENTS   0xA4    // +/-16 g, 6667 Hz
+#define CTRL1_XL_CONTENTS   0b10100100    // +/-16 g, 6667 Hz
 
 // SPI COMMUNICATION BYTES
 #define MULTI_BIT       0x40    // SPI multi-bit communication
@@ -49,7 +50,7 @@ int main(int argc, char const *argv[])
 
     // Need a warm up segment to initialize readings
     for (i = 0; i < coldStartSamples; i++) {
-        data[0] = DATAX0 | MULTI_BIT | READ_BIT;
+        data[0] = WHO_AM_I | MULTI_BIT | READ_BIT;
         bytes = spiXfer(LSM6DS3, data, data, 7);
         printf("bytes = %d,data was %x %x %x %x %x %x %x %x\n\n",bytes,data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
         time_sleep(coldStartDelay);
