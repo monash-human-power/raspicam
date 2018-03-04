@@ -6,12 +6,18 @@
 #include <pigpio.h>
 
 // ACCELEROMETER REGISTERS
-#define CTRL1_XL        0x10    // Linear acceleration sensor control register 1
+#define CTRL1_XL        0x10    // ODR, Scale
+#define CTRL6_C         0x15    // Power Mode
+#define CTRL9_XL        0x18    // Enable axies
+#define INT1_CTRL       0x0D
 #define WHO_AM_I        0x0F
 #define DATAX0          0x28    // Start address for reading accelerometer registers
 
 // ACCELEROMETER SETTINGS
 #define CTRL1_XL_CONTENTS   0b10100100    // +/-16 g, 6667 Hz
+#define CTRL6_C_CONTENTS    0b00000000
+#define CTRL9_XL_CONTENTS   0b00111000
+#define INT1_CTRL_CONTENTS  0b00000001
 
 // SPI COMMUNICATION BYTES
 #define MULTI_BIT       0x40    // SPI multi-bit communication
@@ -40,9 +46,23 @@ int main(int argc, char const *argv[])
     // Define new spi device
     LSM6DS3 = spiOpen(0, speedSPI, 3);
 
-    // Write to BW_RATE Register
+    data[0] = CTRL9_XL | MULTI_BIT;
+    data[1] = CTRL9_XL_CONTENTS;
+    spiWrite(LSM6DS3, data, 2);
+    printf("\nLSM6DS3=%d,data[0]=%d,data[1]=%d\n\n",LSM6DS3,data[0],data[1]);
+
+    data[0] = CTRL6_C | MULTI_BIT;
+    data[1] = CTRL6_C_CONTENTS;
+    spiWrite(LSM6DS3, data, 2);
+    printf("\nLSM6DS3=%d,data[0]=%d,data[1]=%d\n\n",LSM6DS3,data[0],data[1]);
+
     data[0] = CTRL1_XL | MULTI_BIT;
     data[1] = CTRL1_XL_CONTENTS;
+    spiWrite(LSM6DS3, data, 2);
+    printf("\nLSM6DS3=%d,data[0]=%d,data[1]=%d\n\n",LSM6DS3,data[0],data[1]);
+
+    data[0] = INT1_CTRL | MULTI_BIT;
+    data[1] = INT1_CTRL_CONTENTS;
     spiWrite(LSM6DS3, data, 2);
     printf("\nLSM6DS3=%d,data[0]=%d,data[1]=%d\n\n",LSM6DS3,data[0],data[1]);
 
