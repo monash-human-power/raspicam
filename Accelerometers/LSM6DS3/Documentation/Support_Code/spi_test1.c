@@ -58,9 +58,9 @@ int main(int argc, char const *argv[])
 
     // --------------------------- READ DATA ---------------------------
 
-    data[0] = DATAX0 | MULTI_BIT | READ_BIT;
+    data[0] = WHO_AM_I | MULTI_BIT | READ_BIT;
     bytes = spiXfer(LSM6DS3, data, data, 7);
-    printf("bytes=%d,data was %x %x %x %x %x %x %x %x\n\n",bytes,data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+    printf("bytes = %d,data was %x %x %x %x %x %x %x %x\n\n",bytes,data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
 
     // Process bytes on last read
     if (bytes == 7)
