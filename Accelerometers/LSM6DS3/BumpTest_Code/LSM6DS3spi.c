@@ -20,6 +20,7 @@
 #define CTRL9_XL_CONTENTS   0b00111000
 #define INT1_CTRL_CONTENTS  0b00000001
 
+const char codeVersion[3] = "0.2";  // code version number
 const int timeDefault = 5;  // default duration of data stream, seconds
 const int freqDefault = 5;  // default sampling rate of data stream, Hz
 const int freqMax = 6664;  // maximal allowed cmdline arg sampling rate of data stream, Hz
