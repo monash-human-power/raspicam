@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     // handling command-line arguments
 
     int bSave = 1;
-    char vSave[256] = "/Desktop/text.txt";
+    char vSave[256] = "Pi_Data.txt";
     double vTime = timeDefault;
     double vFreq = freqDefault;
     for (i = 1; i < argc; i++) {  // skip argv[0] (program name)
@@ -279,7 +279,7 @@ int main(int argc, char *argv[]) {
             at[i] = tCurrent;
         }
         FILE *f;
-        f = fopen("text.txt", "w");
+        f = fopen("Pi_Data.csv", "w");
         fprintf(f, "time, x, y, z\n");
         for (i = 0; i < samples; i++) {
             fprintf(f, "%.5f, %.5f, %.5f, %.5f \n", at[i], ax[i], ay[i], az[i]);
