@@ -14,7 +14,7 @@
 #define DATAX0        0x32
 
 const char codeVersion[3] = "0.2";  // code version number
-const int timeDefault = 20;  // default duration of data stream, seconds
+const int timeDefault = 10;  // default duration of data stream, seconds
 const int freqDefault = 3200;  // default sampling rate of data stream, Hz
 const int freqMax = 3200;  // maximal allowed cmdline arg sampling rate of data stream, Hz
 const int speedSPI = 2000000;  // SPI communication speed, bps
