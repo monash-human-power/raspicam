@@ -6,9 +6,9 @@ int main()
 {
     int pin = 4;
     int fs = 4000;
-    int t = 20;	// length of run in seconds
+    int run_time = 20;	// length of run in seconds
     int screen = 0;
-    int samples = fs*t;
+    int samples = fs*run_time;
 
     int i;
     int *p;
