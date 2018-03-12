@@ -12,17 +12,17 @@ int main()
 
     int i;
     int *p;
-    int *t;
+    double *t;
 
     p = malloc(samples*sizeof(int));
-    t = malloc(samples*sizeof(int));
+    t = malloc(samples*sizeof(double));
 
     gpioInitialise();
     gpioSetPullUpDown(pin,PI_PUD_UP);
 
     printf("\nStarting run....");
 
-    int tstart=time_time();
+    double tstart=time_time();
     for(i = 0; i < samples; i++)
     {
 	if(screen)
@@ -43,7 +43,7 @@ int main()
     f = fopen("speed.csv","w");
     for(i = 0; i < samples; i++)
     {
-	fprintf(f,"\n%d, %d",t[i],p[i]);
+	fprintf(f,"\n%.5f, %d",t[i],p[i]);
     }
     fclose(f);
 }
