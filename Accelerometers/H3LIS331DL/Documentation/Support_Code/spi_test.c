@@ -8,10 +8,10 @@
 // ACCELEROMETER REGISTERS
 #define CTRL_REG1   0x20
 #define CTRL_REG4   0x23
-#define DATAX0      0x28
+#define DATAX0      0x0F//28
 
 // ACCELEROMETER SETTINGS
-#define CTRL_REG1_CONTENTS 0x27//0b00111111   // Normal Mode, 1000Hz ODR, Enable axes
+#define CTRL_REG1_CONTENTS 0b00111111   // Normal Mode, 1000Hz ODR, Enable axes
 #define CTRL_REG4_CONTENTS 0b00000000   // +-100g (change bits 2/3 - 00 = 100g, 01 = 200g, 11 = 400g)
 
 // SPI COMMUNICATION BYTES
