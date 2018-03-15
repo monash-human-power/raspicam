@@ -6,8 +6,9 @@
 #include <pigpio.h>
 
 // ACCELEROMETER REGISTERS
-#define CTRL_REG1 0x20
-#define CTRL_REG4 0x23
+#define CTRL_REG1   0x20
+#define CTRL_REG4   0x23
+#define DATAX0      0x28
 
 // ACCELEROMETER SETTINGS
 #define CTRL_REG1_CONTENTS 0b00111111   // Normal Mode, 1000Hz ODR, Enable axes
