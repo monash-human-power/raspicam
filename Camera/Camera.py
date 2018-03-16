@@ -28,7 +28,7 @@ filename = "/home/pi/Documents/MHP_raspicam/Camera/Video/Recording_%s.h264" % j
 i = 0
 with picamera.PiCamera() as camera:
     camera.resolution = (VIDEO_WIDTH, VIDEO_HEIGHT)
-    camera.vflip = True
+    camera.vflip = False
     camera.framerate = 45
     camera.led = True
     camera.start_preview()

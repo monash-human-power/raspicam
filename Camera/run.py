@@ -15,7 +15,7 @@ GPIO.setwarnings(False)
 
 convert = True
 rec_num = 0
-recording = 0
+recording = 1
 
 GPIO.setup(22,GPIO.OUT) #Green LED
 GPIO.setup(23,GPIO.OUT) #Red LED
