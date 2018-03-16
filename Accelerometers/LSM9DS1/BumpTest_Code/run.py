@@ -9,7 +9,7 @@
 import subprocess
 from time import sleep
 
-send = 1
+send = 0
 
 p1 = subprocess.Popen(["python", "datav2a.py"])
 print("\nStarting Data Recording v2a...")
