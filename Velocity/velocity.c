@@ -46,4 +46,5 @@ int main()
 	fprintf(f,"\n%.5f, %d",t[i],p[i]);
     }
     fclose(f);
+    return 0;
 }
