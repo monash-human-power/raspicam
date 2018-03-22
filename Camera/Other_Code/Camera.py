@@ -72,9 +72,9 @@ with picamera.PiCamera() as camera:
 
     except KeyboardInterrupt:
 
-        camera.stop_preview()
+            camera.stop_preview()
 
-        print ("\nCancelled")
+            print ("\nCancelled")
 
     finally:
 
