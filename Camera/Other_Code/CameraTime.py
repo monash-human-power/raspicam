@@ -7,12 +7,16 @@ with picamera.PiCamera() as camera:
     camera.resolution = (800, 480)
     camera.framerate = 24
     camera.annotate_background = True
+<<<<<<< HEAD:Camera/Other_Code/CameraTime.py
+    #camera.start_recording('test.h264')
+=======
     camera.start_preview()
 
     # Start Recording with given filename
     camera.start_recording('test.h264')
 
     # Start time
+>>>>>>> 940fd742e790d97a28f3218839684d495232f45f:Camera/Other_Code/test.py
     start = dt.datetime.now()
 
     # Begin Loop
@@ -20,6 +24,11 @@ with picamera.PiCamera() as camera:
         # Calculate time delta
         value = dt.datetime.now() - start
 
+<<<<<<< HEAD:Camera/Other_Code/CameraTime.py
+        camera.annotate_text = '{}:{}:{}'.format(hours,minutes,seconds)
+        #camera.wait_recording(0.2)
+   # camera.stop_recording()
+=======
         # Convert to hours, minutes, seconds
         total_seconds = int(value.total_seconds())
         hours, remainder = divmod(total_seconds, 60 * 60)
@@ -33,3 +42,4 @@ with picamera.PiCamera() as camera:
 
     # Stop recording after 30 seconds
     camera.stop_recording()
+>>>>>>> 940fd742e790d97a28f3218839684d495232f45f:Camera/Other_Code/test.py
