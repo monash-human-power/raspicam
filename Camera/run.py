@@ -15,6 +15,7 @@ GPIO.setwarnings(False)
 
 convert = True
 rec_num = 0
+velocity = 1;
 recording = 1
 
 GPIO.setup(22,GPIO.OUT) #Green LED
@@ -36,9 +37,11 @@ try:
                 GPIO.output(23,GPIO.LOW)
                 break
             sleep(0.2)
-
-        p1 = subprocess.Popen(["python", "/home/pi/Documents/MHP_raspicam/Camera/Camera.py"])
-        sleep(1)
+	if velocity == 1:
+            p1 = subprocess.Popen(["python", "/home/pi/Documents/MHP_raspicam/Camera/CameraVel.py"])
+        else:
+	    p1 = subprocess.Popen(["python", "/home/pi/Documents/MHP_raspicam/Camera/Camera.py"])
+	sleep(1)
 
         while True:
             button_state = GPIO.input(25)
