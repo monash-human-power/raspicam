@@ -12,13 +12,14 @@ d = 0.5
 
 pi = pigpio.pi()
 pi.set_mode(pin, pigpio.INPUT)
-pi.set_pull_up_down(4, pigpio.PUD_UP)
+pi.set_pull_up_down(pin, pigpio.PUD_UP)
 
 if not pi.connected:
     exit()
 
 with picamera.PiCamera() as camera:
     camera.resolution = (800, 480)
+    camera.vflip = False
     camera.framerate = 45
     camera.start_preview()
     camera.annotate_background = picamera.Color('black')
