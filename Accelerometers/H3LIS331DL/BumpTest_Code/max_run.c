@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
 {
     int bytes, h;
     int16_t x, y, z;
+    double rt, rx, ry, rz;
     const double accConversion = 2 * 100.0 / 65536.0;
     const int speedSPI = 2000000;
     char data[7];
@@ -49,13 +50,16 @@ int main(int argc, char *argv[])
         bytes = readBytes(h, data, 7);
         if (bytes == 7)
         {
-            x = (data[2]<<8)|data[1] * accConversion;
-            y = (data[4]<<8)|data[3] * accConversion;
-            z = (data[6]<<8)|data[5] * accConversion;
+            x = (data[2]<<8)|data[1];
+            rx = x * accConversion;
+            y = (data[4]<<8)|data[3];
+            ry = y * accConversion;
+            z = (data[6]<<8)|data[5];
+            rz = z * accConversion;
             t = time_time() - tStart;
 
             printf("\n");
-            if (x > 30 | y > 30 | z > 30)
+            if ((x > 30) | (y > 30) | (z > 30))
             {
                 printf("t = %.2f\tx = %.2f\ty = %.2f\tz = %.2f\n");
             }
