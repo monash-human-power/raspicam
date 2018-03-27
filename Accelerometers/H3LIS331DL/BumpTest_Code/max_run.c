@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 {
     int bytes, h;
     int16_t x, y, z;
-    double rt, rx, ry, rz;
+    double rx, ry, rz;
     const double accConversion = 2 * 100.0 / 65536.0;
     const int speedSPI = 2000000;
     char data[7];
@@ -67,3 +67,5 @@ int main(int argc, char *argv[])
         time_sleep(delay);  // pigpio sleep is accurate enough for console output, not necessary to use nanosleep
     }
     gpioTerminate();
+    return 0;
+}
