@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+double threshold = 30;
+
 #define READ_BIT      0x80
 #define MULTI_BIT     0x40
 #define CTRL_REG1   0x20
@@ -64,7 +66,7 @@ int main(int argc, char *argv[])
             rz = z * accConversion;
             t = time_time() - tStart;
 
-            if ((rx > 30) | (ry > 30) | (rz > 30))
+            if ((rx > threshold) | (ry > threshold) | (rz > threshold))
             {
                 printf("t = %.2f\tx = %.2f\ty = %.2f\tz = %.2f\n", t, rx, ry, rz);
             }
