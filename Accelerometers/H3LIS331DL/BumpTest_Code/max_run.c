@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
             printf("\n");
             if ((x > 30) | (y > 30) | (z > 30))
             {
-                printf("t = %.2f\tx = %.2f\ty = %.2f\tz = %.2f\n");
+                printf("t = %.2f\tx = %.2f\ty = %.2f\tz = %.2f\n", t, rx, ry, rz);
             }
         }
         time_sleep(delay);  // pigpio sleep is accurate enough for console output, not necessary to use nanosleep
