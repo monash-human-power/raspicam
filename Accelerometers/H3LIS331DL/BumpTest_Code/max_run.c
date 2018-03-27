@@ -36,6 +36,11 @@ int main(int argc, char *argv[])
     int ODR = 1000;
     double delay = 1.0 / ODR;
 
+    if (gpioInitialise() < 0) {
+        printf("Failed to initialize GPIO!");
+        return 1;
+    }
+
     h = spiOpen(0, speedSPI, 3);
     data[0] = CTRL_REG1;
     data[1] = CTRL_REG1_CONTENTS;
