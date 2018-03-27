@@ -26,6 +26,15 @@ int writeBytes(int handle, char *data, int count) {
 
 int main(int argc, char *argv[])
 {
+    int bytes, h;
+    int16_t x, y, z;
+    const double accConversion = 2 * 100.0 / 65536.0;
+    const int speedSPI = 2000000;
+    char data[7];
+    double tStart, t;
+    int ODR = 1000;
+    double delay = 1.0 / ODR;
+
     h = spiOpen(0, speedSPI, 3);
     data[0] = CTRL_REG1;
     data[1] = CTRL_REG1_CONTENTS;
@@ -50,9 +59,6 @@ int main(int argc, char *argv[])
             {
                 printf("t = %.2f\tx = %.2f\ty = %.2f\tz = %.2f\n");
             }
-        }
-        else {
-            success = 0;
         }
         time_sleep(delay);  // pigpio sleep is accurate enough for console output, not necessary to use nanosleep
     }
