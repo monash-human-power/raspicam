@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
     data[1] = CTRL_REG4_CONTENTS;
 
     tStart = time_time();
+    printf("\n");
     while (1)
     {
         data[0] = DATAX0;
@@ -63,8 +64,7 @@ int main(int argc, char *argv[])
             rz = z * accConversion;
             t = time_time() - tStart;
 
-            printf("\n");
-            if ((x > 30) | (y > 30) | (z > 30))
+            if ((rx > 30) | (ry > 30) | (rz > 30))
             {
                 printf("t = %.2f\tx = %.2f\ty = %.2f\tz = %.2f\n", t, rx, ry, rz);
             }
