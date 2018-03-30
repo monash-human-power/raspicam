@@ -40,9 +40,6 @@ with picamera.PiCamera() as camera:
         while os.path.exists("/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv"):
             j += 1
         filename_velocity = "/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv" % j
-        with open(filename_velocity, 'a') as csvfile:
-            filewriter = csv.writer(csvfile)
-            filewriter.writerow(["Time", "Speed"])
 
     previous = pi.read(pin)
     prev_time = time.time()
