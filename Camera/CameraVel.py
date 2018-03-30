@@ -40,9 +40,9 @@ with picamera.PiCamera() as camera:
         while os.path.exists("/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv"):
             j += 1
         filename_velocity = "/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv" % j
-        csv_file = open(filename_velocity, 'w')
-        Title = "Time\tSpeed\n"
-        csv_file.write(Title)
+        with open(filename_velocity, 'a') as csvfile:
+            filewriter = csv.writer(csvfile)
+            filewriter.writerow(["Time", "Speed"])
 
     previous = pi.read(pin)
     prev_time = time.time()
@@ -58,8 +58,12 @@ with picamera.PiCamera() as camera:
                 time_delta = float(next_time - prev_time)
                 speed = (1.0 / time_delta) * Pi * d * 3.6
                 camera.annotate_text = '{}'.format(round(speed, 1))
-                row = "%.5f, %.2f" % ((next_time - start_time), speed)
-                csv_file.write(row)
+
+                if record == 1:
+                    with open(filename_velocity, 'a') as csvfile:
+                        filewriter = csv.writer(csvfile)
+                        filewriter.writerow(["%.5f" % (next_time - start_time), "%.2f" % speed])
+
                 prev_time = next_time
 
             if (time.time() - prev_time) > 3:
