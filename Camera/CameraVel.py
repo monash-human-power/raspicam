@@ -58,7 +58,7 @@ with picamera.PiCamera() as camera:
                 time_delta = float(next_time - prev_time)
                 speed = (1.0 / time_delta) * Pi * d * 3.6
                 camera.annotate_text = '{}'.format(round(speed, 1))
-                row = "%.5f, %.2f" % (next_time - start_time), speed
+                row = "%.5f, %.2f" % ((next_time - start_time), speed)
                 csv.write(row)
                 prev_time = next_time
 
