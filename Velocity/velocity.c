@@ -40,10 +40,10 @@ int main()
     printf("\nWriting to file....\n\n");
 
     FILE *f;
-    f = fopen("speed.csv","w");
+    f = fopen("velocity.csv","w");
     for(i = 0; i < samples; i++)
     {
-	fprintf(f,"\n%.5f, %d",t[i],p[i]);
+        fprintf(f,"\n%.5f, %d",t[i],p[i]);
     }
     fclose(f);
     return 0;
