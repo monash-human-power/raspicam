@@ -37,7 +37,7 @@ with picamera.PiCamera() as camera:
 
         # Set up Velocity file
         i = 0
-        while os.path.exists("/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv"):
+        while os.path.exists("/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv" % i):
             i += 1
         filename_velocity = "/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv" % i
 
