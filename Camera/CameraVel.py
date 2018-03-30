@@ -10,6 +10,8 @@ pin = 4
 Pi = 3.14159
 d = 0.5
 
+f = open("velocity.csv", "w")
+
 pi = pigpio.pi()
 pi.set_mode(pin, pigpio.INPUT)
 pi.set_pull_up_down(4, pigpio.PUD_UP)
@@ -33,6 +35,7 @@ with picamera.PiCamera() as camera:
 
     previous = pi.read(pin)
     prev_time = time.time()
+    start_time = time.time()
 
     try:
         while True:
@@ -44,6 +47,7 @@ with picamera.PiCamera() as camera:
                 time_delta = float(next_time - prev_time)
                 speed = (1.0 / time_delta) * Pi * d * 3.6
                 camera.annotate_text = '{}'.format(round(speed, 1))
+                f.write("%.5f, %.2f" % (next_time - start_time, speed))
                 prev_time = next_time
 
             if (time.time() - prev_time) > 3:
@@ -57,3 +61,4 @@ with picamera.PiCamera() as camera:
     except KeyboardInterrupt:
         if record == 1:
             camera.stop_recording()
+            f.close()
