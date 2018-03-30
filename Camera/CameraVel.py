@@ -2,6 +2,7 @@ import picamera
 import pigpio
 import time
 import os
+import csv
 
 # Make sure the command "sudo pigpiod" is running on boot through sudo nano /etc/rc.local
 
@@ -27,11 +28,21 @@ with picamera.PiCamera() as camera:
     camera.annotate_text = '{}'.format(0.0)
 
     if record == 1:
+        # Set up Camera File
         j = 0
         while os.path.exists("/home/pi/Documents/MHP_raspicam/Camera/Video/Recording_%s.h264" % j):
             j += 1
-        filename = "/home/pi/Documents/MHP_raspicam/Camera/Video/Recording_%s.h264" % j
-        camera.start_recording(filename)
+        filename_camera = "/home/pi/Documents/MHP_raspicam/Camera/Video/Recording_%s.h264" % j
+        camera.start_recording(filename_camera)
+
+        # Set up Velocity file
+        j = 0
+        while os.path.exists("/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv"):
+            j += 1
+        filename_velocity = "/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv" % j
+        csv_file = open(filename_velocity, 'w')
+        Title = "Time\tSpeed\n"
+        csv.write(Title)
 
     previous = pi.read(pin)
     prev_time = time.time()
@@ -47,7 +58,8 @@ with picamera.PiCamera() as camera:
                 time_delta = float(next_time - prev_time)
                 speed = (1.0 / time_delta) * Pi * d * 3.6
                 camera.annotate_text = '{}'.format(round(speed, 1))
-                f.write("%.5f, %.2f" % (next_time - start_time, speed))
+                row = "%.5f, %.2f" % (next_time - start_time), speed
+                csv.write(row)
                 prev_time = next_time
 
             if (time.time() - prev_time) > 3:
