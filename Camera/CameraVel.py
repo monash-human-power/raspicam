@@ -36,10 +36,10 @@ with picamera.PiCamera() as camera:
         camera.start_recording(filename_camera)
 
         # Set up Velocity file
-        j = 0
+        i = 0
         while os.path.exists("/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv"):
-            j += 1
-        filename_velocity = "/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv" % j
+            i += 1
+        filename_velocity = "/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv" % i
 
     previous = pi.read(pin)
     prev_time = time.time()
