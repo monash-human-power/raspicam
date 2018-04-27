@@ -11,8 +11,6 @@ pin = 4
 Pi = 3.14159
 d = 0.5
 
-f = open("velocity.csv", "w")
-
 pi = pigpio.pi()
 pi.set_mode(pin, pigpio.INPUT)
 pi.set_pull_up_down(4, pigpio.PUD_UP)
@@ -30,16 +28,16 @@ with picamera.PiCamera() as camera:
     if record == 1:
         # Set up Camera File
         j = 0
-        while os.path.exists("/home/pi/Documents/MHP_raspicam/Camera/Video/Recording_%s.h264" % j):
+        while os.path.exists("/home/pi/Documents/MHP_Raspicam/Video/Recording_%s.h264" % j):
             j += 1
-        filename_camera = "/home/pi/Documents/MHP_raspicam/Camera/Video/Recording_%s.h264" % j
+        filename_camera = "/home/pi/Documents/MHP_Raspicam/Video/Recording_%s.h264" % j
         camera.start_recording(filename_camera)
 
         # Set up Velocity file
         i = 0
-        while os.path.exists("/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv" % i):
+        while os.path.exists("/home/pi/Documents/MHP_Raspicam/ReedSwitch/Recording_%s.csv" % i):
             i += 1
-        filename_velocity = "/home/pi/Documents/MHP_raspicam/Camera/Velocity/Recording_%s.csv" % i
+        filename_velocity = "/home/pi/Documents/MHP_Raspicam/ReedSwitch/Recording_%s.csv" % i
 
     previous = pi.read(pin)
     prev_time = time.time()
@@ -75,4 +73,3 @@ with picamera.PiCamera() as camera:
     except KeyboardInterrupt:
         if record == 1:
             camera.stop_recording()
-            f.close()
