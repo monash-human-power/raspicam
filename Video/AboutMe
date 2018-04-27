@@ -1,0 +1,7 @@
+Please note that video will be stored into this directory
+
+To enable run.py on startup simply enter
+	cd
+	sudo nano /etc/rc.local
+then put this at the bottom of the file
+	python /home/pi/Documents/MHP_raspicam/Camera/run.py &
