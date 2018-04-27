@@ -39,9 +39,9 @@ with picamera.PiCamera() as camera:
 
     if record == 1:
         j = 0
-        while os.path.exists("/home/pi/Documents/MHP_raspicam/Camera/Video/Recording_%s.h264" % j):
+        while os.path.exists("/home/pi/Documents/MHP_Raspicam/Video/Recording_%s.h264" % j):
             j += 1
-        filename = "/home/pi/Documents/MHP_raspicam/Camera/Video/Recording_%s.h264" % j
+        filename = "/home/pi/Documents/MHP_Raspicam/Video/Recording_%s.h264" % j
         camera.start_recording(filename)
 
     previous = pi.read(pin)
