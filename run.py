@@ -1,3 +1,5 @@
+
+
 # ---------------------------------------------------------------------
 # Last Modified:
 #   8-1-2018
@@ -13,10 +15,10 @@ from time import sleep
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-convert = True
-rec_num = 0
-velocity = 1;
-recording = 1
+convert = True # Control whether or not you convert the .h264 file to a .mkv file
+rec_num = 0 # Changes the starting recording number in the Videos sub-folder
+velocity = 1 # change this variable to change wether Camera.py or CameraVel.py is run
+recording = 1 # global flag that tells the script the pi's current recording status
 
 GPIO.setup(22,GPIO.OUT) #Green LED
 GPIO.setup(23,GPIO.OUT) #Red LED
@@ -28,6 +30,7 @@ try:
     GPIO.output(23,GPIO.HIGH)
     while True:
         print("Ready!\n")
+
         while True:
             button_state = GPIO.input(25)
             if button_state == False:
@@ -37,10 +40,11 @@ try:
                 GPIO.output(23,GPIO.LOW)
                 break
             sleep(0.2)
+
 	if velocity == 1:
-            p1 = subprocess.Popen(["python", "/home/pi/Documents/MHP_raspicam/Camera/CameraVel.py"])
+            p1 = subprocess.Popen(["python", "/home/pi/Documents/MHP_Raspicam/CameraVel.py"])
         else:
-	    p1 = subprocess.Popen(["python", "/home/pi/Documents/MHP_raspicam/Camera/Camera.py"])
+	    p1 = subprocess.Popen(["python", "/home/pi/Documents/MHP_Raspicam/Camera.py"])
 	sleep(1)
 
         while True:
@@ -51,7 +55,7 @@ try:
                 recording = 0
                 if convert == True:
                     subprocess.call(
-                        ["bash", "/home/pi/Documents/MHP_raspicam/Camera/convert.sh", str(rec_num)])
+                        ["bash", "/home/pi/Documents/MHP_Raspicam/convert.sh", str(rec_num)])
                     rec_num = rec_num + 1
                     print("")
                 print("Wait....\n")
@@ -60,6 +64,7 @@ try:
                 GPIO.output(23,GPIO.HIGH)
                 break
             sleep(0.2)
+        
 except KeyboardInterrupt:
     if recording == 1:
         subprocess.Popen.kill(p1)
