@@ -1,3 +1,5 @@
+# Script for evaluating performance of Raspberry Pi Model A+ 256MB when compared to Raspberry Pi 3 Model B
+
 # Test Overlay Timer - has three overlays
 import picamera
 import socket
@@ -6,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 from time import sleep
 
-record = 0
+record = 1
 
 # Video Resolution
 VIDEO_HEIGHT = 480
