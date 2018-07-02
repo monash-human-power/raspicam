@@ -13,21 +13,15 @@
 # Get the current date and time
 now=$(date +"RUN_%d_%m_@_%H-%M-%S")
 
-<<<<<<< HEAD
 # If the display is the primary run this command. This command will fail if the display is the secondary or no usb is plugged in.
 ffmpeg -r 45 -i /home/pi/Documents/MHP_raspicam/Camera/Video/Recording_0.h264 -vcodec copy /media/pi/PRIMARY/$now.mkv
 
 # If the display is the secondary run this command. This command will fail if the display is the primary or no usb is plugged in.
 ffmpeg -r 45 -i /home/pi/Documents/MHP_raspicam/Camera/Video/Recording_0.h264 -vcodec copy /media/pi/SECONDARY/$now.mkv
 
-# Remove .h264 files from the SD Card
+# Delete video files after conversion
 sudo rm /home/pi/Documents/MHP_Raspicam/Video/*.h264
-=======
-# Primary
-ffmpeg -r 45 -i /home/pi/Documents/MHP_Raspicam/Video/Recording_0.h264 -vcodec copy /media/pi/PRIMARY/$now.mkv
 
-# Secondary
-ffmpeg -r 45 -i /home/pi/Documents/MHP_Raspicam/Video/Recording_0.h264 -vcodec copy /media/pi/SECONDARY/$now.mkv
-
-sudo rm /home/pi/Documents/MHP_Raspicam/Video/*.h264
->>>>>>> dbf10f4f776629d6afcc24f529c47f4f328739bc
+# Move csv files for Reed Switch to USB if present
+sudo mv /home/pi/Documents/MHP_Raspicam/ReedSwitch/*.csv /media/pi/PRIMARY/$now.csv
+sudo mv /home/pi/Documents/MHP_Raspicam/ReedSwitch/*.csv /media/pi/SECONDARY/$now.csv
