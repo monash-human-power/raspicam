@@ -55,7 +55,7 @@ with picamera.PiCamera() as camera:
     drawTextImage = ImageDraw.Draw(textPadImage)
     if socket.gethostname() == "Secondary":
         drawTextImage.text((75, 18), "SECONDARY", font=fontBold, fill=("Red"))
-    else
+    else:
         drawTextImage.text((75, 18), "PRIMARY", font=fontBold, fill=("Red"))
     overlay.update(textPadImage.tobytes())
 
