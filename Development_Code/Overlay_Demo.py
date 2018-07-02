@@ -1,3 +1,10 @@
+# Written by: Minh T Nguyen
+# Last modified: 16/7/2018
+# Softwares: Python 3.4.2, picamera 1.13, PIL 1.1.7
+# Hardwares: Camera Module V2.1, Official 7" touchscreen monitor
+
+# Descriptions:
+
 from picamera import PiCamera, Color
 from PIL import Image, ImageDraw, ImageFont
 from time import sleep
