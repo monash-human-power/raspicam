@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 # Description: This file indicates the current status of the camera system. It is designed to be run on boot and controls configuration of the whole system.
 # The script is controlled by one push button. When this is pressed it starts a Camera script as specified by global variables. It constantly updates some LEDs so that
 # external users are aware of the status of the system.
 # Last Modified: Sunday 1st July 2018 by Pat Graham
 # Written By: Pat Graham
-=======
-
 
 # ---------------------------------------------------------------------
 # Last Modified:
@@ -18,7 +15,6 @@
 import subprocess
 import RPi.GPIO as GPIO
 from time import sleep
->>>>>>> dbf10f4f776629d6afcc24f529c47f4f328739bc
 
 # Some notes
 # 1) If the script is running the LEDs will light up. If they are not lit up, start the script
@@ -35,18 +31,15 @@ from time import sleep		# For allowing the script to pause occasionally
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-<<<<<<< HEAD
 # Global variables to define configuration of the system
 convert = True		# does the user want to convert the files and have them removed from the SD card? If no usb is connected this simply deletes each file after it is recorded.
 rec_num = 0		# Keep track of the number of recordings
 velocity = 1;		# Does the user want to run Camera.py or CameraVel.py? CamerVel.py is run when this variable is 1.
 recording = 1		# Global variable to indicate the status of the sytem
-=======
 convert = True # Control whether or not you convert the .h264 file to a .mkv file
 rec_num = 0 # Changes the starting recording number in the Videos sub-folder
 velocity = 1 # change this variable to change wether Camera.py or CameraVel.py is run
 recording = 1 # global flag that tells the script the pi's current recording status
->>>>>>> dbf10f4f776629d6afcc24f529c47f4f328739bc
 
 # Set up GPIO Pins
 GPIO.setup(22,GPIO.OUT) 				# Green LED
@@ -69,10 +62,8 @@ try:
         # Indicate the system is read to record on the command line
         print("Ready!\n")
 
-<<<<<<< HEAD
+
         # Loop here until the push button is pressed. Active low.
-=======
->>>>>>> dbf10f4f776629d6afcc24f529c47f4f328739bc
         while True:
 
             # Read push button
@@ -89,10 +80,7 @@ try:
             # If no then wait a little bit before reading again.
             sleep(0.2)
 
-<<<<<<< HEAD
         # Has the user specified CameraVel.py or Camera.py? Open the specified Camera script.
-=======
->>>>>>> dbf10f4f776629d6afcc24f529c47f4f328739bc
 	if velocity == 1:
             p1 = subprocess.Popen(["python", "/home/pi/Documents/MHP_Raspicam/CameraVel.py"])
         else:
@@ -113,14 +101,9 @@ try:
 
                 # Did the user specify they wanted files converted and then delete from SD card? Do this now.
                 if convert == True:
-                    subprocess.call(
-<<<<<<< HEAD
-                        ["bash", "/home/pi/Documents/MHP_raspicam/Camera/convert.sh", str(rec_num)])
+                    subprocess.call(["bash", "/home/pi/Documents/MHP_Raspicam/Camera/convert.sh", str(rec_num)])
                     rec_num = rec_num + 1	# Update recording number
-=======
-                        ["bash", "/home/pi/Documents/MHP_Raspicam/convert.sh", str(rec_num)])
                     rec_num = rec_num + 1
->>>>>>> dbf10f4f776629d6afcc24f529c47f4f328739bc
                     print("")
 
                 # Wait a little bit for conversion to complete. Depending on the size of the file this delay may have to be increased.
@@ -136,11 +119,7 @@ try:
 
             # No button pressed? Sleep for a little bit before next read.
             sleep(0.2)
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> dbf10f4f776629d6afcc24f529c47f4f328739bc
 except KeyboardInterrupt:
 
     # If User presses control c on command line and camera is recording, stop camera recording
