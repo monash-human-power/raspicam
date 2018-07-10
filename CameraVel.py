@@ -21,7 +21,7 @@ import csv			# For storing reed switch data into a csv file
 record = 1	# Global variable to control whether or not data and camera video are recorded or not
 pin = 4		# Pin for the reed switch
 Pi = 3.14159	# Definition of the irrational number pi for calculating circumference of the wheel
-d = 0.5		# Global variable to define the diameter of the wheel.
+d = 0.507/4		# Global variable to define the diameter of the wheel.
 
 # Configure reed switch pin as an input with an internal pull up resistor
 pi = pigpio.pi()
