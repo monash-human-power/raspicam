@@ -25,14 +25,13 @@ img = Image.new('RGBA', (WIDTH, HEIGHT))
 draw = ImageDraw.Draw(img)
 
 """
-Text display for speed. "number" is refer to the digit and "unit" is the unit. For
-example, 50 km/h, "number" is "50" and unit is "km/h".
+Text display for speed.
 """
 # Text height in pixel
-number_height = 50
-number_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',number_height)
-number = '{}'.format(0)
-draw.text((WIDTH/2 - 65, HEIGHT-number_height+2), number, font=number_font, fill='black')
+speed_height = 50
+speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
+speed = 'SP: {}'.format(0)
+draw.text((WIDTH/2 - 65, HEIGHT-speed_height), speed, font=speed_font, fill='black')
 """
 unit_height = 25
 unit_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',unit_height)
@@ -46,7 +45,7 @@ Text display for power, cadence (pedalling rate), distance, heart rate. As menti
 above, these are dummy text for displaying purpose only.
 """
 #display_text = ['Pwr: {} W'.format(0),'Cad: {} rpm'.format(0.0), 'Dist: {} km'.format(0.0), 'Heart rate: {} bpm'.format(0)]
-display_text = ['P: {}'.format(0),'C: {}'.format(0.0), 'D: {}'.format(0.0), 'H/r: {}'.format(0)]
+display_text = ['Pwr: {}'.format(0),'Cad: {}'.format(0.0), 'Dist: {}'.format(0.0), 'H/r: {}'.format(0)]
 text_height = 20
 text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',text_height)
 for i in range(len(display_text)):
