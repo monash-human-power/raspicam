@@ -101,7 +101,7 @@ try:
 
                 # Did the user specify they wanted files converted and then delete from SD card? Do this now.
                 if convert == True:
-                    subprocess.call(["bash", "/home/pi/Documents/MHP_Raspicam/Camera/convert.sh", str(rec_num)])
+                    subprocess.call(["bash", "/home/pi/Documents/MHP_Raspicam/convert.sh", str(rec_num)])
                     rec_num = rec_num + 1	# Update recording number
                     rec_num = rec_num + 1
                     print("")
