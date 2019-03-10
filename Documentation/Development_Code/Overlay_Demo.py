@@ -28,7 +28,7 @@ def on_message(client, userdata, msg):
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect("DAS's IP", 1883, 60)
+client.connect(" *DAS's IP* ", 1883, 60)
 
 
 # The resolution of the camera preview. Current system using 800x480.
