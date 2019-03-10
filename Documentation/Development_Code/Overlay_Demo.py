@@ -11,6 +11,25 @@ from picamera import PiCamera, Color
 from PIL import Image, ImageDraw, ImageFont
 from time import sleep
 import datetime as dt
+import paho.mqtt.client as mqtt
+import json
+
+# mqtt methods 
+def on_connect(client, userdata, rc):
+    print ("Connected with rc: " + str(rc))
+    client.subscribe("demo/test1")
+
+def on_message(client, userdata, msg):
+    data_json = msg.payload
+    data = json.loads(data_json)
+
+    # print(data['ant_plus_power'])
+
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
+client.connect("DAS's IP", 1883, 60)
+
 
 # The resolution of the camera preview. Current system using 800x480.
 WIDTH = 800
@@ -71,3 +90,6 @@ camera.annotate_foreground = Color('black')
 while True:
     sleep(1)
     camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+# mqtt loop
+client.loop_forever()
