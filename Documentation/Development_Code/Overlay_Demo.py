@@ -14,16 +14,34 @@ import datetime as dt
 import paho.mqtt.client as mqtt
 import json
 
+GLOBAL_DATA = {
+    power: 0,
+    cadence: 0,
+}
+
+# Convert data to a suitable format
+def parse_data(data):
+    terms = data.split("&")
+    data_dict = {}
+    filename = ""
+    for term in terms:
+        key,value = term.split("=")
+        data_dict[key] = value
+    return data_dict
+
 # mqtt methods 
 def on_connect(client, userdata, rc):
     print ("Connected with rc: " + str(rc))
-    client.subscribe("demo/test1")
+    client.subscribe("start")
+    client.subscribe("data")
+    client.subscribe("stop")
 
 def on_message(client, userdata, msg):
-    data_json = msg.payload
-    data = json.loads(data_json)
-
-    #print(data['ant_plus_power'])
+    if msg.topic == "data":
+        data = str(msg.payload.decode("utf-8"))
+        parsed_data = parse_data(data)
+        GLOBAL_DATA.power = parsed_data.power
+        GLOBAL_DATA.cadence = parsed_data.cadence
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -63,13 +81,15 @@ draw.text((WIDTH/2, HEIGHT-unit_height), unit, font=unit_font, fill='black')
 Text display for power, cadence (pedalling rate), distance, heart rate. As mentionaed
 above, these are dummy text for displaying purpose only.
 """
-#display_text = ['Pwr: {} W'.format(0),'Cad: {} rpm'.format(0.0), 'Dist: {} km'.format(0.0), 'Heart rate: {} bpm'.format(0)]
-display_text = ['Pwr: {}'.format(0),'Cad: {}'.format(0.0), 'Dist: {}'.format(0.0), 'H/r: {}'.format(0)]
-text_height = 20
 text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',text_height)
-for i in range(len(display_text)):
-    draw.text((10, 10 + text_height*i), display_text[i], font=text_font, fill='black')
+text_height = 20
+#display_text = ['Pwr: {}'.format(0),'Cad: {}'.format(0.0), 'Dist: {}'.format(0.0), 'H/r: {}'.format(0)]
 
+# Display power
+draw.text((10, 10 + text_height*1), GLOBAL_DATA.power, font=text_font, fill='black')
+
+# Display cadence
+draw.text((10, 10 + text_height*2), GLOBAL_DATA.cadence, font=text_font, fill='black')
 
 # Add the image to the preview overlay
 overlay = camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
