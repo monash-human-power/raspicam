@@ -9,17 +9,23 @@
 
 from picamera import PiCamera, Color
 from PIL import Image, ImageDraw, ImageFont
-from time import sleep
+import time
 import datetime as dt
 import paho.mqtt.client as mqtt
 import json
 
+speed_height = 50
+speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
 text_height = 20
 text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',text_height)
 
+PREV_OVERLAY = None
+START_TIME = round(time.time(), 2)
 GLOBAL_DATA = {
     "power": 0,
     "cadence": 0,
+    "gps_speed": 0,
+    "count": 0,
 }
 
 # The resolution of the camera preview. Current system using 800x480.
@@ -28,7 +34,6 @@ HEIGHT = 480
 
 # Initiate camera preview
 camera = PiCamera(resolution=(WIDTH, HEIGHT))
-camera.start_preview()
 
 # Convert data to a suitable format
 def parse_data(data):
@@ -40,79 +45,88 @@ def parse_data(data):
         data_dict[key] = value
     return data_dict
 
-# mqtt methods 
-def on_connect(client, userdata, rc):
-    print ("Connected with rc: " + str(rc))
+# mqtt methods
+def on_log(client, userdata, level, buf):
+    print("log: ", buf)
+    
+def on_disconnect(client, userdata, msg):
+    print("Disconnected from broker")
+
+def on_connect(client, userdata, flags, rc):
+    print("Connected with rc: " + str(rc))
     client.subscribe("start")
     client.subscribe("data")
     client.subscribe("stop")
+    
+    # Add static text
+    img = Image.new('RGBA', (WIDTH, HEIGHT))
+    draw = ImageDraw.Draw(img)
+    draw.text((10, 10 + text_height*1), "Power:", font=text_font, fill='black')
+    draw.text((10, 10 + text_height*2), "Cadence:", font=text_font, fill='black')
+    draw.text((WIDTH/2 - 140, HEIGHT-speed_height), "SP:", font=speed_font, fill='black')
+    
+    overlay = camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
+    overlay.layer = 3
+    overlay.fullscreen = True
 
 def on_message(client, userdata, msg):
+    global START_TIME
+    print(msg.topic + " " + str(msg.payload.decode("utf-8")))
+    current_time = round(time.time(), 2)
     if msg.topic == "data":
-        print(data)
         data = str(msg.payload.decode("utf-8"))
+        print(data)
         parsed_data = parse_data(data)
-        GLOBAL_DATA.power = parsed_data.power
-        GLOBAL_DATA.cadence = parsed_data.cadence
-        # Display power
-        draw.text((10, 10 + text_height*1), str(GLOBAL_DATA["power"]), font=text_font, fill='black')
+        GLOBAL_DATA["power"] += int(parsed_data["power"])
+        GLOBAL_DATA["cadence"] += int(parsed_data["cadence"])
+        GLOBAL_DATA["gps_speed"] += float(parsed_data["gps_speed"])
+        GLOBAL_DATA["count"] = GLOBAL_DATA["count"] + 1
+        total_time = current_time - START_TIME
+        print(total_time)
+        update_time = 0.5
+        if total_time >= update_time:
+            START_TIME = current_time
+            # Create a transparent image to attach text
+            img = Image.new('RGBA', (WIDTH, HEIGHT))
+            draw = ImageDraw.Draw(img)
+            # Display power
+            power = GLOBAL_DATA["power"]/GLOBAL_DATA["count"]
+            draw.text((120, 10 + text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='black')
 
-        # Display cadence
-        draw.text((10, 10 + text_height*2), str(GLOBAL_DATA["cadence"]), font=text_font, fill='black')
+            # Display cadence
+            cadence = power = GLOBAL_DATA["cadence"]/GLOBAL_DATA["count"]
+            draw.text((120, 10 + text_height*2), "{0}".format(round(cadence, 2)), font=text_font, fill='black')
 
-        # Add the image to the preview overlay
-        overlay = camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
-        overlay.layer = 3
-        overlay.fullscreen = True
+            # Display speed
+            speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
+            speed = GLOBAL_DATA["gps_speed"]/GLOBAL_DATA["count"]
+            speed_text = "{0} km/h".format(round(speed, 2))
+            draw.text((WIDTH/2 - 30, HEIGHT-speed_height), speed_text, font=speed_font, fill='black')
+            # Add the image to the preview overlay
+            global PREV_OVERLAY
+            print(PREV_OVERLAY)
+            if PREV_OVERLAY:
+                camera.remove_overlay(PREV_OVERLAY)
+            overlay = camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
+            overlay.layer = 3
+            overlay.fullscreen = True
+            PREV_OVERLAY = overlay
+            
+            # Reset variables
+            GLOBAL_DATA["power"] = 0
+            GLOBAL_DATA["cadence"] = 0
+            GLOBAL_DATA["gps_speed"] = 0
+            GLOBAL_DATA["count"] = 0
 
 client = mqtt.Client()
 client.on_connect = on_connect
+client.on_disconnect = on_disconnect
 client.on_message = on_message
+client.on_log = on_log
+
 client.connect("192.168.100.100", 1883, 60)
 
-# Create a transparent image to attach text
-img = Image.new('RGBA', (WIDTH, HEIGHT))
-draw = ImageDraw.Draw(img)
-
-"""
-Text display for speed.
-"""
-# Text height in pixel
-speed_height = 50
-speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
-speed = 'SP: {}'.format(0)
-draw.text((WIDTH/2 - 65, HEIGHT-speed_height), speed, font=speed_font, fill='black')
-"""
-unit_height = 25
-unit_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',unit_height)
-unit = ' km/h'
-draw.text((WIDTH/2, HEIGHT-unit_height), unit, font=unit_font, fill='black')
-"""
-
-
-"""
-Text display for power, cadence (pedalling rate), distance, heart rate. As mentionaed
-above, these are dummy text for displaying purpose only.
-"""
-
-#display_text = ['Pwr: {}'.format(0),'Cad: {}'.format(0.0), 'Dist: {}'.format(0.0), 'H/r: {}'.format(0)]
-
-
-
-
-"""
-Text display for time. "annotate_text" is used instead of "draw.text" because by default,
-(1) the text generated by "annotate_text" is centrally aligned in the middle of the screen,
-and (2) the text is saved toghether with the recorded video while "draw.text" will not be saved.
-"""
-camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-camera.annotate_text_size = 26
-camera.annotate_foreground = Color('black')
-
-# Update the time after 1 second
-# while True:
-#     sleep(1)
-#     camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
 # mqtt loop
+camera.start_preview()
 client.loop_forever()
+
