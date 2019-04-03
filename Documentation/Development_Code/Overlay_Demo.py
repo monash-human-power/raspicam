@@ -162,7 +162,7 @@ client.on_disconnect = on_disconnect
 client.on_message = on_message
 client.on_log = on_log
 
-client.connect("192.168.1.65", 1883, 60)
+client.connect("192.168.100.100", 1883, 60)
 
 # mqtt loop
 camera.start_preview()
