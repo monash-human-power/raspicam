@@ -1,11 +1,3 @@
-# Written by: Minh T Nguyen
-# Last modified: 17/7/2018
-# Softwares: Python 3.4.2, picamera 1.13, PIL 1.1.7
-# Hardwares: Camera Module V2.1, Official 7" touchscreen monitor
-
-# Descriptions: A camera preview with the data overlay of time, speed, heart rate,
-# power, cadence and distance. This is a demo therefore only the time is working.
-# All other entries are just dummy data and is used for display purpose.
 
 from picamera import PiCamera, Color
 from PIL import Image, ImageDraw, ImageFont
@@ -16,7 +8,7 @@ import json
 
 speed_height = 50
 speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
-text_height = 20
+text_height = 25
 text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',text_height)
 
 PREV_OVERLAY = None
@@ -25,6 +17,7 @@ GLOBAL_DATA = {
     "power": 0,
     "cadence": 0,
     "gps_speed": 0,
+    "reed_distance": 0,
     "count": 0,
 }
 
@@ -52,7 +45,7 @@ def parse_data(data):
 
 # mqtt methods
 def on_log(client, userdata, level, buf):
-    print("log: ", buf)
+    print("\nlog: ", buf)
     
 def on_disconnect(client, userdata, msg):
     print("Disconnected from broker")
@@ -69,6 +62,7 @@ def on_connect(client, userdata, flags, rc):
     draw = ImageDraw.Draw(img)
     draw.text((10, 10 + text_height*1), "Power:", font=text_font, fill='black')
     draw.text((10, 10 + text_height*2), "Cadence:", font=text_font, fill='black')
+    draw.text((10, 10 + text_height*3), "Distance:", font=text_font, fill='black')
     draw.text((WIDTH/2 - 140, HEIGHT-speed_height), "SP:", font=speed_font, fill='black')
     
     overlay = camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
@@ -82,6 +76,7 @@ def on_message(client, userdata, msg):
     if msg.topic == "power_model/targets":
         req_data = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(req_data)
+        #print(parsed_data)
         REQUIRED_DATA["rec_power"] = int(parsed_data["rec_power"])
         REQUIRED_DATA["rec_speed"] = int(parsed_data["rec_speed"])
         
@@ -93,6 +88,7 @@ def on_message(client, userdata, msg):
         GLOBAL_DATA["cadence"] += int(parsed_data["cadence"])
         if int(parsed_data["gps"]) == 1:
             GLOBAL_DATA["gps_speed"] += float(parsed_data["gps_speed"])
+        GLOBAL_DATA["reed_distance"] += int(parsed_data["reed_distance"])
         GLOBAL_DATA["count"] = GLOBAL_DATA["count"] + 1
         total_time = current_time - START_TIME
         update_time = 0.5
@@ -138,7 +134,12 @@ def on_message(client, userdata, msg):
                     else:
                         draw.text((WIDTH/2 - 30, HEIGHT-speed_height), speed_text, font=speed_font, fill='black')
 
-
+            # Display reed_distance (distance travelled)
+            if GLOBAL_DATA["reed_distance"] != 0:
+                reed_distance = GLOBAL_DATA["reed_distance"]/GLOBAL_DATA["count"]
+                draw.text((120, 10 + text_height*3), "{0}".format(round(reed_distance, 2)), font=text_font, fill='black')
+                
+                
             # Remove and add the image to the preview overlay
             global PREV_OVERLAY
             if PREV_OVERLAY:
@@ -152,6 +153,7 @@ def on_message(client, userdata, msg):
             GLOBAL_DATA["power"] = 0
             GLOBAL_DATA["cadence"] = 0
             GLOBAL_DATA["gps_speed"] = 0
+            GLOBAL_DATA["reed_distance"] = 0
             GLOBAL_DATA["count"] = 0
 
 client = mqtt.Client()
@@ -160,7 +162,7 @@ client.on_disconnect = on_disconnect
 client.on_message = on_message
 client.on_log = on_log
 
-client.connect("192.168.100.100", 1883, 60)
+client.connect("192.168.1.65", 1883, 60)
 
 # mqtt loop
 camera.start_preview()
