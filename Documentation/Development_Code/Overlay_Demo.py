@@ -6,10 +6,12 @@ import datetime as dt
 import paho.mqtt.client as mqtt
 import json
 
-speed_height = 50
+speed_height = 70
 speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
-text_height = 25
+text_height = 45
 text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',text_height)
+
+brokerIP = "192.168.100.100"
 
 PREV_OVERLAY = None
 START_TIME = round(time.time(), 2)
@@ -27,8 +29,8 @@ REQUIRED_DATA = {
 }
 
 # The resolution of the camera preview. Current system using 800x480.
-WIDTH = 800
-HEIGHT = 480
+WIDTH = 1280
+HEIGHT = 800
 
 # Initiate camera preview
 camera = PiCamera(resolution=(WIDTH, HEIGHT))
@@ -104,18 +106,18 @@ def on_message(client, userdata, msg):
                 rec_power = REQUIRED_DATA["rec_power"]
                 tolerance = 0.05
                 if power> rec_power and power < (rec_power + (rec_power*tolerance)):
-                    draw.text((120, 10 + text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='green')
+                    draw.text((250, 10 + text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='green')
                     
                 elif power > (rec_power + (rec_power*tolerance)):
-                    draw.text((120, 10 + text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='red')
+                    draw.text((250, 10 + text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='red')
 
                 else:
-                    draw.text((120, 10 + text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='black')
+                    draw.text((250, 10 + text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='black')
 
             # Display cadence
             if GLOBAL_DATA["cadence"] != 0:
                 cadence = GLOBAL_DATA["cadence"]/GLOBAL_DATA["count"]
-                draw.text((120, 10 + text_height*2), "{0}".format(round(cadence, 2)), font=text_font, fill='black')
+                draw.text((250, 10 + text_height*2), "{0}".format(round(cadence, 2)), font=text_font, fill='black')
 
             # Display speed
             if int(parsed_data["gps"]) == 1:
@@ -137,7 +139,7 @@ def on_message(client, userdata, msg):
             # Display reed_distance (distance travelled)
             if GLOBAL_DATA["reed_distance"] != 0:
                 reed_distance = GLOBAL_DATA["reed_distance"]/GLOBAL_DATA["count"]
-                draw.text((120, 10 + text_height*3), "{0}".format(round(reed_distance, 2)), font=text_font, fill='black')
+                draw.text((250, 10 + text_height*3), "{0}".format(round(reed_distance, 2)), font=text_font, fill='black')
                 
                 
             # Remove and add the image to the preview overlay
@@ -162,9 +164,10 @@ client.on_disconnect = on_disconnect
 client.on_message = on_message
 client.on_log = on_log
 
-client.connect("192.168.100.100", 1883, 60)
+client.connect(brokerIP, 1883, 60)
 
 # mqtt loop
-camera.start_preview()
+# Position and size of the preview window(x,y,width,height)
+camera.start_preview(fullscreen=False, window=(0,-20,WIDTH,HEIGHT))
 client.loop_forever()
 
