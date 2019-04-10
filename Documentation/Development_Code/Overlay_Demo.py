@@ -62,10 +62,10 @@ def on_connect(client, userdata, flags, rc):
     # Add static text
     img = Image.new('RGBA', (WIDTH, HEIGHT))
     draw = ImageDraw.Draw(img)
-    draw.text((10, 10 + text_height*1), "Power:", font=text_font, fill='black')
-    draw.text((10, 10 + text_height*2), "Cadence:", font=text_font, fill='black')
-    draw.text((10, 10 + text_height*3), "Distance:", font=text_font, fill='black')
-    draw.text((WIDTH/2 - 140, HEIGHT-speed_height), "SP:", font=speed_font, fill='black')
+    draw.text((0, text_height*1), "Power:", font=text_font, fill='black')
+    draw.text((0, text_height*2), "Cadence:", font=text_font, fill='black')
+    draw.text((0, text_height*3), "Distance:", font=text_font, fill='black')
+    #draw.text((WIDTH/2 - 140, HEIGHT-speed_height), "SP:", font=speed_font, fill='black')
     
     overlay = camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
     overlay.layer = 3
@@ -106,18 +106,18 @@ def on_message(client, userdata, msg):
                 rec_power = REQUIRED_DATA["rec_power"]
                 tolerance = 0.05
                 if power> rec_power and power < (rec_power + (rec_power*tolerance)):
-                    draw.text((250, 10 + text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='green')
+                    draw.text((200, text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='green')
                     
                 elif power > (rec_power + (rec_power*tolerance)):
-                    draw.text((250, 10 + text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='red')
+                    draw.text((200, text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='red')
 
                 else:
-                    draw.text((250, 10 + text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='black')
+                    draw.text((200, text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='black')
 
             # Display cadence
             if GLOBAL_DATA["cadence"] != 0:
                 cadence = GLOBAL_DATA["cadence"]/GLOBAL_DATA["count"]
-                draw.text((250, 10 + text_height*2), "{0}".format(round(cadence, 2)), font=text_font, fill='black')
+                draw.text((200, text_height*2), "{0}".format(round(cadence, 2)), font=text_font, fill='black')
 
             # Display speed
             if int(parsed_data["gps"]) == 1:
@@ -131,7 +131,7 @@ def on_message(client, userdata, msg):
                         draw.text((WIDTH/2 - 30, HEIGHT-speed_height), speed_text, font=speed_font, fill='green')
                         
                     elif speed > (rec_speed + (rec_speed*tolerance)):
-                        draw.text((WIDTH/2 - 30, HEIGHT-speed_height), speed_text, font=speed_font, fill='red')
+                        draw.text((WIDTH/2 - 140, HEIGHT-speed_height), speed_text, font=speed_font, fill='red')
 
                     else:
                         draw.text((WIDTH/2 - 30, HEIGHT-speed_height), speed_text, font=speed_font, fill='black')
@@ -139,7 +139,7 @@ def on_message(client, userdata, msg):
             # Display reed_distance (distance travelled)
             if GLOBAL_DATA["reed_distance"] != 0:
                 reed_distance = GLOBAL_DATA["reed_distance"]/GLOBAL_DATA["count"]
-                draw.text((250, 10 + text_height*3), "{0}".format(round(reed_distance, 2)), font=text_font, fill='black')
+                draw.text((200, text_height*3), "{0}".format(round(reed_distance, 2)), font=text_font, fill='black')
                 
                 
             # Remove and add the image to the preview overlay
