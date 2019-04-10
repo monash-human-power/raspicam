@@ -26,6 +26,7 @@ GLOBAL_DATA = {
 REQUIRED_DATA = {
     "rec_power": 0,
     "rec_speed": 0,
+    "max_speed": 0,
 }
 
 # The resolution of the camera preview. Current system using 800x480.
@@ -58,15 +59,19 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("data")
     client.subscribe("stop")
     client.subscribe("power_model/recommended_SP")
-    
+    client.subscribe("power_model/max_speed")
+
     # Add static text
     img = Image.new('RGBA', (WIDTH, HEIGHT))
     draw = ImageDraw.Draw(img)
-    draw.text((0, text_height*1), "Power:", font=text_font, fill='black')
-    draw.text((0, text_height*2), "Cadence:", font=text_font, fill='black')
-    draw.text((0, text_height*3), "Distance:", font=text_font, fill='black')
-    #draw.text((WIDTH/2 - 140, HEIGHT-speed_height), "SP:", font=speed_font, fill='black')
-    
+    draw.text((0, text_height*1), "REC Power:", font=text_font, fill='black')
+    draw.text((0, text_height*2), "Power:", font=text_font, fill='black')
+    draw.text((0, text_height*3), "Cadence:", font=text_font, fill='black')
+    draw.text((0, text_height*4), "Distance:", font=text_font, fill='black')
+    draw.text((WIDTH/2 - 140, HEIGHT-speed_height), "SP:", font=speed_font, fill='black')
+    draw.text((WIDTH/2 - 140, HEIGHT-speed_height*2), "REC SP:", font=speed_font, fill='black')
+    draw.text((WIDTH/2 - 140, HEIGHT-speed_height*3), "MAX SP:", font=speed_font, fill='black')
+
     overlay = camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
     overlay.layer = 3
     overlay.fullscreen = True
@@ -78,11 +83,12 @@ def on_message(client, userdata, msg):
     if msg.topic == "power_model/recommended_SP":
         req_data = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(req_data)
-        #print(parsed_data)
         REQUIRED_DATA["rec_power"] = float(parsed_data["rec_power"])
         REQUIRED_DATA["rec_speed"] = float(parsed_data["rec_speed"])
-        
-    if msg.topic == "data":
+    elif msg.topic == "power_model/max_speed":
+        max_speed = str(msg.payload.decode("utf-8"))
+        REQUIRED_DATA["max_speed"] = float(max_speed)
+    elif msg.topic == "data":
         data = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(data)
         print(str(parsed_data))
@@ -105,28 +111,40 @@ def on_message(client, userdata, msg):
                 power = GLOBAL_DATA["power"]/GLOBAL_DATA["count"]
                 rec_power = REQUIRED_DATA["rec_power"]
                 tolerance = 0.05
+                # Display recommended power
+                draw.text((200, text_height*1), "{0}".format(round(rec_power, 2)), font=text_font, fill='black')
+                # Display power
                 if power> rec_power and power < (rec_power + (rec_power*tolerance)):
-                    draw.text((200, text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='green')
+                    draw.text((200, text_height*2), "{0}".format(round(power, 2)), font=text_font, fill='green')
                     
                 elif power > (rec_power + (rec_power*tolerance)):
-                    draw.text((200, text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='red')
+                    draw.text((200, text_height*2), "{0}".format(round(power, 2)), font=text_font, fill='red')
 
                 else:
-                    draw.text((200, text_height*1), "{0}".format(round(power, 2)), font=text_font, fill='black')
+                    draw.text((200, text_height*2), "{0}".format(round(power, 2)), font=text_font, fill='black')
 
             # Display cadence
             if GLOBAL_DATA["cadence"] != 0:
                 cadence = GLOBAL_DATA["cadence"]/GLOBAL_DATA["count"]
-                draw.text((200, text_height*2), "{0}".format(round(cadence, 2)), font=text_font, fill='black')
+                draw.text((200, text_height*3), "{0}".format(round(cadence, 2)), font=text_font, fill='black')
 
             # Display speed
             if int(parsed_data["gps"]) == 1:
                 if GLOBAL_DATA["gps_speed"] != 0:
                     speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
-                    speed = GLOBAL_DATA["gps_speed"]/GLOBAL_DATA["count"]
+                    # Max Speed
+                    max_speed = REQUIRED_DATA["max_speed"]
+                    max_speed_text = "{0} km/h".format(round(max_speed, 2))
+                    draw.text((WIDTH/2 - 30, HEIGHT-speed_height*3), max_speed_text, font=speed_font, fill='black')
+
+                    # Recommended speed
                     rec_speed = REQUIRED_DATA["rec_speed"]
+                    rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
+                    draw.text((WIDTH/2 - 30, HEIGHT-speed_height*2), rec_speed_text, font=speed_font, fill='black')
+                    
+                    # Actual speed
+                    speed = GLOBAL_DATA["gps_speed"]/GLOBAL_DATA["count"]
                     speed_text = "{0} km/h".format(round(speed, 2))
-                     
                     if speed> rec_speed and speed < (rec_speed + (rec_speed*tolerance)):
                         draw.text((WIDTH/2 - 30, HEIGHT-speed_height), speed_text, font=speed_font, fill='green')
                         
@@ -139,7 +157,7 @@ def on_message(client, userdata, msg):
             # Display reed_distance (distance travelled)
             if GLOBAL_DATA["reed_distance"] != 0:
                 reed_distance = GLOBAL_DATA["reed_distance"]/GLOBAL_DATA["count"]
-                draw.text((200, text_height*3), "{0}".format(round(reed_distance, 2)), font=text_font, fill='black')
+                draw.text((200, text_height*4), "{0}".format(round(reed_distance, 2)), font=text_font, fill='black')
                 
                 
             # Remove and add the image to the preview overlay
