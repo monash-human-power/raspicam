@@ -57,7 +57,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("start")
     client.subscribe("data")
     client.subscribe("stop")
-    client.subscribe("power_model/targets")
+    client.subscribe("power_model/recommended_SP")
     
     # Add static text
     img = Image.new('RGBA', (WIDTH, HEIGHT))
@@ -75,12 +75,12 @@ def on_message(client, userdata, msg):
     global START_TIME
     print(msg.topic + " " + str(msg.payload.decode("utf-8")))
     current_time = round(time.time(), 2)
-    if msg.topic == "power_model/targets":
+    if msg.topic == "power_model/recommended_SP":
         req_data = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(req_data)
         #print(parsed_data)
-        REQUIRED_DATA["rec_power"] = int(parsed_data["rec_power"])
-        REQUIRED_DATA["rec_speed"] = int(parsed_data["rec_speed"])
+        REQUIRED_DATA["rec_power"] = float(parsed_data["rec_power"])
+        REQUIRED_DATA["rec_speed"] = float(parsed_data["rec_speed"])
         
     if msg.topic == "data":
         data = str(msg.payload.decode("utf-8"))
@@ -90,7 +90,7 @@ def on_message(client, userdata, msg):
         GLOBAL_DATA["cadence"] += int(parsed_data["cadence"])
         if int(parsed_data["gps"]) == 1:
             GLOBAL_DATA["gps_speed"] += float(parsed_data["gps_speed"])
-        GLOBAL_DATA["reed_distance"] += int(parsed_data["reed_distance"])
+        GLOBAL_DATA["reed_distance"] += float(parsed_data["reed_distance"])
         GLOBAL_DATA["count"] = GLOBAL_DATA["count"] + 1
         total_time = current_time - START_TIME
         update_time = 0.5
