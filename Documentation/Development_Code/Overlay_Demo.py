@@ -18,6 +18,7 @@ START_TIME = round(time.time(), 2)
 GLOBAL_DATA = {
     "power": 0,
     "cadence": 0,
+    "reed_velocity": 0,
     "gps_speed": 0,
     "reed_distance": 0,
     "count": 0,
@@ -97,6 +98,7 @@ def on_message(client, userdata, msg):
         if int(parsed_data["gps"]) == 1:
             GLOBAL_DATA["gps_speed"] += float(parsed_data["gps_speed"])
         GLOBAL_DATA["reed_distance"] += float(parsed_data["reed_distance"])
+        GLOBAL_DATA["reed_velocity"] += float(parsed_data["reed_velocity"])
         GLOBAL_DATA["count"] = GLOBAL_DATA["count"] + 1
         total_time = current_time - START_TIME
         update_time = 0.5
