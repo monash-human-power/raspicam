@@ -195,10 +195,12 @@ client.on_disconnect = on_disconnect
 client.on_message = on_message
 client.on_log = on_log
 
-client.connect(brokerIP, 1883, 60)
+client.connect_async(brokerIP, 1883, 60)
 
 # mqtt loop
 # Position and size of the preview window(x,y,width,height)
 camera.start_preview(fullscreen=False, window=(0,-20,WIDTH,HEIGHT))
-client.loop_forever()
+client.loop_start()
+while True:
+    time.sleep(1)
 
