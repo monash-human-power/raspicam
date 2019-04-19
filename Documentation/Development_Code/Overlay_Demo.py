@@ -19,6 +19,7 @@ MAX_SPEED = 0
 GLOBAL_DATA = {
     "power": 0,
     "cadence": 0,
+    "reed_velocity": 0,
     "gps_speed": 0,
     "reed_distance": 0,
     "count": 0,
@@ -108,6 +109,7 @@ def on_message(client, userdata, msg):
         if int(parsed_data["gps"]) == 1:
             GLOBAL_DATA["gps_speed"] += float(parsed_data["gps_speed"])
         GLOBAL_DATA["reed_distance"] += float(parsed_data["reed_distance"])
+        GLOBAL_DATA["reed_velocity"] += float(parsed_data["reed_velocity"])
         GLOBAL_DATA["count"] = GLOBAL_DATA["count"] + 1
         total_time = current_time - START_TIME
         update_time = 0.5
@@ -140,34 +142,29 @@ def on_message(client, userdata, msg):
                 draw.text((300, text_height*3), "{0}".format(round(cadence, 2)), font=text_font, fill='black')
 
             # Display speed
-            if int(parsed_data["gps"]) == 1:
-                if GLOBAL_DATA["gps_speed"] != 0:
-                    speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
-                    # Max Speed
-                    max_speed = REQUIRED_DATA["max_speed"]
-                    max_speed_text = "{0} km/h".format(round(max_speed, 2))
-                    draw.text((WIDTH/2 - 70, HEIGHT-speed_height*3), max_speed_text, font=speed_font, fill='black')
+            if GLOBAL_DATA["reed_velocity"] != 0:
+                speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
+                # Max Speed
+                max_speed = REQUIRED_DATA["max_speed"]
+                max_speed_text = "{0} km/h".format(round(max_speed, 2))
+                draw.text((WIDTH/2 - 70, HEIGHT-speed_height*3), max_speed_text, font=speed_font, fill='black')
 
-                    # Recommended speed
-                    rec_speed = REQUIRED_DATA["rec_speed"]
-                    rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
-                    draw.text((WIDTH/2 - 70, HEIGHT-speed_height*2), rec_speed_text, font=speed_font, fill='black')
+                # Recommended speed
+                rec_speed = REQUIRED_DATA["rec_speed"]
+                rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
+                draw.text((WIDTH/2 - 70, HEIGHT-speed_height*2), rec_speed_text, font=speed_font, fill='black')
+                
+                # Actual speed
+                speed = GLOBAL_DATA["reed_velocity"]/GLOBAL_DATA["count"]
+                speed_text = "{0} km/h".format(round(speed, 2))
+                if speed> rec_speed and speed < (rec_speed + (rec_speed*tolerance)):
+                    draw.text((WIDTH/2 - 70, HEIGHT-speed_height), speed_text, font=speed_font, fill='green')
                     
-                    # Actual speed
-                    speed = GLOBAL_DATA["gps_speed"]/GLOBAL_DATA["count"]
+                elif speed > (rec_speed + (rec_speed*tolerance)):
+                    draw.text((WIDTH/2 - 70, HEIGHT-speed_height), speed_text, font=speed_font, fill='red')
 
-                    # Calculate Actual Max Speed
-                    actual_max(speed)
-
-                    speed_text = "{0} km/h".format(round(speed, 2))
-                    if speed> rec_speed and speed < (rec_speed + (rec_speed*tolerance)):
-                        draw.text((WIDTH/2 - 70, HEIGHT-speed_height), speed_text, font=speed_font, fill='green')
-                        
-                    elif speed > (rec_speed + (rec_speed*tolerance)):
-                        draw.text((WIDTH/2 - 70, HEIGHT-speed_height), speed_text, font=speed_font, fill='red')
-
-                    else:
-                        draw.text((WIDTH/2 - 70, HEIGHT-speed_height), speed_text, font=speed_font, fill='black')
+                else:
+                    draw.text((WIDTH/2 - 70, HEIGHT-speed_height), speed_text, font=speed_font, fill='black')
 
             # Display reed_distance (distance travelled)
             if GLOBAL_DATA["reed_distance"] != 0:
@@ -188,6 +185,7 @@ def on_message(client, userdata, msg):
             GLOBAL_DATA["power"] = 0
             GLOBAL_DATA["cadence"] = 0
             GLOBAL_DATA["gps_speed"] = 0
+            GLOBAL_DATA["reed_velocity"] = 0
             GLOBAL_DATA["reed_distance"] = 0
             GLOBAL_DATA["count"] = 0
 
@@ -197,10 +195,12 @@ client.on_disconnect = on_disconnect
 client.on_message = on_message
 client.on_log = on_log
 
-client.connect(brokerIP, 1883, 60)
+client.connect_async(brokerIP, 1883, 60)
 
 # mqtt loop
 # Position and size of the preview window(x,y,width,height)
 camera.start_preview(fullscreen=False, window=(0,-20,WIDTH,HEIGHT))
-client.loop_forever()
+client.loop_start()
+while True:
+    time.sleep(1)
 
