@@ -15,6 +15,7 @@ brokerIP = "192.168.100.100"
 
 PREV_OVERLAY = None
 START_TIME = round(time.time(), 2)
+MAX_SPEED = 0
 GLOBAL_DATA = {
     "power": 0,
     "cadence": 0,
@@ -46,6 +47,16 @@ def parse_data(data):
         key,value = term.split("=")
         data_dict[key] = value
     return data_dict
+
+# Calculate Max-speed
+def actual_max(cur_speed):
+    global MAX_SPEED
+
+    if cur_speed > MAX_SPEED:
+        MAX_SPEED = cur_speed
+    
+    
+
 
 # mqtt methods
 def on_log(client, userdata, level, buf):
