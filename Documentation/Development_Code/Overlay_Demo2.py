@@ -18,7 +18,7 @@ top_text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.
 top_box_height = 80
 top_box_width = WIDTH
 
-brokerIP = "192.168.100.99"
+brokerIP = "192.168.100.100"
 
 PREV_OVERLAY = None
 START_TIME = round(time.time(), 2) # static, doesn't change
