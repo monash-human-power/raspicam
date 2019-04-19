@@ -35,9 +35,9 @@ GLOBAL_DATA = {
 
 REQUIRED_DATA = {
     "rec_power": 0,
-    "rec_speed": 0,
     "pred_max_speed": 0,
-    "zdist": 0
+    "zdist": 0,
+    "plan_name": ""
 }
 
 # Initiate camera preview
@@ -74,6 +74,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("stop")
     client.subscribe("power_model/recommended_SP")
     client.subscribe("power_model/predicted_max_speed")
+    client.subscribe("power_model/plan_name")
 
     # Add static text
     img = Image.new('RGBA', (WIDTH, HEIGHT))
@@ -98,13 +99,15 @@ def on_message(client, userdata, msg):
         req_data = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(req_data)
         REQUIRED_DATA["rec_power"] = int(parsed_data["rec_power"])
-        REQUIRED_DATA["rec_speed"] = float(parsed_data["rec_speed"])
         REQUIRED_DATA["zdist"] = int(parsed_data["zdist"])
     elif msg.topic == "power_model/predicted_max_speed":
         pred_max_speed = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(pred_max_speed)
-        print("\nHERE: ", float(parsed_data["predicted_max_speed"]))
         REQUIRED_DATA["pred_max_speed"] = int(parsed_data["predicted_max_speed"])
+    elif msg.topic == "power_model/plan_name":
+        plan_name = str(msg.payload.decode("utf-8"))
+        parsed_data = parse_data(plan_name)
+        REQUIRED_DATA["plan_name"] = str(parsed_data["plan_name"])
     elif msg.topic == "data":
         data = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(data)
@@ -119,7 +122,7 @@ def on_message(client, userdata, msg):
             total_time = current_time - START_TIME
         else:
             total_time = current_time - PREV_TIME
-        update_time = 0.5
+        update_time = 1
         if total_time >= update_time:
             PREV_TIME = current_time
             # Create a transparent image to attach text
@@ -177,14 +180,17 @@ def on_message(client, userdata, msg):
 
             # Display zone distance left (bugged)
             if REQUIRED_DATA["zdist"] != 0:
-                zdist_left = REQUIRED_DATA["zdist"]/GLOBAL_DATA["count"]
-                print("\nHERE\n: ", zdist_left)
-                draw.text((360,(top_box_height-top_text_height)/2+8), "{0}".format(zdist_left), font=top_text_font, fill='white')
+                zdist_left = REQUIRED_DATA["zdist"]
+                draw.text((360,(top_box_height-top_text_height)/2+8), "{0}".format(int(zdist_left)), font=top_text_font, fill='white')
 #            if GLOBAL_DATA["reed_distance"] != 0:
 #                reed_distance = GLOBAL_DATA["reed_distance"]/GLOBAL_DATA["count"]
 #                draw.text((300, text_height*4), "{0}".format(round(reed_distance, 2)), font=top_text_font, fill='black')
-                
-                
+
+            # Display plan name and clear after 15 secs
+            if REQUIRED_DATA["plan_name"] != '' and time.time()-START_TIME <= 15:
+                plan_name = REQUIRED_DATA["plan_name"]
+                draw.text((0, HEIGHT-top_text_height),"{}".format(plan_name), font=top_text_font, fill='red')
+
             # Remove and add the image to the preview overlay
             global PREV_OVERLAY
             if PREV_OVERLAY:
