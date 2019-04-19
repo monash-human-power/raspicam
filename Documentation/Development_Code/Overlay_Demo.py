@@ -15,6 +15,7 @@ brokerIP = "192.168.100.100"
 
 PREV_OVERLAY = None
 START_TIME = round(time.time(), 2)
+MAX_SPEED = 0
 GLOBAL_DATA = {
     "power": 0,
     "cadence": 0,
@@ -45,6 +46,16 @@ def parse_data(data):
         key,value = term.split("=")
         data_dict[key] = value
     return data_dict
+
+# Calculate Max-speed
+def actual_max(cur_speed):
+    global MAX_SPEED
+
+    if cur_speed > MAX_SPEED:
+        MAX_SPEED = cur_speed
+    
+    
+
 
 # mqtt methods
 def on_log(client, userdata, level, buf):
@@ -144,6 +155,10 @@ def on_message(client, userdata, msg):
                     
                     # Actual speed
                     speed = GLOBAL_DATA["gps_speed"]/GLOBAL_DATA["count"]
+
+                    # Calculate Actual Max Speed
+                    actual_max(speed)
+
                     speed_text = "{0} km/h".format(round(speed, 2))
                     if speed> rec_speed and speed < (rec_speed + (rec_speed*tolerance)):
                         draw.text((WIDTH/2 - 70, HEIGHT-speed_height), speed_text, font=speed_font, fill='green')
