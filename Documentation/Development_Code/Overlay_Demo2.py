@@ -166,7 +166,7 @@ def on_message(client, userdata, msg):
                     # Actual speed (no colour change)
                     speed = GLOBAL_DATA["gps_speed"]/GLOBAL_DATA["count"]
                     speed_text = "{0}".format(round(speed, 2))
-                    draw.text((WIDTH/2-90, HEIGHT-bottom_text_height*2), "{0}".format(round(speed,2)), font=bottom_text_font,fill='red')
+                    draw.text((WIDTH/2-90, HEIGHT-bottom_text_height*2-30), "{0}".format(round(speed,2)), font=bottom_text_font,fill='red')
 
                     # Actual max speed
                     actual_max(speed)
