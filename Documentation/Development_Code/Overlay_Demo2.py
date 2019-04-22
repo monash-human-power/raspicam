@@ -138,30 +138,17 @@ def on_message(client, userdata, msg):
             if GLOBAL_DATA["power"] != 0:
                 power = GLOBAL_DATA["power"]/GLOBAL_DATA["count"]
                 rec_power = REQUIRED_DATA["rec_power"]
-#                tolerance = 0.05
                 # Display recommended power
                 draw.text((600, (top_box_height-top_text_height)/2+8), "{0}".format(round(rec_power, 0)), font=top_text_font, fill='white')
                 # Display power (no colour change)
                 draw.text((WIDTH/2-90, HEIGHT-bottom_text_height), "{0}".format(round(power,2)), font=bottom_text_font, fill='red')
-#                if power> rec_power and power < (rec_power + (rec_power*tolerance)):
-#                    draw.text((300, bottom_text_height*2), "{0}".format(round(power, 2)), font=bottom_text_font, fill='green')
-#                elif power > (rec_power + (rec_power*tolerance)):
-#                    draw.text((300, bottom_text_height*2), "{0}".format(round(power, 2)), font=bottom_text_font, fill='red')
-#                else:
-#                    draw.text((300, bottom_text_height*2), "{0}".format(round(power, 2)), font=bottom_text_font, fill='black') 
 
             # Display speed
             if int(parsed_data["gps"]) == 1:
                 if GLOBAL_DATA["gps_speed"] != 0:
                     # Predicted max speed
                     pred_max_speed = REQUIRED_DATA["pred_max_speed"]
-#                    pred_max_speed_text = "{0} km/h".format(round(pred_max_speed, 2))
                     draw.text((890, (top_box_height-top_text_height)/2+8), "{0}".format(round(pred_max_speed,2)), font=top_text_font, fill='white')
-
-                    # Recommended speed
-#                    rec_speed = REQUIRED_DATA["rec_speed"]
-#                    rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
-#                    draw.text((WIDTH/2 - 70, HEIGHT-bottom_text_height*2), rec_speed_text, font=bottom_text_font, fill='black')
 
                     # Actual speed (no colour change)
                     speed = GLOBAL_DATA["gps_speed"]/GLOBAL_DATA["count"]
@@ -171,20 +158,11 @@ def on_message(client, userdata, msg):
                     # Actual max speed
                     actual_max(speed)
                     draw.text((1120, (top_box_height-top_text_height)/2+8), "{0}".format(int(MAX_SPEED)), font = top_text_font, fill='white')
-#                    if speed> rec_speed and speed < (rec_speed + (rec_speed*tolerance)):
-#                        draw.text((WIDTH/2 - 70, HEIGHT-bottom_text_height), speed_text, font=bottom_text_font, fill='green')
-#                    elif speed > (rec_speed + (rec_speed*tolerance)):
-#                        draw.text((WIDTH/2 - 70, HEIGHT-bottom_text_height), speed_text, font=bottom_text_font, fill='red')
-#                    else:
-#                        draw.text((WIDTH/2 - 70, HEIGHT-botttom_text_height), speed_text, font=bottom_text_font, fill='black')
 
             # Display zone distance left (bugged)
             if REQUIRED_DATA["zdist"] != 0:
                 zdist_left = REQUIRED_DATA["zdist"]
                 draw.text((360,(top_box_height-top_text_height)/2+8), "{0}".format(int(zdist_left)), font=top_text_font, fill='white')
-#            if GLOBAL_DATA["reed_distance"] != 0:
-#                reed_distance = GLOBAL_DATA["reed_distance"]/GLOBAL_DATA["count"]
-#                draw.text((300, text_height*4), "{0}".format(round(reed_distance, 2)), font=top_text_font, fill='black')
 
             # Display plan name and clear after 15 secs
             if REQUIRED_DATA["plan_name"] != '' and time.time()-START_TIME <= 15:
