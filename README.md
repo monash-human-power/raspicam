@@ -6,7 +6,7 @@ This repo contains code used to run the Monash Human Power camera system. It is 
   - Added `requirements.txt` to work with virtualenv
 
 ## Dependencies
-To install Pillow (PIL fork) on Raspberry Pi: *haven't tested on fresh Raspberry Pi*
+To install Pillow (PIL fork) on Raspberry Pi: **haven't tested on fresh Raspberry Pi**
   - install virtual env `sudo pip3 install virualenv`
   - install system dependencies listed in Pillow's [doc](https://pillow.readthedocs.io/en/latest/installation.html#linux-installation) `sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev`
   - in MHP_Raspicam folder, run 
@@ -14,5 +14,5 @@ To install Pillow (PIL fork) on Raspberry Pi: *haven't tested on fresh Raspberry
     virtualenv venv
     source venv/bin/activate   
     ````
-  - install python dependencies `pip3 install -r requirements.txt` *haven't tested*
+  - install python dependencies `pip3 install -r requirements.txt` **haven't tested**
   - PROFIT!
