@@ -4,6 +4,7 @@ This repo contains code used to run the Monash Human Power camera system. It is 
 
 ## Important-changes log
   - Added `requirements.txt` to work with virtualenv
+  - Code for V1.5 is in `Legacy` folder, code for V2 is in `CameraOverlay`
 
 ## Dependencies
 To install Pillow (PIL fork), RPi.GPIO, paho-mqtt on Raspberry Pi: **haven't tested on fresh Raspberry Pi**
