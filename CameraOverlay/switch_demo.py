@@ -34,7 +34,7 @@ try:
 			sleep(0.25)
 		prev_switch_state = switch_state
         # TODO: Remove hard coding of directory of python script
-		p1 = subprocess.Popen(["python", "/home/pi/Documents/MHP_Raspicam/Documentation/Development_Code/Overlay_Demo.py"])
+		p1 = subprocess.Popen(["python3", "/home/pi/Documents/MHP_Raspicam/CameraOverlay/Overlay_Demo.py"])
 		turn_off(red_led)
 		turn_on(green_led)
 		sleep(1)
