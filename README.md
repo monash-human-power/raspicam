@@ -16,5 +16,5 @@ To install Pillow (PIL fork), RPi.GPIO, paho-mqtt on Raspberry Pi: **haven't tes
     virtualenv venv
     source venv/bin/activate   
     ````
-  - install python dependencies `pip3 install -r requirements.txt` **haven't tested**
+  - install python dependencies `pip3 install -r requirements.txt`
   - PROFIT!
