@@ -141,7 +141,7 @@ def on_message(client, userdata, msg):
                 # Display recommended power
                 draw.text((600, (top_box_height-top_text_height)/2+8), "{0}".format(round(rec_power, 0)), font=top_text_font, fill='white')
                 # Display power (no colour change)
-                draw.text((WIDTH/2-90, HEIGHT-bottom_text_height), "{0}".format(round(power,2)), font=bottom_text_font, fill='red')
+                draw.text((WIDTH/2-90, HEIGHT-bottom_text_height), "P:{0}".format(round(power,2)), font=bottom_text_font, fill='red')
 
             # Display speed
             if int(parsed_data["gps"]) == 1:
@@ -153,7 +153,7 @@ def on_message(client, userdata, msg):
                     # Actual speed (no colour change)
                     speed = DAS_DATA["gps_speed"] / DAS_DATA["count"]
                     speed_text = "{0}".format(round(speed, 2))
-                    draw.text((WIDTH/2-90, HEIGHT-bottom_text_height*2-30), "{0}".format(round(speed,2)), font=bottom_text_font,fill='red')
+                    draw.text((WIDTH/2-90, HEIGHT-bottom_text_height*2-30), "S:{0}".format(round(speed,2)), font=bottom_text_font,fill='red')
 
                     # Actual max speed
                     actual_max(speed)
