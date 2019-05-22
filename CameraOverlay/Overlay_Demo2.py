@@ -25,7 +25,7 @@ START_TIME = round(time.time(), 2) # static, doesn't change
 PREV_TIME = 0 # updated every time on_message() is called
 MAX_SPEED = 0
 
-GLOBAL_DATA = {
+DAS_DATA = {
     "power": 0,
     "cadence": 0,
     "gps_speed": 0,
@@ -33,7 +33,7 @@ GLOBAL_DATA = {
     "count": 0,
 }
 
-REQUIRED_DATA = {
+POWER_MODEL_DATA = {
     "rec_power": 0,
     "pred_max_speed": 0,
     "zdist": 0,
@@ -98,26 +98,26 @@ def on_message(client, userdata, msg):
     if msg.topic == "power_model/recommended_SP":
         req_data = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(req_data)
-        REQUIRED_DATA["rec_power"] = int(parsed_data["rec_power"])
-        REQUIRED_DATA["zdist"] = int(parsed_data["zdist"])
+        POWER_MODEL_DATA["rec_power"] = int(parsed_data["rec_power"])
+        POWER_MODEL_DATA["zdist"] = int(parsed_data["zdist"])
     elif msg.topic == "power_model/predicted_max_speed":
         pred_max_speed = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(pred_max_speed)
-        REQUIRED_DATA["pred_max_speed"] = int(parsed_data["predicted_max_speed"])
+        POWER_MODEL_DATA["pred_max_speed"] = int(parsed_data["predicted_max_speed"])
     elif msg.topic == "power_model/plan_name":
         plan_name = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(plan_name)
-        REQUIRED_DATA["plan_name"] = str(parsed_data["plan_name"])
+        POWER_MODEL_DATA["plan_name"] = str(parsed_data["plan_name"])
     elif msg.topic == "data":
         data = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(data)
         print(str(parsed_data))
-        GLOBAL_DATA["power"] += int(parsed_data["power"])
-        GLOBAL_DATA["cadence"] += int(parsed_data["cadence"])
+        DAS_DATA["power"] += int(parsed_data["power"])
+        DAS_DATA["cadence"] += int(parsed_data["cadence"])
         if int(parsed_data["gps"]) == 1:
-            GLOBAL_DATA["gps_speed"] += float(parsed_data["gps_speed"])
-        GLOBAL_DATA["reed_distance"] += float(parsed_data["reed_distance"])
-        GLOBAL_DATA["count"] = GLOBAL_DATA["count"] + 1
+            DAS_DATA["gps_speed"] += float(parsed_data["gps_speed"])
+        DAS_DATA["reed_distance"] += float(parsed_data["reed_distance"])
+        DAS_DATA["count"] = DAS_DATA["count"] + 1
         if PREV_TIME == 0:
             total_time = current_time - START_TIME
         else:
@@ -135,9 +135,9 @@ def on_message(client, userdata, msg):
             draw.text((50,(top_box_height-top_text_height)/2+8), "{:0>2}:{:0>2}".format(int(minutes),int(seconds)), font=top_text_font, fill='white') 
 
             # Display power
-            if GLOBAL_DATA["power"] != 0:
-                power = GLOBAL_DATA["power"]/GLOBAL_DATA["count"]
-                rec_power = REQUIRED_DATA["rec_power"]
+            if DAS_DATA["power"] != 0:
+                power = DAS_DATA["power"] / DAS_DATA["count"]
+                rec_power = POWER_MODEL_DATA["rec_power"]
                 # Display recommended power
                 draw.text((600, (top_box_height-top_text_height)/2+8), "{0}".format(round(rec_power, 0)), font=top_text_font, fill='white')
                 # Display power (no colour change)
@@ -145,13 +145,13 @@ def on_message(client, userdata, msg):
 
             # Display speed
             if int(parsed_data["gps"]) == 1:
-                if GLOBAL_DATA["gps_speed"] != 0:
+                if DAS_DATA["gps_speed"] != 0:
                     # Predicted max speed
-                    pred_max_speed = REQUIRED_DATA["pred_max_speed"]
+                    pred_max_speed = POWER_MODEL_DATA["pred_max_speed"]
                     draw.text((890, (top_box_height-top_text_height)/2+8), "{0}".format(round(pred_max_speed,2)), font=top_text_font, fill='white')
 
                     # Actual speed (no colour change)
-                    speed = GLOBAL_DATA["gps_speed"]/GLOBAL_DATA["count"]
+                    speed = DAS_DATA["gps_speed"] / DAS_DATA["count"]
                     speed_text = "{0}".format(round(speed, 2))
                     draw.text((WIDTH/2-90, HEIGHT-bottom_text_height*2-30), "{0}".format(round(speed,2)), font=bottom_text_font,fill='red')
 
@@ -160,13 +160,13 @@ def on_message(client, userdata, msg):
                     draw.text((1120, (top_box_height-top_text_height)/2+8), "{0}".format(int(MAX_SPEED)), font = top_text_font, fill='white')
 
             # Display zone distance left (bugged)
-            if REQUIRED_DATA["zdist"] != 0:
-                zdist_left = REQUIRED_DATA["zdist"]
+            if POWER_MODEL_DATA["zdist"] != 0:
+                zdist_left = POWER_MODEL_DATA["zdist"]
                 draw.text((360,(top_box_height-top_text_height)/2+8), "{0}".format(int(zdist_left)), font=top_text_font, fill='white')
 
             # Display plan name and clear after 15 secs
-            if REQUIRED_DATA["plan_name"] != '' and time.time()-START_TIME <= 15:
-                plan_name = REQUIRED_DATA["plan_name"]
+            if POWER_MODEL_DATA["plan_name"] != '' and time.time()-START_TIME <= 15:
+                plan_name = POWER_MODEL_DATA["plan_name"]
                 draw.text((0, HEIGHT-top_text_height),"{}".format(plan_name), font=top_text_font, fill='red')
 
             # Remove and add the image to the preview overlay
@@ -180,11 +180,11 @@ def on_message(client, userdata, msg):
             PREV_OVERLAY = overlay
             
             # Reset variables
-            GLOBAL_DATA["power"] = 0
-            GLOBAL_DATA["cadence"] = 0
-            GLOBAL_DATA["gps_speed"] = 0
-            GLOBAL_DATA["reed_distance"] = 0
-            GLOBAL_DATA["count"] = 0
+            DAS_DATA["power"] = 0
+            DAS_DATA["cadence"] = 0
+            DAS_DATA["gps_speed"] = 0
+            DAS_DATA["reed_distance"] = 0
+            DAS_DATA["count"] = 0
 
 client = mqtt.Client()
 client.on_connect = on_connect
