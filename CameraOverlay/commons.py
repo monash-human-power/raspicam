@@ -13,6 +13,8 @@ def set_overlay(new_overlays, dir=CURRENT_DIRECTORY):
 	new_overlay = new_overlays[current_device]
 
 	configs = read_configs(dir)
+	if 'device' in configs:
+		configs.pop('device')
 	configs[ACTIVE_OVERLAY_KEY] = new_overlay
 
 	with open(os.path.join(dir, CONFIG_FILE), 'w') as f:
@@ -35,6 +37,6 @@ def get_active_overlay(dir=CURRENT_DIRECTORY):
 	return os.path.join(dir, configs[ACTIVE_OVERLAY_KEY])
 
 if __name__ == '__main__':
-	set_overlay('Overlay_Demo2.py')
+	set_overlay({'primary': 'Overlay_Demo2.py'})
 	print(get_active_overlay())
 	print(read_configs())
