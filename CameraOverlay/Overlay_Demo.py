@@ -74,6 +74,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("power_model/recommended_SP")
     client.subscribe("power_model/max_speed")
     client.subscribe("camera/get_overlays")
+    client.subscribe("camera/set_overlay")
 
     # Add static text
     img = Image.new('RGBA', (WIDTH, HEIGHT))
@@ -105,6 +106,8 @@ def on_message(client, userdata, msg):
     elif msg.topic == "camera/get_overlays":
         overlays = commons.get_overlays()
         client.publish("camera/push_overlays", json.dumps(overlays))
+    elif msg.topic == "camera/set_overlay":
+        commons.set_overlay(str(msg.payload.decode("utf-8")))
     elif msg.topic == "data":
         data = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(data)
