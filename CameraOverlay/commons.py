@@ -8,9 +8,12 @@ ACTIVE_OVERLAY_KEY = 'activeOverlay'
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
-def set_overlay(overlay, dir=CURRENT_DIRECTORY):
+def set_overlay(new_overlays, dir=CURRENT_DIRECTORY):
+	current_device = os.getenv('MHP_CAMERA')
+	new_overlay = new_overlays[current_device]
+
 	configs = read_configs(dir)
-	configs[ACTIVE_OVERLAY_KEY] = overlay
+	configs[ACTIVE_OVERLAY_KEY] = new_overlay
 
 	with open(os.path.join(dir, CONFIG_FILE), 'w') as f:
 		json.dump(configs, f, indent=2, sort_keys=True)

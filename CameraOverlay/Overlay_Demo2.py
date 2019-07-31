@@ -111,7 +111,7 @@ def on_message(client, userdata, msg):
         configs = commons.read_configs()
         client.publish("camera/push_overlays", json.dumps(configs))
     elif msg.topic == "camera/set_overlay":
-        commons.set_overlay(str(msg.payload.decode("utf-8")))
+        commons.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
     elif msg.topic == "power_model/plan_name":
         plan_name = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(plan_name)
