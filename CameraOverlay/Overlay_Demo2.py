@@ -108,8 +108,8 @@ def on_message(client, userdata, msg):
         parsed_data = parse_data(pred_max_speed)
         POWER_MODEL_DATA["pred_max_speed"] = int(parsed_data["predicted_max_speed"])
     elif msg.topic == "camera/get_overlays":
-        overlays = commons.get_overlays()
-        client.publish("camera/push_overlays", json.dumps(overlays))
+        configs = commons.read_configs()
+        client.publish("camera/push_overlays", json.dumps(configs))
     elif msg.topic == "camera/set_overlay":
         commons.set_overlay(str(msg.payload.decode("utf-8")))
     elif msg.topic == "power_model/plan_name":

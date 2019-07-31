@@ -104,8 +104,8 @@ def on_message(client, userdata, msg):
         max_speed = str(msg.payload.decode("utf-8"))
         POWER_MODEL_DATA["max_speed"] = float(max_speed)
     elif msg.topic == "camera/get_overlays":
-        overlays = commons.get_overlays()
-        client.publish("camera/push_overlays", json.dumps(overlays))
+        configs = commons.read_configs()
+        client.publish("camera/push_overlays", json.dumps(configs))
     elif msg.topic == "camera/set_overlay":
         commons.set_overlay(str(msg.payload.decode("utf-8")))
     elif msg.topic == "data":

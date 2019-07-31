@@ -1,29 +1,37 @@
 import os
 import json
-import fnmatch
+from dotenv import load_dotenv
 
+load_dotenv()
 CONFIG_FILE = 'configs.json'
 ACTIVE_OVERLAY_KEY = 'activeOverlay'
-OVERLAY_FILE_PATTERN = 'Overlay_Demo*.py'
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
-def get_overlays(dir=CURRENT_DIRECTORY):
-	overlays = [os.path.basename(file) for file in os.listdir(dir) if fnmatch.fnmatch(file, OVERLAY_FILE_PATTERN)]
-	return overlays
-
-
 def set_overlay(overlay, dir=CURRENT_DIRECTORY):
+	configs = read_configs(dir)
+	configs[ACTIVE_OVERLAY_KEY] = overlay
+
 	with open(os.path.join(dir, CONFIG_FILE), 'w') as f:
-		json.dump({ACTIVE_OVERLAY_KEY: overlay}, f, indent=2)
+		json.dump(configs, f, indent=2, sort_keys=True)
+
+def read_configs(dir=CURRENT_DIRECTORY):
+	filepath = os.path.join(dir, CONFIG_FILE)
+	if not os.path.isfile(filepath):
+		return {}
+	else:
+		with open(filepath) as f:
+			configs = json.load(f)
+
+			current_device = os.getenv('MHP_CAMERA')
+			configs['device'] = current_device
+			return configs
 
 def get_active_overlay(dir=CURRENT_DIRECTORY):
-	with open(os.path.join(dir, CONFIG_FILE)) as f:
-		data = json.load(f)
-		active_overlay = data[ACTIVE_OVERLAY_KEY]
-		return os.path.join(dir, active_overlay)
+	configs = read_configs(dir)
+	return os.path.join(dir, configs[ACTIVE_OVERLAY_KEY])
 
 if __name__ == '__main__':
-	print(get_overlays())
-	set_overlay('bleh bleh bleh')
+	set_overlay('Overlay_Demo2.py')
 	print(get_active_overlay())
+	print(read_configs())
