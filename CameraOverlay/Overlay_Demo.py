@@ -5,6 +5,7 @@ import time
 import datetime as dt
 import paho.mqtt.client as mqtt
 import json
+import commons
 
 speed_height = 70
 speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
@@ -72,6 +73,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("stop")
     client.subscribe("power_model/recommended_SP")
     client.subscribe("power_model/max_speed")
+    client.subscribe("camera/get_overlays")
 
     # Add static text
     img = Image.new('RGBA', (WIDTH, HEIGHT))
@@ -100,6 +102,9 @@ def on_message(client, userdata, msg):
     elif msg.topic == "power_model/max_speed":
         max_speed = str(msg.payload.decode("utf-8"))
         POWER_MODEL_DATA["max_speed"] = float(max_speed)
+    elif msg.topic == "camera/get_overlays":
+        overlays = commons.get_overlays()
+        client.publish("camera/push_overlays", json.dumps(overlays))
     elif msg.topic == "data":
         data = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(data)
