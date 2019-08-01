@@ -76,8 +76,6 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("power_model/recommended_SP")
     client.subscribe("power_model/predicted_max_speed")
     client.subscribe("power_model/plan_name")
-    client.subscribe("camera/get_overlays")
-    client.subscribe("camera/set_overlay")
 
     # Add static text
     img = Image.new('RGBA', (WIDTH, HEIGHT))
@@ -107,11 +105,6 @@ def on_message(client, userdata, msg):
         pred_max_speed = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(pred_max_speed)
         POWER_MODEL_DATA["pred_max_speed"] = int(parsed_data["predicted_max_speed"])
-    elif msg.topic == "camera/get_overlays":
-        configs = commons.read_configs()
-        client.publish("camera/push_overlays", json.dumps(configs))
-    elif msg.topic == "camera/set_overlay":
-        commons.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
     elif msg.topic == "power_model/plan_name":
         plan_name = str(msg.payload.decode("utf-8"))
         parsed_data = parse_data(plan_name)
