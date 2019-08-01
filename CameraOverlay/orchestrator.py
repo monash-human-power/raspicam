@@ -1,8 +1,14 @@
 import json
 import commons
+import argparse
 import paho.mqtt.client as mqtt
 
-brokerIP = "192.168.100.100"
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--host", type=str, default="192.168.100.100", help="ip address of the broker")
+args = parser.parse_args()
+
+brokerIP = args.host
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
