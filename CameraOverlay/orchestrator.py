@@ -2,7 +2,7 @@ import json
 import commons
 import argparse
 import paho.mqtt.client as mqtt
-import test
+import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--host", type=str, default="192.168.100.100", help="ip address of the broker")
