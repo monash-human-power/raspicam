@@ -2,10 +2,7 @@
 from picamera import PiCamera, Color
 from PIL import Image, ImageDraw, ImageFont
 import time
-import datetime as dt
 import paho.mqtt.client as mqtt
-import json
-import commons
 
 speed_height = 70
 speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)

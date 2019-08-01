@@ -3,10 +3,7 @@
 from picamera import PiCamera, Color
 from PIL import Image, ImageDraw, ImageFont
 import time
-import datetime as dt
 import paho.mqtt.client as mqtt
-import json
-import commons
 
 # Resolution of camera preview
 WIDTH = 1280
