@@ -2,7 +2,7 @@ import json
 import commons
 import argparse
 import paho.mqtt.client as mqtt
-
+import test
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--host", type=str, default="192.168.100.100", help="ip address of the broker")
@@ -25,7 +25,7 @@ def on_message(client, userdata, msg):
     if msg.topic == "camera/get_overlays":
         configs = commons.read_configs()
         client.publish("camera/push_overlays", json.dumps(configs))
-    elif msg.topic == "camera/set_overlay":
+    elif msg.topic == "camera/set_overlays":
         commons.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
 
 
@@ -51,3 +51,5 @@ client.connect_async(brokerIP, 1883, 60)
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
 client.loop_start()
+while True:
+    time.sleep(1)
