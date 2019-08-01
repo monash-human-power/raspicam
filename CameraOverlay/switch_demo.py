@@ -1,6 +1,7 @@
 import RPi.GPIO as gpio
 from time import sleep
 import subprocess
+import commons
 
 # Pins
 switch = 15
@@ -34,7 +35,7 @@ try:
 			sleep(0.25)
 		prev_switch_state = switch_state
         # TODO: Remove hard coding of directory of python script
-		p1 = subprocess.Popen(["python3", "/home/pi/Documents/MHP_Raspicam/CameraOverlay/Overlay_Demo.py"])
+		p1 = subprocess.Popen(["python3", commons.get_active_overlay()])
 		turn_off(red_led)
 		turn_on(green_led)
 		sleep(1)
