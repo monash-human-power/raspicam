@@ -2,8 +2,15 @@
 # speed and power.
 from picamera import PiCamera, Color
 from PIL import Image, ImageDraw, ImageFont
+import argparse
 import time
 import paho.mqtt.client as mqtt
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--host", type=str, default="192.168.100.100", help="ip address of the broker")
+args = parser.parse_args()
+
+brokerIP = args.host
 
 # Resolution of camera preview
 WIDTH = 1280
@@ -15,8 +22,6 @@ top_text_height = 45
 top_text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',top_text_height)
 top_box_height = 80
 top_box_width = WIDTH
-
-brokerIP = "192.168.100.100"
 
 PREV_OVERLAY = None
 START_TIME = round(time.time(), 2) # static, doesn't change

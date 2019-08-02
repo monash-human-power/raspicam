@@ -2,14 +2,19 @@
 from picamera import PiCamera, Color
 from PIL import Image, ImageDraw, ImageFont
 import time
+import argparse
 import paho.mqtt.client as mqtt
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--host", type=str, default="192.168.100.100", help="ip address of the broker")
+args = parser.parse_args()
+
+brokerIP = args.host
 
 speed_height = 70
 speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
 text_height = 45
 text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',text_height)
-
-brokerIP = "192.168.100.100"
 
 PREV_OVERLAY = None
 START_TIME = round(time.time(), 2)
