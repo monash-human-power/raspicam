@@ -2,6 +2,8 @@ from picamera import PiCamera, Color
 from PIL import Image, ImageDraw, ImageFont
 import time
 import paho.mqtt.client as mqtt
+from abc import ABC, abstractmethod
+
 
 bottom_text_height = 70
 bottom_text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf', bottom_text_height)
@@ -160,7 +162,7 @@ def on_message(client, userdata, msg):
 
 
 
-class Overlay:
+class Overlay(ABC):
 	def __init__(self, width = 1280, height = 740):
 		self.width = width
 		self.height = height
@@ -169,6 +171,21 @@ class Overlay:
 		self.camera = PiCamera(resolution=(self.width, self.height))
 
 		self.client = mqtt.Client()
+
+	@property
+	def data(self):
+		return NotImplementedError
+
+	@property
+	def data_types(self):
+		return NotImplementedError
+
+	def get_value(self, value):
+		cast_func = self.data_types[value]
+		parsed_value = self.parse_data(self.data[value])
+		casted_value = cast_func(parsed_value)
+		return casted_value
+
 
 	def connect(self, ip, port):
 
@@ -187,10 +204,9 @@ class Overlay:
 			time.sleep(1)
 
 	# Convert data to a suitable format
-	def parse_data(data):
-		terms = data.split("&")
+	def parse_data(self, data):
+		terms = data.decode("utf-8").split("&")
 		data_dict = {}
-		filename = ""
 		for term in terms:
 			key, value = term.split("=")
 			data_dict[key] = value
@@ -209,10 +225,16 @@ class Overlay:
 
 	def on_connect(self, topics):
 		self.subscribe_topics(topics)
-		self.draw
 
 	def subscribe_topics(self, topics):
 		self.client.subscribe(topics)
+
+	@abstractmethod
+	def update_overlay(self, data):
+		pass
+
+
+
 
 
 
