@@ -6,36 +6,6 @@ from abc import ABC, abstractmethod
 
 class Overlay(ABC):
 
-	data = {
-		# das data
-		"power": 0,
-		"cadence": 0,
-		"reed_velocity": 0,
-		"gps_speed": 0,
-		"reed_distance": 0,
-		"count": 0,
-
-		# power model data
-		"rec_power": 0,
-		"rec_speed": 0,
-		"max_speed": 0,
-	}
-
-	data_types = {
-		# das data
-		"power": int,
-		"cadence": int,
-		"reed_velocity": float,
-		"gps_speed": float,
-		"reed_distance": float,
-		"count": int,
-
-		# power model data
-		"rec_power": float,
-		"rec_speed": float,
-		"max_speed": float,
-	}
-
 	def __init__(self, width=1280, height=740):
 		self.width = width
 		self.height = height
@@ -52,13 +22,43 @@ class Overlay(ABC):
 		self.client.on_message = self.on_message
 		self.client.on_log = self.on_log
 
-	@property
-	def data(self):
-		return NotImplementedError
+		self.data = {
+			# das data
+			"count": 0,
+			"cadence": 0,
+			"gps_speed": 0,
+			"power": 0,
+			"reed_distance": 0,
+			"reed_velocity": 0,
 
-	@property
-	def data_types(self):
-		return NotImplementedError
+			# power model data
+			"max_speed": 0,
+			"rec_power": 0,
+			"rec_speed": 0,
+		}
+
+		self.data_types = {
+			# das data
+			"power": int,
+			"cadence": int,
+			"reed_velocity": float,
+			"gps_speed": float,
+			"reed_distance": float,
+			"count": int,
+
+			# power model data
+			"rec_power": float,
+			"rec_speed": float,
+			"max_speed": float,
+		}
+
+		self.topics = [
+			('data', 0),
+			('start', 0),
+			('stop', 0),
+			('power_model/max_speed', 0),
+			('power_model/recommended_SP', 0),
+		]
 
 	def get_value(self, value):
 		cast_func = self.data_types[value]
