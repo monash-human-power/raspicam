@@ -7,6 +7,8 @@ CONFIG_FILE = 'configs.json'
 ACTIVE_OVERLAY_KEY = 'activeOverlay'
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
+TOPIC_POWERMODEL_RECOOM = 'power_model/recommended_SP'
+
 
 def set_overlay(new_overlays, dir=CURRENT_DIRECTORY):
 	current_device = os.getenv('MHP_CAMERA')
