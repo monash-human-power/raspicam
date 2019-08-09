@@ -1,15 +1,15 @@
 from PIL import Image, ImageDraw, ImageFont
 
+WIDTH = 1280
+HEIGHT = 740
+FONT = '/Users/harsilpatel/Coding/MHP_Raspicam/CameraOverlay/LibreCaslonText-Regular.ttf'
 
-def main():
-	# Resolution of camera preview
-	WIDTH = 1280
-	HEIGHT = 740
+def overlay_two():
 
 	bottom_text_height = 70
-	bottom_text_font = ImageFont.truetype('/Users/harsilpatel/Coding/MHP_Raspicam/CameraOverlay/LibreCaslonText-Regular.ttf', bottom_text_height)
+	bottom_text_font = ImageFont.truetype(FONT, bottom_text_height)
 	top_text_height = 45
-	top_text_font = ImageFont.truetype('/Users/harsilpatel/Coding/MHP_Raspicam/CameraOverlay/LibreCaslonText-Regular.ttf', top_text_height)
+	top_text_font = ImageFont.truetype(FONT, top_text_height)
 	top_box_height = 80
 	top_box_width = WIDTH
 
@@ -27,6 +27,23 @@ def main():
 	# overlay.window = (0, -20, WIDTH, HEIGHT)
 	img.show()
 
+def overlay_one():
+	speed_height = 70
+	speed_font = ImageFont.truetype(FONT, speed_height)
+	text_height = 45
+	text_font = ImageFont.truetype(FONT, text_height)
+
+	img = Image.new('RGBA', (WIDTH, HEIGHT))
+	draw = ImageDraw.Draw(img)
+	draw.text((0, text_height * 1), "REC Power:", font=text_font, fill='black')
+	draw.text((0, text_height * 2), "Power:", font=text_font, fill='black')
+	draw.text((0, text_height * 3), "Cadence:", font=text_font, fill='black')
+	draw.text((0, text_height * 4), "Distance:", font=text_font, fill='black')
+	draw.text((WIDTH / 2 - 300, HEIGHT - speed_height), "SP:", font=speed_font, fill='black')
+	draw.text((WIDTH / 2 - 300, HEIGHT - speed_height * 2), "REC:", font=speed_font, fill='black')
+	draw.text((WIDTH / 2 - 300, HEIGHT - speed_height * 3), "MAX:", font=speed_font, fill='black')
+	img.show()
 
 if __name__ == '__main__':
-	main()
+	overlay_one()
+	overlay_two()
