@@ -2,6 +2,13 @@ import os
 import time
 from overlay import Overlay
 from PIL import Image, ImageDraw, ImageFont
+import topics
+
+class POWER_MODEL(Enum):
+	START = "power_model/start"
+	POWER_MODEL_STOP = 2
+	GREEN = 3
+
 
 
 class OverlayTopStrip(Overlay):
@@ -9,10 +16,10 @@ class OverlayTopStrip(Overlay):
 	def __init__(self):
 		super(OverlayTopStrip, self).__init__()
 		self.font_path = os.path.join(os.path.dirname(__file__), 'FreeSans.ttf')
-		self.self.text_height = 45
-		self.self.speed_height = 70
-		self.self.text_font = ImageFont.truetype(self.font_path, self.self.text_height)
-		self.speed_font = ImageFont.truetype(self.font_path, self.self.speed_height)
+		self.text_height = 45
+		self.speed_height = 70
+		self.text_font = ImageFont.truetype(self.font_path, self.text_height)
+		self.speed_font = ImageFont.truetype(self.font_path, self.speed_height)
 
 
 	def on_connect(self, client, userdata, flags, rc):
@@ -22,30 +29,32 @@ class OverlayTopStrip(Overlay):
 		# Add static text
 		img = Image.new('RGBA', (self.width, self.height))
 		draw = ImageDraw.Draw(img)
-		draw.text((0, self.self.text_height * 1), "REC Power:", font=self.self.text_font, fill='black')
-		draw.text((0, self.self.text_height * 2), "Power:", font=self.self.text_font, fill='black')
-		draw.text((0, self.self.text_height * 3), "Cadence:", font=self.self.text_font, fill='black')
-		draw.text((0, self.self.text_height * 4), "Distance:", font=self.self.text_font, fill='black')
-		draw.text((self.width / 2 - 300, self.height - self.self.speed_height), "SP:", font=self.speed_font, fill='black')
-		draw.text((self.width / 2 - 300, self.height - self.self.speed_height * 2), "REC:", font=self.speed_font, fill='black')
-		draw.text((self.width / 2 - 300, self.height - self.self.speed_height * 3), "MAX:", font=self.speed_font, fill='black')
+		draw.text((0, self.text_height * 1), "REC Power:", font=self.text_font, fill='black')
+		draw.text((0, self.text_height * 2), "Power:", font=self.text_font, fill='black')
+		draw.text((0, self.text_height * 3), "Cadence:", font=self.text_font, fill='black')
+		draw.text((0, self.text_height * 4), "Distance:", font=self.text_font, fill='black')
+		draw.text((self.width / 2 - 300, self.height - self.speed_height), "SP:", font=self.speed_font, fill='black')
+		draw.text((self.width / 2 - 300, self.height - self.speed_height * 2), "REC:", font=self.speed_font, fill='black')
+		draw.text((self.width / 2 - 300, self.height - self.speed_height * 3), "MAX:", font=self.speed_font, fill='black')
 
-		overlay = self.add_overlay(img.tobytes(), format='rgba', size=img.size)
+		overlay = self.camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
 		overlay.layer = 3
 		overlay.fullscreen = True
 
 	def on_message(self, client, userdata, msg):
-		print(msg.topic + " " + str(msg.payload.decode("utf-8")))
+		topic = msg.topic
+		print(topic + " " + str(msg.payload.decode("utf-8")))
 		current_time = round(time.time(), 2)
-		if msg.topic == "power_model/recommended_SP":
+
+		if topic == topics.PowerModel.recommended_sp.value:
 			req_data = str(msg.payload.decode("utf-8"))
 			parsed_data = self.parse_data(req_data)
 			self.data["rec_power"] = float(parsed_data["rec_power"])
 			self.data["rec_speed"] = float(parsed_data["rec_speed"])
-		elif msg.topic == "power_model/max_speed":
+		elif topic == topics.PowerModel.max_speed.value:
 			max_speed = str(msg.payload.decode("utf-8"))
 			self.data["max_speed"] = float(max_speed)
-		elif msg.topic == "data":
+		elif topic == topics.DAS.data.value:
 			data = str(msg.payload.decode("utf-8"))
 			parsed_data = self.parse_data(data)
 			print(str(parsed_data))
@@ -122,18 +131,14 @@ class OverlayTopStrip(Overlay):
 				# Remove and add the image to the preview overlay
 				if self.prev_overlay:
 					self.camera.remove_overlay(self.prev_overlay)
-				overlay = self.add_overlay(img.tobytes(), format='rgba', size=img.size)
+				overlay = self.camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
 				overlay.layer = 3
 				overlay.fullscreen = True
-				PREV_OVERLAY = overlay
+				self.prev_overlay = overlay
 
 				# Reset variables
-				self.data["power"] = 0
-				self.data["cadence"] = 0
-				self.data["gps_speed"] = 0
-				self.data["reed_velocity"] = 0
-				self.data["reed_distance"] = 0
-				self.data["count"] = 0
+				for key, _ in self.data.items():
+					self.data[key] = 0
 
 
 if __name__ == '__main__':
