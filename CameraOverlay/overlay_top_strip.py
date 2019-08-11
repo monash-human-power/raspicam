@@ -4,12 +4,6 @@ from overlay import Overlay
 from PIL import Image, ImageDraw, ImageFont
 import topics
 
-class POWER_MODEL(Enum):
-	START = "power_model/start"
-	POWER_MODEL_STOP = 2
-	GREEN = 3
-
-
 
 class OverlayTopStrip(Overlay):
 
@@ -46,15 +40,15 @@ class OverlayTopStrip(Overlay):
 		print(topic + " " + str(msg.payload.decode("utf-8")))
 		current_time = round(time.time(), 2)
 
-		if topic == topics.PowerModel.recommended_sp.value:
+		if topic == topics.PowerModel.recommended_sp:
 			req_data = str(msg.payload.decode("utf-8"))
 			parsed_data = self.parse_data(req_data)
 			self.data["rec_power"] = float(parsed_data["rec_power"])
 			self.data["rec_speed"] = float(parsed_data["rec_speed"])
-		elif topic == topics.PowerModel.max_speed.value:
+		elif topic == topics.PowerModel.max_speed:
 			max_speed = str(msg.payload.decode("utf-8"))
 			self.data["max_speed"] = float(max_speed)
-		elif topic == topics.DAS.data.value:
+		elif topic == topics.DAS.data:
 			data = str(msg.payload.decode("utf-8"))
 			parsed_data = self.parse_data(data)
 			print(str(parsed_data))
@@ -137,8 +131,15 @@ class OverlayTopStrip(Overlay):
 				self.prev_overlay = overlay
 
 				# Reset variables
-				for key, _ in self.data.items():
-					self.data[key] = 0
+				# self.reset_variables()
+
+				# Reset variables
+				self.data["power"] = 0
+				self.data["cadence"] = 0
+				self.data["gps_speed"] = 0
+				self.data["reed_velocity"] = 0
+				self.data["reed_distance"] = 0
+				self.data["count"] = 0
 
 
 if __name__ == '__main__':
