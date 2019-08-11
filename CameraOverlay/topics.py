@@ -13,8 +13,10 @@ class DAS(NeatEnum):
 
 
 class PowerModel(NeatEnum):
-	max_speed = 'power_model/max_speed',
+	plan_name = 'power_model/plan_name'
+	max_speed = 'power_model/max_speed'
 	recommended_sp = 'power_model/recommended_SP'
+	predicted_max_speed = 'power_model/predicted_max_speed'
 
 
 class Camera(NeatEnum):

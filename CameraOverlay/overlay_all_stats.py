@@ -24,12 +24,12 @@ class OverlayAllStats(Overlay):
 	def on_connect(self, client, userdata, flags, rc):
 		print("Connected with rc: " + str(rc))
 		# Subscribed topics
-		client.subscribe("start")
-		client.subscribe("data")
-		client.subscribe("stop")
-		client.subscribe("power_model/recommended_SP")
-		client.subscribe("power_model/predicted_max_speed")
-		client.subscribe("power_model/plan_name")
+		client.subscribe(topics.DAS.start)
+		client.subscribe(topics.DAS.data)
+		client.subscribe(topics.DAS.stop)
+		client.subscribe(topics.PowerModel.recommended_sp)
+		client.subscribe(topics.PowerModel.predicted_max_speed)
+		client.subscribe(topics.PowerModel.plan_name)
 
 		# Add static text
 		img = Image.new('RGBA', (self.width, self.height))
@@ -48,20 +48,20 @@ class OverlayAllStats(Overlay):
 	def on_message(self, client, userdata, msg):
 		print(msg.topic + " " + str(msg.payload.decode("utf-8")))
 		current_time = round(time.time(), 2)
-		if msg.topic == "power_model/recommended_SP":
+		if msg.topic == topics.PowerModel.recommended_sp:
 			req_data = str(msg.payload.decode("utf-8"))
 			parsed_data = self.parse_data(req_data)
 			self.data["rec_power"] = int(parsed_data["rec_power"])
 			self.data["zdist"] = int(parsed_data["zdist"])
-		elif msg.topic == "power_model/predicted_max_speed":
+		elif msg.topic == topics.PowerModel.predicted_max_speed:
 			pred_max_speed = str(msg.payload.decode("utf-8"))
 			parsed_data = self.parse_data(pred_max_speed)
 			self.data["pred_max_speed"] = int(parsed_data["predicted_max_speed"])
-		elif msg.topic == "power_model/plan_name":
+		elif msg.topic == topics.PowerModel.plan_name:
 			plan_name = str(msg.payload.decode("utf-8"))
 			parsed_data = self.parse_data(plan_name)
 			self.data["plan_name"] = str(parsed_data["plan_name"])
-		elif msg.topic == "data":
+		elif msg.topic == topics.DAS.data:
 			data = str(msg.payload.decode("utf-8"))
 			parsed_data = self.parse_data(data)
 			print(str(parsed_data))
