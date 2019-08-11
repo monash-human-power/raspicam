@@ -53,18 +53,8 @@ class Overlay(ABC):
 		}
 
 		self.topics = [
-			('data', 0),
-			('start', 0),
-			('stop', 0),
-			('power_model/max_speed', 0),
-			('power_model/recommended_SP', 0),
-		]
 
-	def get_value(self, value):
-		cast_func = self.data_types[value]
-		parsed_value = self.parse_data(self.data[value])
-		casted_value = cast_func(parsed_value)
-		return casted_value
+		]
 
 	def connect(self, ip, port):
 		self.client.connect_async(ip, port, 60)
@@ -82,7 +72,8 @@ class Overlay(ABC):
 		data_dict = {}
 		for term in terms:
 			key, value = term.split("=")
-			data_dict[key] = value
+			cast_func = self.data_types[key]
+			data_dict[key] = cast_func(value)
 		return data_dict
 
 	# Calculate max speed
@@ -99,9 +90,10 @@ class Overlay(ABC):
 	def subscribe_topics(self, topics):
 		self.client.subscribe(topics)
 
-	@abstractmethod
-	def update_overlay(self, data):
-		pass
+	def reset_variables(self, value=0):
+		for key, _ in self.data.items():
+			self.data[key] = value
+
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
