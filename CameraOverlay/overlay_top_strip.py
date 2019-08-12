@@ -18,7 +18,12 @@ class OverlayTopStrip(Overlay):
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
-		self.client.subscribe(self.topics)
+		# self.client.subscribe(self.topics)
+		client.subscribe(topics.DAS.start)
+		client.subscribe(topics.DAS.data)
+		client.subscribe(topics.DAS.stop)
+		client.subscribe(topics.PowerModel.recommended_sp)
+		client.subscribe(topics.PowerModel.max_speeds)
 
 		# Add static text
 		img = Image.new('RGBA', (self.width, self.height))
