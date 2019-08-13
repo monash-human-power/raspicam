@@ -9,9 +9,9 @@ class OverlayAllStats(Overlay):
 
 	def __init__(self):
 		super(OverlayAllStats, self).__init__()
-	
+
 		self.prev_time = 0
-		
+
 		self.font_path = os.path.join(os.path.dirname(__file__), 'FreeSans.ttf')
 		self.bottom_text_height = 70
 		self.bottom_text_font = ImageFont.truetype(self.font_path, self.bottom_text_height)
@@ -19,7 +19,6 @@ class OverlayAllStats(Overlay):
 		self.top_text_font = ImageFont.truetype(self.font_path, self.top_text_height)
 		self.top_box_height = 80
 		self.top_box_width = self.width
-		
 
 	def on_connect(self, client, userdata, flags, rc):
 		print("Connected with rc: " + str(rc))
@@ -35,11 +34,16 @@ class OverlayAllStats(Overlay):
 		img = Image.new('RGBA', (self.width, self.height))
 		draw = ImageDraw.Draw(img)
 		draw.rectangle(((0, 0), (self.top_box_width, self.top_box_height)), fill='black')
-		draw.text((0, (self.top_box_height - self.top_text_height) / 2 + 8), 'T: ', font=self.top_text_font, fill='white')
-		draw.text((256, (self.top_box_height - self.top_text_height) / 2 + 8), 'ZDL: ', font=self.top_text_font, fill='white')
-		draw.text((512, (self.top_box_height - self.top_text_height) / 2 + 8), 'RP: ', font=self.top_text_font, fill='white')
-		draw.text((768, (self.top_box_height - self.top_text_height) / 2 + 8), 'PMV: ', font=self.top_text_font, fill='white')
-		draw.text((1024, (self.top_box_height - self.top_text_height) / 2 + 8), 'MS: ', font=self.top_text_font, fill='white')
+		draw.text((0, (self.top_box_height - self.top_text_height) / 2 + 8), 'T: ', font=self.top_text_font,
+		          fill='white')
+		draw.text((256, (self.top_box_height - self.top_text_height) / 2 + 8), 'ZDL: ', font=self.top_text_font,
+		          fill='white')
+		draw.text((512, (self.top_box_height - self.top_text_height) / 2 + 8), 'RP: ', font=self.top_text_font,
+		          fill='white')
+		draw.text((768, (self.top_box_height - self.top_text_height) / 2 + 8), 'PMV: ', font=self.top_text_font,
+		          fill='white')
+		draw.text((1024, (self.top_box_height - self.top_text_height) / 2 + 8), 'MS: ', font=self.top_text_font,
+		          fill='white')
 		overlay = self.camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
 		overlay.layer = 3
 		overlay.fullscreen = False
@@ -83,7 +87,7 @@ class OverlayAllStats(Overlay):
 				draw = ImageDraw.Draw(img)
 
 				# Display elapsed time:
-				hours, rem = divmod(time.time() - self.start_time, 3600)
+				_, rem = divmod(time.time() - self.start_time, 3600)
 				minutes, seconds = divmod(rem, 60)
 				draw.text((50, (self.top_box_height - self.top_text_height) / 2 + 8),
 				          "{:0>2}:{:0>2}".format(int(minutes), int(seconds)), font=self.top_text_font, fill='white')
@@ -93,10 +97,12 @@ class OverlayAllStats(Overlay):
 					power = self.data["power"] / self.data["count"]
 					rec_power = self.data["rec_power"]
 					# Display recommended power
-					draw.text((600, (self.top_box_height - self.top_text_height) / 2 + 8), "{0}".format(round(rec_power, 0)),
+					draw.text((600, (self.top_box_height - self.top_text_height) / 2 + 8),
+					          "{0}".format(round(rec_power, 0)),
 					          font=self.top_text_font, fill='white')
 					# Display power (no colour change)
-					draw.text((self.width / 2 - 90, self.height - self.bottom_text_height), "P:{0}".format(round(power, 2)),
+					draw.text((self.width / 2 - 90, self.height - self.bottom_text_height),
+					          "P:{0}".format(round(power, 2)),
 					          font=self.bottom_text_font, fill='red')
 
 				# Display speed
@@ -109,25 +115,28 @@ class OverlayAllStats(Overlay):
 
 						# Actual speed (no colour change)
 						speed = self.data["gps_speed"] / self.data["count"]
-						speed_text = "{0}".format(round(speed, 2))
+						# speed_text = "{0}".format(round(speed, 2))
 						draw.text((self.width / 2 - 90, self.height - self.bottom_text_height * 2 - 30),
 						          "S:{0}".format(round(speed, 2)), font=self.bottom_text_font, fill='red')
 
 						# Actual max speed
 						self.actual_max(speed)
-						draw.text((1120, (self.top_box_height - self.top_text_height) / 2 + 8), "{0}".format(int(self.max_speed)),
+						draw.text((1120, (self.top_box_height - self.top_text_height) / 2 + 8),
+						          "{0}".format(int(self.max_speed)),
 						          font=self.top_text_font, fill='white')
 
 				# Display zone distance left (bugged)
 				if self.data["zdist"] != 0:
 					zdist_left = self.data["zdist"]
-					draw.text((360, (self.top_box_height - self.top_text_height) / 2 + 8), "{0}".format(int(zdist_left)),
+					draw.text((360, (self.top_box_height - self.top_text_height) / 2 + 8),
+					          "{0}".format(int(zdist_left)),
 					          font=self.top_text_font, fill='white')
 
 				# Display plan name and clear after 15 secs
 				if self.data["plan_name"] != '' and time.time() - self.start_time <= 15:
 					plan_name = self.data["plan_name"]
-					draw.text((0, self.height - self.top_text_height), "{}".format(plan_name), font=self.top_text_font, fill='red')
+					draw.text((0, self.height - self.top_text_height), "{}".format(plan_name), font=self.top_text_font,
+					          fill='red')
 
 				# Remove and add the image to the preview overlay
 				if self.prev_overlay:
@@ -144,9 +153,6 @@ class OverlayAllStats(Overlay):
 				self.data["gps_speed"] = 0
 				self.data["reed_distance"] = 0
 				self.data["count"] = 0
-				
-				
-			
 
 
 if __name__ == '__main__':

@@ -4,10 +4,10 @@ WIDTH = 1280
 HEIGHT = 740
 FONT = '/Users/harsilpatel/Coding/MHP_Raspicam/CameraOverlay/LibreCaslonText-Regular.ttf'
 
-def overlay_two():
 
+def overlay_two():
 	bottom_text_height = 70
-	bottom_text_font = ImageFont.truetype(FONT, bottom_text_height)
+	# _ = ImageFont.truetype(FONT, bottom_text_height)
 	top_text_height = 45
 	top_text_font = ImageFont.truetype(FONT, top_text_height)
 	top_box_height = 80
@@ -27,6 +27,7 @@ def overlay_two():
 	# overlay.window = (0, -20, WIDTH, HEIGHT)
 	img.show()
 
+
 def overlay_one():
 	speed_height = 70
 	speed_font = ImageFont.truetype(FONT, speed_height)
@@ -43,6 +44,7 @@ def overlay_one():
 	draw.text((WIDTH / 2 - 300, HEIGHT - speed_height * 2), "REC:", font=speed_font, fill='black')
 	draw.text((WIDTH / 2 - 300, HEIGHT - speed_height * 3), "MAX:", font=speed_font, fill='black')
 	img.show()
+
 
 if __name__ == '__main__':
 	overlay_one()

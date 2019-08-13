@@ -2,12 +2,12 @@ import os
 import json
 from dotenv import load_dotenv
 
+from .topics import *
+
 load_dotenv()
 CONFIG_FILE = 'configs.json'
 ACTIVE_OVERLAY_KEY = 'activeOverlay'
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-
-TOPIC_POWERMODEL_RECOOM = 'power_model/recommended_SP'
 
 
 def set_overlay(new_overlays, dir=CURRENT_DIRECTORY):
@@ -22,6 +22,7 @@ def set_overlay(new_overlays, dir=CURRENT_DIRECTORY):
 	with open(os.path.join(dir, CONFIG_FILE), 'w') as f:
 		json.dump(configs, f, indent=2, sort_keys=True)
 
+
 def read_configs(dir=CURRENT_DIRECTORY):
 	filepath = os.path.join(dir, CONFIG_FILE)
 	if not os.path.isfile(filepath):
@@ -34,9 +35,11 @@ def read_configs(dir=CURRENT_DIRECTORY):
 			configs['device'] = current_device
 			return configs
 
+
 def get_active_overlay(dir=CURRENT_DIRECTORY):
 	configs = read_configs(dir)
 	return os.path.join(dir, configs[ACTIVE_OVERLAY_KEY])
+
 
 if __name__ == '__main__':
 	set_overlay({'primary': 'Overlay_Demo2.py'})

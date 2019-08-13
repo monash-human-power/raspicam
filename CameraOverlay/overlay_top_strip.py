@@ -15,7 +15,6 @@ class OverlayTopStrip(Overlay):
 		self.text_font = ImageFont.truetype(self.font_path, self.text_height)
 		self.speed_font = ImageFont.truetype(self.font_path, self.speed_height)
 
-
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
 		# self.client.subscribe(self.topics)
@@ -33,8 +32,10 @@ class OverlayTopStrip(Overlay):
 		draw.text((0, self.text_height * 3), "Cadence:", font=self.text_font, fill='black')
 		draw.text((0, self.text_height * 4), "Distance:", font=self.text_font, fill='black')
 		draw.text((self.width / 2 - 300, self.height - self.speed_height), "SP:", font=self.speed_font, fill='black')
-		draw.text((self.width / 2 - 300, self.height - self.speed_height * 2), "REC:", font=self.speed_font, fill='black')
-		draw.text((self.width / 2 - 300, self.height - self.speed_height * 3), "MAX:", font=self.speed_font, fill='black')
+		draw.text((self.width / 2 - 300, self.height - self.speed_height * 2), "REC:", font=self.speed_font,
+		          fill='black')
+		draw.text((self.width / 2 - 300, self.height - self.speed_height * 3), "MAX:", font=self.speed_font,
+		          fill='black')
 
 		overlay = self.camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
 		overlay.layer = 3
@@ -67,7 +68,7 @@ class OverlayTopStrip(Overlay):
 			total_time = current_time - self.start_time
 			update_time = 0.5
 			if total_time >= update_time:
-				START_TIME = current_time
+				self.start_time = current_time
 				# Create a transparent image to attach text
 				img = Image.new('RGBA', (self.width, self.height))
 				draw = ImageDraw.Draw(img)
@@ -78,48 +79,59 @@ class OverlayTopStrip(Overlay):
 					rec_power = self.data["rec_power"]
 					tolerance = 0.05
 					# Display recommended power
-					draw.text((300, self.text_height * 1), "{0}".format(round(rec_power, 2)), font=self.text_font, fill='black')
+					draw.text((300, self.text_height * 1), "{0}".format(round(rec_power, 2)), font=self.text_font,
+					          fill='black')
 					# Display power
 					if power > rec_power and power < (rec_power + (rec_power * tolerance)):
-						draw.text((300, self.text_height * 2), "{0}".format(round(power, 2)), font=self.text_font, fill='green')
+						draw.text((300, self.text_height * 2), "{0}".format(round(power, 2)), font=self.text_font,
+						          fill='green')
 
 					elif power > (rec_power + (rec_power * tolerance)):
-						draw.text((300, self.text_height * 2), "{0}".format(round(power, 2)), font=self.text_font, fill='red')
+						draw.text((300, self.text_height * 2), "{0}".format(round(power, 2)), font=self.text_font,
+						          fill='red')
 
 					else:
-						draw.text((300, self.text_height * 2), "{0}".format(round(power, 2)), font=self.text_font, fill='black')
+						draw.text((300, self.text_height * 2), "{0}".format(round(power, 2)), font=self.text_font,
+						          fill='black')
 
 				# Display cadence
 				if self.data["cadence"] != 0:
 					cadence = self.data["cadence"] / self.data["count"]
-					draw.text((300, self.text_height * 3), "{0}".format(round(cadence, 2)), font=self.text_font, fill='black')
+					draw.text((300, self.text_height * 3), "{0}".format(round(cadence, 2)), font=self.text_font,
+					          fill='black')
 
 				# Display speed
 				if self.data["reed_velocity"] != 0:
-					speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf', self.speed_height)
+					speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',
+					                                self.speed_height)
 					# Max Speed
 					max_speed = self.data["max_speed"]
 					max_speed_text = "{0} km/h".format(round(max_speed, 2))
-					draw.text((self.width / 2 - 70, self.height - self.speed_height * 3), max_speed_text, font=speed_font,
+					draw.text((self.width / 2 - 70, self.height - self.speed_height * 3), max_speed_text,
+					          font=speed_font,
 					          fill='black')
 
 					# Recommended speed
 					rec_speed = self.data["rec_speed"]
 					rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
-					draw.text((self.width / 2 - 70, self.height - self.speed_height * 2), rec_speed_text, font=speed_font,
+					draw.text((self.width / 2 - 70, self.height - self.speed_height * 2), rec_speed_text,
+					          font=speed_font,
 					          fill='black')
 
 					# Actual speed
 					speed = self.data["reed_velocity"] / self.data["count"]
 					speed_text = "{0} km/h".format(round(speed, 2))
 					if speed > rec_speed and speed < (rec_speed + (rec_speed * tolerance)):
-						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=speed_font, fill='green')
+						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=speed_font,
+						          fill='green')
 
 					elif speed > (rec_speed + (rec_speed * tolerance)):
-						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=speed_font, fill='red')
+						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=speed_font,
+						          fill='red')
 
 					else:
-						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=speed_font, fill='black')
+						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=speed_font,
+						          fill='black')
 
 				# Display reed_distance (distance travelled)
 				if self.data["reed_distance"] != 0:
@@ -150,7 +162,3 @@ class OverlayTopStrip(Overlay):
 if __name__ == '__main__':
 	my_overlay = OverlayTopStrip()
 	my_overlay.connect()
-
-
-
-

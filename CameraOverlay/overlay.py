@@ -52,11 +52,11 @@ class Overlay(ABC):
 			"max_speed": float,
 		}
 
-		self.topics = [
+	# self.topics = [
+	#
+	# ]
 
-		]
-
-	def connect(self, ip, port):
+	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
 		# mqtt loop
@@ -81,10 +81,10 @@ class Overlay(ABC):
 		return max(self.max_speed, cur_speed)
 
 	# mqtt methods
-	def on_log(client, userdata, level, buf):
+	def on_log(self, client, userdata, level, buf):
 		print("\nlog: ", buf)
 
-	def on_disconnect(client, userdata, msg):
+	def on_disconnect(self, client, userdata, msg):
 		print("Disconnected from broker")
 
 	def subscribe_topics(self, topics):
@@ -93,7 +93,6 @@ class Overlay(ABC):
 	def reset_variables(self, value=0):
 		for key, _ in self.data.items():
 			self.data[key] = value
-
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
