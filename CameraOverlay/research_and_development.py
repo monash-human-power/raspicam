@@ -1,8 +1,9 @@
+import os
 from PIL import Image, ImageDraw, ImageFont
 
 WIDTH = 1280
 HEIGHT = 740
-FONT = '/Users/harsilpatel/Coding/MHP_Raspicam/CameraOverlay/LibreCaslonText-Regular.ttf'
+FONT = os.path.join(os.path.dirname(__file__), 'LibreCaslonText-Regular.ttf')
 
 
 def overlay_two():
