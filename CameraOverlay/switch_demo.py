@@ -1,7 +1,14 @@
 import RPi.GPIO as gpio
 from time import sleep
 import subprocess
+import argparse
 import commons
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--host", type=str, default="192.168.100.100", help="ip address of the broker")
+args = parser.parse_args()
+
+brokerIP = args.host
 
 # Pins
 switch = 15
@@ -35,7 +42,7 @@ try:
 			sleep(0.25)
 		prev_switch_state = switch_state
         # TODO: Remove hard coding of directory of python script
-		p1 = subprocess.Popen(["python3", commons.get_active_overlay()])
+		p1 = subprocess.Popen(["python3", commons.get_active_overlay(), "--host", brokerIP])
 		turn_off(red_led)
 		turn_on(green_led)
 		sleep(1)
