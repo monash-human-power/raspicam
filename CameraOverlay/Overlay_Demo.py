@@ -1,24 +1,16 @@
 
-from picamera import PiCamera, Color
+from picamera import PiCamera
 from PIL import Image, ImageDraw, ImageFont
 import time
-import argparse
 import paho.mqtt.client as mqtt
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--host", type=str, default="192.168.100.100", help="ip address of the broker")
-args = parser.parse_args()
-
-brokerIP = args.host
 
 speed_height = 70
 speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
 text_height = 45
 text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',text_height)
 
-PREV_OVERLAY = None
-START_TIME = round(time.time(), 2)
-MAX_SPEED = 0
+brokerIP = "192.168.100.100"
+
 DAS_DATA = {
     "power": 0,
     "cadence": 0,
@@ -34,39 +26,6 @@ POWER_MODEL_DATA = {
     "max_speed": 0,
 }
 
-# The resolution of the camera preview. Current system using 800x480.
-WIDTH = 1280
-HEIGHT = 800
-
-# Initiate camera preview
-camera = PiCamera(resolution=(WIDTH, HEIGHT))
-
-# Convert data to a suitable format
-def parse_data(data):
-    terms = data.split("&")
-    data_dict = {}
-    filename = ""
-    for term in terms:
-        key,value = term.split("=")
-        data_dict[key] = value
-    return data_dict
-
-# Calculate Max-speed
-def actual_max(cur_speed):
-    global MAX_SPEED
-
-    if cur_speed > MAX_SPEED:
-        MAX_SPEED = cur_speed
-    
-    
-
-
-# mqtt methods
-def on_log(client, userdata, level, buf):
-    print("\nlog: ", buf)
-    
-def on_disconnect(client, userdata, msg):
-    print("Disconnected from broker")
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with rc: " + str(rc))
@@ -192,11 +151,6 @@ def on_message(client, userdata, msg):
             DAS_DATA["reed_distance"] = 0
             DAS_DATA["count"] = 0
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_disconnect = on_disconnect
-client.on_message = on_message
-client.on_log = on_log
 
 client.connect_async(brokerIP, 1883, 60)
 
