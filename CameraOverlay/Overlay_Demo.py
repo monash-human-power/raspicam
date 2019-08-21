@@ -1,0 +1,163 @@
+
+from picamera import PiCamera
+from PIL import Image, ImageDraw, ImageFont
+import time
+import paho.mqtt.client as mqtt
+
+speed_height = 70
+speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
+text_height = 45
+text_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',text_height)
+
+brokerIP = "192.168.100.100"
+
+DAS_DATA = {
+    "power": 0,
+    "cadence": 0,
+    "reed_velocity": 0,
+    "gps_speed": 0,
+    "reed_distance": 0,
+    "count": 0,
+}
+
+POWER_MODEL_DATA = {
+    "rec_power": 0,
+    "rec_speed": 0,
+    "max_speed": 0,
+}
+
+
+def on_connect(client, userdata, flags, rc):
+    print("Connected with rc: " + str(rc))
+    client.subscribe("start")
+    client.subscribe("data")
+    client.subscribe("stop")
+    client.subscribe("power_model/recommended_SP")
+    client.subscribe("power_model/max_speed")
+
+    # Add static text
+    img = Image.new('RGBA', (WIDTH, HEIGHT))
+    draw = ImageDraw.Draw(img)
+    draw.text((0, text_height*1), "REC Power:", font=text_font, fill='black')
+    draw.text((0, text_height*2), "Power:", font=text_font, fill='black')
+    draw.text((0, text_height*3), "Cadence:", font=text_font, fill='black')
+    draw.text((0, text_height*4), "Distance:", font=text_font, fill='black')
+    draw.text((WIDTH/2 - 300, HEIGHT-speed_height), "SP:", font=speed_font, fill='black')
+    draw.text((WIDTH/2 - 300, HEIGHT-speed_height*2), "REC:", font=speed_font, fill='black')
+    draw.text((WIDTH/2 - 300, HEIGHT-speed_height*3), "MAX:", font=speed_font, fill='black')
+
+    overlay = camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
+    overlay.layer = 3
+    overlay.fullscreen = True
+
+def on_message(client, userdata, msg):
+    global START_TIME
+    print(msg.topic + " " + str(msg.payload.decode("utf-8")))
+    current_time = round(time.time(), 2)
+    if msg.topic == "power_model/recommended_SP":
+        req_data = str(msg.payload.decode("utf-8"))
+        parsed_data = parse_data(req_data)
+        POWER_MODEL_DATA["rec_power"] = float(parsed_data["rec_power"])
+        POWER_MODEL_DATA["rec_speed"] = float(parsed_data["rec_speed"])
+    elif msg.topic == "power_model/max_speed":
+        max_speed = str(msg.payload.decode("utf-8"))
+        POWER_MODEL_DATA["max_speed"] = float(max_speed)
+    elif msg.topic == "data":
+        data = str(msg.payload.decode("utf-8"))
+        parsed_data = parse_data(data)
+        print(str(parsed_data))
+        DAS_DATA["power"] += int(parsed_data["power"])
+        DAS_DATA["cadence"] += int(parsed_data["cadence"])
+        if int(parsed_data["gps"]) == 1:
+            DAS_DATA["gps_speed"] += float(parsed_data["gps_speed"])
+        DAS_DATA["reed_distance"] += float(parsed_data["reed_distance"])
+        DAS_DATA["reed_velocity"] += float(parsed_data["reed_velocity"])
+        DAS_DATA["count"] = DAS_DATA["count"] + 1
+        total_time = current_time - START_TIME
+        update_time = 0.5
+        if total_time >= update_time:
+            START_TIME = current_time
+            # Create a transparent image to attach text
+            img = Image.new('RGBA', (WIDTH, HEIGHT))
+            draw = ImageDraw.Draw(img)
+            
+            # Display power
+            if DAS_DATA["power"] != 0:
+                power = DAS_DATA["power"] / DAS_DATA["count"]
+                rec_power = POWER_MODEL_DATA["rec_power"]
+                tolerance = 0.05
+                # Display recommended power
+                draw.text((300, text_height*1), "{0}".format(round(rec_power, 2)), font=text_font, fill='black')
+                # Display power
+                if power> rec_power and power < (rec_power + (rec_power*tolerance)):
+                    draw.text((300, text_height*2), "{0}".format(round(power, 2)), font=text_font, fill='green')
+                    
+                elif power > (rec_power + (rec_power*tolerance)):
+                    draw.text((300, text_height*2), "{0}".format(round(power, 2)), font=text_font, fill='red')
+
+                else:
+                    draw.text((300, text_height*2), "{0}".format(round(power, 2)), font=text_font, fill='black')
+
+            # Display cadence
+            if DAS_DATA["cadence"] != 0:
+                cadence = DAS_DATA["cadence"] / DAS_DATA["count"]
+                draw.text((300, text_height*3), "{0}".format(round(cadence, 2)), font=text_font, fill='black')
+
+            # Display speed
+            if DAS_DATA["reed_velocity"] != 0:
+                speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',speed_height)
+                # Max Speed
+                max_speed = POWER_MODEL_DATA["max_speed"]
+                max_speed_text = "{0} km/h".format(round(max_speed, 2))
+                draw.text((WIDTH/2 - 70, HEIGHT-speed_height*3), max_speed_text, font=speed_font, fill='black')
+
+                # Recommended speed
+                rec_speed = POWER_MODEL_DATA["rec_speed"]
+                rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
+                draw.text((WIDTH/2 - 70, HEIGHT-speed_height*2), rec_speed_text, font=speed_font, fill='black')
+                
+                # Actual speed
+                speed = DAS_DATA["reed_velocity"] / DAS_DATA["count"]
+                speed_text = "{0} km/h".format(round(speed, 2))
+                if speed> rec_speed and speed < (rec_speed + (rec_speed*tolerance)):
+                    draw.text((WIDTH/2 - 70, HEIGHT-speed_height), speed_text, font=speed_font, fill='green')
+                    
+                elif speed > (rec_speed + (rec_speed*tolerance)):
+                    draw.text((WIDTH/2 - 70, HEIGHT-speed_height), speed_text, font=speed_font, fill='red')
+
+                else:
+                    draw.text((WIDTH/2 - 70, HEIGHT-speed_height), speed_text, font=speed_font, fill='black')
+
+            # Display reed_distance (distance travelled)
+            if DAS_DATA["reed_distance"] != 0:
+                reed_distance = DAS_DATA["reed_distance"] / DAS_DATA["count"]
+                draw.text((300, text_height*4), "{0}".format(round(reed_distance, 2)), font=text_font, fill='black')
+                
+                
+            # Remove and add the image to the preview overlay
+            global PREV_OVERLAY
+            if PREV_OVERLAY:
+                camera.remove_overlay(PREV_OVERLAY)
+            overlay = camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
+            overlay.layer = 3
+            overlay.fullscreen = True
+            PREV_OVERLAY = overlay
+            
+            # Reset variables
+            DAS_DATA["power"] = 0
+            DAS_DATA["cadence"] = 0
+            DAS_DATA["gps_speed"] = 0
+            DAS_DATA["reed_velocity"] = 0
+            DAS_DATA["reed_distance"] = 0
+            DAS_DATA["count"] = 0
+
+
+client.connect_async(brokerIP, 1883, 60)
+
+# mqtt loop
+# Position and size of the preview window(x,y,width,height)
+camera.start_preview(fullscreen=False, window=(0,-20,WIDTH,HEIGHT))
+client.loop_start()
+while True:
+    time.sleep(1)
+
