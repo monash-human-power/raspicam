@@ -1,7 +1,14 @@
-from picamera import PiCamera
 import time
-import paho.mqtt.client as mqtt
 from abc import ABC, abstractmethod
+import cv2
+import numpy as np
+import paho.mqtt.client as mqtt
+
+try:
+	from picamera import PiCamera, PiRGBArray
+	ON_PI = True
+except (ImportError, RuntimeError):
+	ON_PI = False
 
 
 class Overlay(ABC):
@@ -9,12 +16,18 @@ class Overlay(ABC):
 	def __init__(self, width=1280, height=740):
 		self.width = width
 		self.height = height
+		self.frametime = 17 # ms
 
 		self.prev_overlay = None
 		self.max_speed = float('-inf')
 		self.start_time = round(time.time(), 2)
 
-		self.camera = PiCamera(resolution=(self.width, self.height))
+		if ON_PI:
+			self.pi_camera = PiCamera(resolution=(self.width, self.height))
+		else:
+			self.webcam = cv2.VideoCapture(0)
+
+		self.overlay = np.zeros((self.height, self.width, 3), np.uint8)
 
 		self.client = mqtt.Client()
 		self.client.on_connect = self.on_connect
@@ -59,12 +72,24 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		# mqtt loop
-		# Position and size of the preview window(x,y,width,height)
-		self.camera.start_preview(fullscreen=False, window=(0, -20, self.width, self.height))
+		# mqtt loop (does not block)
 		self.client.loop_start()
+
+		# Display video feed and overlay
 		while True:
-			time.sleep(1)
+			# Get video feed - source depends on if we're running on a Pi or not
+			if ON_PI:
+				raw_capture = PiRGBArray(self.pi_camera)
+				self.pi_camera.capture(raw_capture, format="bgr")
+				frame = raw_capture.array
+			else:
+				_, frame = self.webcam.read()
+				frame = cv2.resize(frame, (self.width, self.height))
+
+			# Draw overlay over video and display frame
+			frame = cv2.add(frame, self.overlay)
+			cv2.imshow('frame', frame)
+			cv2.waitKey(self.frametime)
 
 	# Convert data to a suitable format
 	def parse_data(self, data):
