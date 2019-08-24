@@ -11,9 +11,9 @@ class OverlayBlank(Overlay):
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
 
-		self.overlay = np.zeros((self.height, self.width, 3), np.uint8)
-		font = cv2.FONT_HERSHEY_PLAIN
-		cv2.putText(self.overlay, 'Blank overlay', (10, self.height - 10), font, 4, (255, 255, 255), 2, cv2.LINE_AA)
+		self.base_overlay = np.zeros((self.height, self.width, 4), np.uint8)
+		font = cv2.FONT_HERSHEY_SIMPLEX
+		cv2.putText(self.base_overlay, 'Blank overlay', (10, self.height - 10), font, 4, (150, 50, 255, 255), 2, cv2.LINE_AA)
 
 	def on_message(self, client, userdata, msg):
 		topic = msg.topic

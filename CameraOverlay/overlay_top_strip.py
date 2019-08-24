@@ -1,15 +1,25 @@
 import os
 import time
-from overlay import Overlay
 from PIL import Image, ImageDraw, ImageFont
+import cv2
+import numpy as np
+from overlay import Overlay
 import topics
 
 
 class OverlayTopStrip(Overlay):
 
+	topics = [
+			topics.DAS.start,
+			topics.DAS.data,
+			topics.DAS.stop,
+			topics.PowerModel.recommended_sp,
+			topics.PowerModel.max_speed,
+	]
+
 	def __init__(self):
 		super(OverlayTopStrip, self).__init__()
-		self.font_path = os.path.join(os.path.dirname(__file__), 'FreeSans.ttf')
+		self.font_path = os.path.join(os.path.dirname(__file__), 'LibreCaslonText-Regular.ttf')
 		self.text_height = 45
 		self.speed_height = 70
 		self.text_font = ImageFont.truetype(self.font_path, self.text_height)
@@ -17,12 +27,8 @@ class OverlayTopStrip(Overlay):
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
-		# self.client.subscribe(self.topics)
-		client.subscribe(topics.DAS.start)
-		client.subscribe(topics.DAS.data)
-		client.subscribe(topics.DAS.stop)
-		client.subscribe(topics.PowerModel.recommended_sp)
-		client.subscribe(topics.PowerModel.max_speeds)
+		for topic in OverlayTopStrip.topics:
+			client.subscribe(str(topic))
 
 		# Add static text
 		img = Image.new('RGBA', (self.width, self.height))
@@ -32,14 +38,13 @@ class OverlayTopStrip(Overlay):
 		draw.text((0, self.text_height * 3), "Cadence:", font=self.text_font, fill='black')
 		draw.text((0, self.text_height * 4), "Distance:", font=self.text_font, fill='black')
 		draw.text((self.width / 2 - 300, self.height - self.speed_height), "SP:", font=self.speed_font, fill='black')
-		draw.text((self.width / 2 - 300, self.height - self.speed_height * 2), "REC:", font=self.speed_font,
-		          fill='black')
-		draw.text((self.width / 2 - 300, self.height - self.speed_height * 3), "MAX:", font=self.speed_font,
-		          fill='black')
+		draw.text((self.width / 2 - 300, self.height - self.speed_height * 2), "REC:", font=self.speed_font, fill='black')
+		draw.text((self.width / 2 - 300, self.height - self.speed_height * 3), "MAX:", font=self.speed_font, fill='black')
 
-		overlay = self.camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
-		overlay.layer = 3
-		overlay.fullscreen = True
+		self.base_overlay = cv2.cvtColor(np.array(img), cv2.COLOR_RGBA2BGRA)
+
+		font = cv2.FONT_HERSHEY_PLAIN
+		cv2.putText(self.base_overlay, 'Blank overlay', (10, self.height - 10), font, 4, (255, 255, 255), 2, cv2.LINE_AA)
 
 	def on_message(self, client, userdata, msg):
 		topic = msg.topic
@@ -54,8 +59,8 @@ class OverlayTopStrip(Overlay):
 		elif topic == topics.PowerModel.max_speed:
 			max_speed = str(msg.payload.decode("utf-8"))
 			self.data["max_speed"] = float(max_speed)
-		elif topic == topics.DAS.data:
-			data = str(msg.payload.decode("utf-8"))
+		elif topic == str(topics.DAS.data):
+			data = msg.payload
 			parsed_data = self.parse_data(data)
 			print(str(parsed_data))
 			self.data["power"] += int(parsed_data["power"])
@@ -102,35 +107,33 @@ class OverlayTopStrip(Overlay):
 
 				# Display speed
 				if self.data["reed_velocity"] != 0:
-					speed_font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeSans.ttf',
-					                                self.speed_height)
 					# Max Speed
 					max_speed = self.data["max_speed"]
 					max_speed_text = "{0} km/h".format(round(max_speed, 2))
 					draw.text((self.width / 2 - 70, self.height - self.speed_height * 3), max_speed_text,
-					          font=speed_font,
+					          font=self.speed_font,
 					          fill='black')
 
 					# Recommended speed
 					rec_speed = self.data["rec_speed"]
 					rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
 					draw.text((self.width / 2 - 70, self.height - self.speed_height * 2), rec_speed_text,
-					          font=speed_font,
+					          font=self.speed_font,
 					          fill='black')
 
 					# Actual speed
 					speed = self.data["reed_velocity"] / self.data["count"]
 					speed_text = "{0} km/h".format(round(speed, 2))
 					if speed > rec_speed and speed < (rec_speed + (rec_speed * tolerance)):
-						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=speed_font,
+						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=self.speed_font,
 						          fill='green')
 
 					elif speed > (rec_speed + (rec_speed * tolerance)):
-						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=speed_font,
+						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=self.speed_font,
 						          fill='red')
 
 					else:
-						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=speed_font,
+						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=self.speed_font,
 						          fill='black')
 
 				# Display reed_distance (distance travelled)
@@ -139,13 +142,7 @@ class OverlayTopStrip(Overlay):
 					draw.text((300, self.text_height * 4), "{0}".format(round(reed_distance, 2)), font=self.text_font,
 					          fill='black')
 
-				# Remove and add the image to the preview overlay
-				if self.prev_overlay:
-					self.camera.remove_overlay(self.prev_overlay)
-				overlay = self.camera.add_overlay(img.tobytes(), format='rgba', size=img.size)
-				overlay.layer = 3
-				overlay.fullscreen = True
-				self.prev_overlay = overlay
+				self.data_overlay = cv2.cvtColor(np.array(img), cv2.COLOR_RGBA2BGRA)
 
 				# Reset variables
 				# self.reset_variables()
@@ -161,4 +158,4 @@ class OverlayTopStrip(Overlay):
 
 if __name__ == '__main__':
 	my_overlay = OverlayTopStrip()
-	my_overlay.connect()
+	my_overlay.connect(ip="localhost")

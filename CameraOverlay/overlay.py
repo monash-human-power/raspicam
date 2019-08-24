@@ -10,6 +10,15 @@ try:
 except (ImportError, RuntimeError):
 	ON_PI = False
 
+def add_overlay_to_frame(frame, overlay):
+	# Extract the alpha mask of the BGRA overlay, convert to BGR
+	blue, green, red, alpha = cv2.split(overlay)
+	overlay = cv2.merge((blue, green, red))
+	_, mask = cv2.threshold(alpha, 180, 255, cv2.THRESH_BINARY)
+
+	# Black-out the area behind the overlay
+	frame = cv2.bitwise_and(frame, frame, mask=cv2.bitwise_not(mask))
+	return cv2.add(frame, overlay)
 
 class Overlay(ABC):
 
@@ -27,7 +36,8 @@ class Overlay(ABC):
 		else:
 			self.webcam = cv2.VideoCapture(0)
 
-		self.overlay = np.zeros((self.height, self.width, 3), np.uint8)
+		self.base_overlay = np.zeros((self.height, self.width, 4), np.uint8)
+		self.data_overlay = np.zeros((self.height, self.width, 4), np.uint8)
 
 		self.client = mqtt.Client()
 		self.client.on_connect = self.on_connect
@@ -39,6 +49,7 @@ class Overlay(ABC):
 			# das data
 			"count": 0,
 			"cadence": 0,
+			"gps": 0,
 			"gps_speed": 0,
 			"power": 0,
 			"reed_distance": 0,
@@ -55,6 +66,7 @@ class Overlay(ABC):
 			"power": int,
 			"cadence": int,
 			"reed_velocity": float,
+			"gps": int,
 			"gps_speed": float,
 			"reed_distance": float,
 			"count": int,
@@ -69,6 +81,22 @@ class Overlay(ABC):
 	#
 	# ]
 
+	def get_display(self):
+		# Get video feed - source depends on if we're running on a Pi or not
+		if ON_PI:
+			raw_capture = PiRGBArray(self.pi_camera)
+			self.pi_camera.capture(raw_capture, format="bgr")
+			frame = raw_capture.array
+		else:
+			_, frame = self.webcam.read()
+			frame = cv2.resize(frame, (self.width, self.height))
+
+		# First do the base overlay:
+		frame = add_overlay_to_frame(frame, self.base_overlay)
+		frame = add_overlay_to_frame(frame, self.data_overlay)
+
+		return frame
+
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
@@ -77,18 +105,7 @@ class Overlay(ABC):
 
 		# Display video feed and overlay
 		while True:
-			# Get video feed - source depends on if we're running on a Pi or not
-			if ON_PI:
-				raw_capture = PiRGBArray(self.pi_camera)
-				self.pi_camera.capture(raw_capture, format="bgr")
-				frame = raw_capture.array
-			else:
-				_, frame = self.webcam.read()
-				frame = cv2.resize(frame, (self.width, self.height))
-
-			# Draw overlay over video and display frame
-			frame = cv2.add(frame, self.overlay)
-			cv2.imshow('frame', frame)
+			cv2.imshow('frame', self.get_display())
 			cv2.waitKey(self.frametime)
 
 	# Convert data to a suitable format
@@ -97,6 +114,8 @@ class Overlay(ABC):
 		data_dict = {}
 		for term in terms:
 			key, value = term.split("=")
+			if key not in self.data_types:
+				continue
 			cast_func = self.data_types[key]
 			data_dict[key] = cast_func(value)
 		return data_dict
