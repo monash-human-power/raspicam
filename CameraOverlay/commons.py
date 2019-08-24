@@ -1,13 +1,18 @@
 import os
 import json
+import fnmatch
 from dotenv import load_dotenv
-
-from .topics import *
 
 load_dotenv()
 CONFIG_FILE = 'configs.json'
 ACTIVE_OVERLAY_KEY = 'activeOverlay'
+OVERLAY_FILE_PATTERN = 'Overlay_Demo*.py'
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+
+
+def get_overlays(dir=CURRENT_DIRECTORY):
+	overlays = [file for file in os.listdir(dir) if fnmatch.fnmatch(file, OVERLAY_FILE_PATTERN)]
+	return overlays
 
 
 def set_overlay(new_overlays, dir=CURRENT_DIRECTORY):
@@ -33,6 +38,7 @@ def read_configs(dir=CURRENT_DIRECTORY):
 
 			current_device = os.getenv('MHP_CAMERA')
 			configs['device'] = current_device
+			configs['overlays'] = get_overlays()
 			return configs
 
 
@@ -42,6 +48,6 @@ def get_active_overlay(dir=CURRENT_DIRECTORY):
 
 
 if __name__ == '__main__':
-	set_overlay({'primary': 'Overlay_Demo2.py'})
+	# set_overlay({'primary': 'Overlay_Demo2.py'})
 	print(get_active_overlay())
-	print(read_configs())
+	print(json.dumps(read_configs()))
