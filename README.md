@@ -18,4 +18,5 @@ To install Pillow (PIL fork), RPi.GPIO, paho-mqtt on Raspberry Pi: **haven't tes
     ````
   - install python dependencies `pip3 install -r requirements.txt`
   - have an ```.env``` file in the ```CameraOverlay``` folder with the variable ```MHP_CAMERA``` set to either ```primary``` or ```secondary```
+  - create an ```configs.json``` file in the ```CameraOverlay``` directory with attribute ```activeOverlay``` that points to the overlay file that is currently active, for instance the value could be ```overlay_all_stats.py```
   - PROFIT!

@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 CONFIG_FILE = 'configs.json'
 ACTIVE_OVERLAY_KEY = 'activeOverlay'
-OVERLAY_FILE_PATTERN = 'Overlay_Demo*.py'
+OVERLAY_FILE_PATTERN = 'overlay_*.py'
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -49,5 +49,5 @@ def get_active_overlay(directory=CURRENT_DIRECTORY):
 
 if __name__ == '__main__':
 	# set_overlay({'primary': 'Overlay_Demo2.py'})
-	print(get_active_overlay())
+	# print(get_active_overlay())
 	print(json.dumps(read_configs()))
