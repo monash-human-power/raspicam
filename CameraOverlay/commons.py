@@ -31,15 +31,14 @@ def set_overlay(new_overlays, directory=CURRENT_DIRECTORY):
 def read_configs(directory=CURRENT_DIRECTORY):
 	filepath = os.path.join(directory, CONFIG_FILE)
 	if not os.path.isfile(filepath):
-		return {}
+		configs = {}
 	else:
 		with open(filepath) as f:
 			configs = json.load(f)
-
-			current_device = os.getenv('MHP_CAMERA')
-			configs['device'] = current_device
-			configs['overlays'] = get_overlays()
-			return configs
+	current_device = os.getenv('MHP_CAMERA')
+	configs['device'] = current_device
+	configs['overlays'] = get_overlays()
+	return configs
 
 
 def get_active_overlay(directory=CURRENT_DIRECTORY):
@@ -48,6 +47,6 @@ def get_active_overlay(directory=CURRENT_DIRECTORY):
 
 
 if __name__ == '__main__':
-	# set_overlay({'primary': 'Overlay_Demo2.py'})
+	# set_overlay({'primary': 'overlay_all_stats.py'})
 	# print(get_active_overlay())
 	print(json.dumps(read_configs()))
