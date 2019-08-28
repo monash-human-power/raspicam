@@ -1,5 +1,6 @@
 import os
 import json
+import random
 import fnmatch
 from dotenv import load_dotenv
 
@@ -29,21 +30,39 @@ def set_overlay(new_overlays, directory=CURRENT_DIRECTORY):
 
 
 def read_configs(directory=CURRENT_DIRECTORY):
-	filepath = os.path.join(directory, CONFIG_FILE)
-	if not os.path.isfile(filepath):
-		configs = {}
-	else:
-		with open(filepath) as f:
+	configs_file = os.path.join(directory, CONFIG_FILE)
+
+	if not os.path.isfile(configs_file):
+		create_default_configs(directory)
+
+	with open(configs_file) as f:
+		configs = json.load(f)
+
+	if ACTIVE_OVERLAY_KEY not in configs:
+		create_default_configs(directory)
+		with open(configs_file) as f:
 			configs = json.load(f)
+
 	current_device = os.getenv('MHP_CAMERA')
 	configs['device'] = current_device
 	configs['overlays'] = get_overlays()
 	return configs
 
 
+def create_default_configs(directory):
+	random_overlay = random.choice(get_overlays(directory))
+	with open(os.path.join(directory, CONFIG_FILE), 'w') as f:
+		json.dump({ACTIVE_OVERLAY_KEY: random_overlay}, f, indent=2, sort_keys=True)
+	return random_overlay
+
+
 def get_active_overlay(directory=CURRENT_DIRECTORY):
 	configs = read_configs(directory)
-	return os.path.join(directory, configs[ACTIVE_OVERLAY_KEY])
+	try:
+		active_overlay = configs[ACTIVE_OVERLAY_KEY]
+	except KeyError:
+		active_overlay = create_default_configs(directory)
+	return os.path.join(directory, active_overlay)
 
 
 if __name__ == '__main__':
