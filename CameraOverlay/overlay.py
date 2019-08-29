@@ -1,4 +1,5 @@
 import time
+from enum import Enum
 from abc import ABC, abstractmethod
 import cv2
 import numpy as np
@@ -10,15 +11,42 @@ try:
 except (ImportError, RuntimeError):
 	ON_PI = False
 
-def add_overlay_to_frame(frame, overlay):
-	# Extract the alpha mask of the BGRA overlay, convert to BGR
-	blue, green, red, alpha = cv2.split(overlay)
-	overlay = cv2.merge((blue, green, red))
-	_, mask = cv2.threshold(alpha, 180, 255, cv2.THRESH_BINARY)
+class Color(Enum):
+	# Remember, OpenCV uses BGR(A) not RGB(A)
+	white = (255, 255, 255, 255)
+	black = (0, 0, 0, 255)
+	blue = (255, 0, 0, 255)
+	green = (0, 255, 0, 255)
+	red = (0, 0, 255, 255)
 
-	# Black-out the area behind the overlay
-	frame = cv2.bitwise_and(frame, frame, mask=cv2.bitwise_not(mask))
-	return cv2.add(frame, overlay)
+class Canvas():
+	""" A writeable image, for creating overlay content """
+
+	def __init__(self, width, height):
+		""" Initialises to plain black and transparent """
+		self.width = width
+		self.height = height
+		self.clear()
+
+	def clear(self):
+		self.img = np.zeros((self.height, self.width, 4), np.uint8)
+
+	def draw_text(self, text, coord, size=1.8, color=Color.black):
+		font = cv2.FONT_HERSHEY_SIMPLEX
+		thickness = round(size + 0.5)
+		cv2.putText(self.img, text, coord, font, size, color.value, thickness, cv2.LINE_AA)
+
+	def copy_to(self, dest):
+		""" Writes the contents of self.img over dest, accounting for transpaency
+		    Use this method to put the overlay contents over the video feed """
+		# Extract the alpha mask of the BGRA canvas, convert to BGR
+		blue, green, red, alpha = cv2.split(self.img)
+		img = cv2.merge((blue, green, red))
+		_, mask = cv2.threshold(alpha, 180, 255, cv2.THRESH_BINARY)
+
+		# Black-out the area behind the canvas on the destination
+		dest = cv2.bitwise_and(dest, dest, mask=cv2.bitwise_not(mask))
+		return cv2.add(dest, img)
 
 class Overlay(ABC):
 
@@ -36,8 +64,8 @@ class Overlay(ABC):
 		else:
 			self.webcam = cv2.VideoCapture(0)
 
-		self.base_overlay = np.zeros((self.height, self.width, 4), np.uint8)
-		self.data_overlay = np.zeros((self.height, self.width, 4), np.uint8)
+		self.base_canvas = Canvas(self.width, self.height)
+		self.data_canvas = Canvas(self.width, self.height)
 
 		self.client = mqtt.Client()
 		self.client.on_connect = self.on_connect
@@ -77,10 +105,6 @@ class Overlay(ABC):
 			"max_speed": float,
 		}
 
-	# self.topics = [
-	#
-	# ]
-
 	def get_display(self):
 		# Get video feed - source depends on if we're running on a Pi or not
 		if ON_PI:
@@ -91,9 +115,8 @@ class Overlay(ABC):
 			_, frame = self.webcam.read()
 			frame = cv2.resize(frame, (self.width, self.height))
 
-		# First do the base overlay:
-		frame = add_overlay_to_frame(frame, self.base_overlay)
-		frame = add_overlay_to_frame(frame, self.data_overlay)
+		frame = self.base_canvas.copy_to(frame)
+		frame = self.data_canvas.copy_to(frame)
 
 		return frame
 
@@ -145,3 +168,4 @@ class Overlay(ABC):
 	@abstractmethod
 	def on_message(self, client, userdata, msg):
 		pass
+

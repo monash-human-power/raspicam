@@ -1,11 +1,6 @@
-import os
 import time
-from PIL import Image, ImageDraw, ImageFont
-import cv2
-import numpy as np
-from overlay import Overlay
+from overlay import Overlay, Color
 import topics
-
 
 class OverlayTopStrip(Overlay):
 
@@ -19,11 +14,8 @@ class OverlayTopStrip(Overlay):
 
 	def __init__(self):
 		super(OverlayTopStrip, self).__init__()
-		self.font_path = os.path.join(os.path.dirname(__file__), 'LibreCaslonText-Regular.ttf')
-		self.text_height = 45
+		self.text_height = 50
 		self.speed_height = 70
-		self.text_font = ImageFont.truetype(self.font_path, self.text_height)
-		self.speed_font = ImageFont.truetype(self.font_path, self.speed_height)
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
@@ -31,32 +23,26 @@ class OverlayTopStrip(Overlay):
 			client.subscribe(str(topic))
 
 		# Add static text
-		img = Image.new('RGBA', (self.width, self.height))
-		draw = ImageDraw.Draw(img)
-		draw.text((0, self.text_height * 1), "REC Power:", font=self.text_font, fill='black')
-		draw.text((0, self.text_height * 2), "Power:", font=self.text_font, fill='black')
-		draw.text((0, self.text_height * 3), "Cadence:", font=self.text_font, fill='black')
-		draw.text((0, self.text_height * 4), "Distance:", font=self.text_font, fill='black')
-		draw.text((self.width / 2 - 300, self.height - self.speed_height), "SP:", font=self.speed_font, fill='black')
-		draw.text((self.width / 2 - 300, self.height - self.speed_height * 2), "REC:", font=self.speed_font, fill='black')
-		draw.text((self.width / 2 - 300, self.height - self.speed_height * 3), "MAX:", font=self.speed_font, fill='black')
+		self.base_canvas.draw_text("REC Power:", (5, self.text_height * 1))
+		self.base_canvas.draw_text("Power:", (5, self.text_height * 2))
+		self.base_canvas.draw_text("Cadence:", (5, self.text_height * 3))
+		self.base_canvas.draw_text("Distance:", (5, self.text_height * 4))
 
-		self.base_overlay = cv2.cvtColor(np.array(img), cv2.COLOR_RGBA2BGRA)
-
-		font = cv2.FONT_HERSHEY_PLAIN
-		cv2.putText(self.base_overlay, 'Blank overlay', (10, self.height - 10), font, 4, (255, 255, 255), 2, cv2.LINE_AA)
+		speed_x = self.width // 2 - 300
+		self.base_canvas.draw_text("SP:", (speed_x, self.height - self.speed_height * 0), size=2.5)
+		self.base_canvas.draw_text("REC:", (speed_x, self.height - self.speed_height * 1), size=2.5)
+		self.base_canvas.draw_text("MAX:", (speed_x, self.height - self.speed_height * 2), size=2.5)
 
 	def on_message(self, client, userdata, msg):
 		topic = msg.topic
 		print(topic + " " + str(msg.payload.decode("utf-8")))
 		current_time = round(time.time(), 2)
 
-		if topic == topics.PowerModel.recommended_sp:
-			req_data = str(msg.payload.decode("utf-8"))
-			parsed_data = self.parse_data(req_data)
+		if topic == str(topics.PowerModel.recommended_sp):
+			parsed_data = self.parse_data(msg.payload)
 			self.data["rec_power"] = float(parsed_data["rec_power"])
 			self.data["rec_speed"] = float(parsed_data["rec_speed"])
-		elif topic == topics.PowerModel.max_speed:
+		elif topic == str(topics.PowerModel.max_speed):
 			max_speed = str(msg.payload.decode("utf-8"))
 			self.data["max_speed"] = float(max_speed)
 		elif topic == str(topics.DAS.data):
@@ -74,9 +60,7 @@ class OverlayTopStrip(Overlay):
 			update_time = 0.5
 			if total_time >= update_time:
 				self.start_time = current_time
-				# Create a transparent image to attach text
-				img = Image.new('RGBA', (self.width, self.height))
-				draw = ImageDraw.Draw(img)
+				self.data_canvas.clear()
 
 				# Display power
 				if self.data["power"] != 0:
@@ -84,68 +68,52 @@ class OverlayTopStrip(Overlay):
 					rec_power = self.data["rec_power"]
 					tolerance = 0.05
 					# Display recommended power
-					draw.text((300, self.text_height * 1), "{0}".format(round(rec_power, 2)), font=self.text_font,
-					          fill='black')
+					self.data_canvas.draw_text("{0}".format(round(rec_power, 2)), (340, self.text_height * 1))
 					# Display power
-					if power > rec_power and power < (rec_power + (rec_power * tolerance)):
-						draw.text((300, self.text_height * 2), "{0}".format(round(power, 2)), font=self.text_font,
-						          fill='green')
-
-					elif power > (rec_power + (rec_power * tolerance)):
-						draw.text((300, self.text_height * 2), "{0}".format(round(power, 2)), font=self.text_font,
-						          fill='red')
-
+					if power > (rec_power + (rec_power * tolerance)):
+						power_color = Color.red
+					elif power > rec_power:
+						power_color = Color.green
 					else:
-						draw.text((300, self.text_height * 2), "{0}".format(round(power, 2)), font=self.text_font,
-						          fill='black')
+						power_color = Color.black
+					self.data_canvas.draw_text("{0}".format(round(power, 2)), (340, self.text_height * 2), color=power_color)
 
 				# Display cadence
 				if self.data["cadence"] != 0:
 					cadence = self.data["cadence"] / self.data["count"]
-					draw.text((300, self.text_height * 3), "{0}".format(round(cadence, 2)), font=self.text_font,
-					          fill='black')
+					self.data_canvas.draw_text("{0}".format(round(cadence, 2)), (340, self.text_height * 3))
 
 				# Display speed
 				if self.data["reed_velocity"] != 0:
 					# Max Speed
 					max_speed = self.data["max_speed"]
 					max_speed_text = "{0} km/h".format(round(max_speed, 2))
-					draw.text((self.width / 2 - 70, self.height - self.speed_height * 3), max_speed_text,
-					          font=self.speed_font,
-					          fill='black')
+					max_speed_pos = (self.width // 2 - 70, self.height - self.speed_height * 2)
+					self.data_canvas.draw_text(max_speed_text, max_speed_pos, size=2.5)
 
 					# Recommended speed
 					rec_speed = self.data["rec_speed"]
 					rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
-					draw.text((self.width / 2 - 70, self.height - self.speed_height * 2), rec_speed_text,
-					          font=self.speed_font,
-					          fill='black')
+					rec_speed_pos = (self.width // 2 - 70, self.height - self.speed_height * 1)
+					self.data_canvas.draw_text(rec_speed_text, rec_speed_pos, size=2.5)
 
 					# Actual speed
 					speed = self.data["reed_velocity"] / self.data["count"]
 					speed_text = "{0} km/h".format(round(speed, 2))
-					if speed > rec_speed and speed < (rec_speed + (rec_speed * tolerance)):
-						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=self.speed_font,
-						          fill='green')
-
-					elif speed > (rec_speed + (rec_speed * tolerance)):
-						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=self.speed_font,
-						          fill='red')
-
+					speed_pos = (self.width // 2 - 70, self.height - self.speed_height * 0)
+					tolerance = 0.05
+					if speed > (rec_speed + (rec_speed * tolerance)):
+						speed_color = Color.red
+					elif speed > rec_speed:
+						speed_color = Color.green
 					else:
-						draw.text((self.width / 2 - 70, self.height - self.speed_height), speed_text, font=self.speed_font,
-						          fill='black')
+						speed_color = Color.black
+					self.data_canvas.draw_text(speed_text, speed_pos, color=speed_color, size=2.5)
 
 				# Display reed_distance (distance travelled)
 				if self.data["reed_distance"] != 0:
 					reed_distance = self.data["reed_distance"] / self.data["count"]
-					draw.text((300, self.text_height * 4), "{0}".format(round(reed_distance, 2)), font=self.text_font,
-					          fill='black')
-
-				self.data_overlay = cv2.cvtColor(np.array(img), cv2.COLOR_RGBA2BGRA)
-
-				# Reset variables
-				# self.reset_variables()
+					self.data_canvas.draw_text("{0}".format(round(reed_distance, 2)), (340, self.text_height * 4))
 
 				# Reset variables
 				self.data["power"] = 0

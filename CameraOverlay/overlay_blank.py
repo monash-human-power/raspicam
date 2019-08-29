@@ -1,7 +1,4 @@
-import numpy as np
-import cv2
-from overlay import Overlay
-
+from overlay import Overlay, Color
 
 class OverlayBlank(Overlay):
 
@@ -11,9 +8,7 @@ class OverlayBlank(Overlay):
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
 
-		self.base_overlay = np.zeros((self.height, self.width, 4), np.uint8)
-		font = cv2.FONT_HERSHEY_SIMPLEX
-		cv2.putText(self.base_overlay, 'Blank overlay', (10, self.height - 10), font, 4, (150, 50, 255, 255), 2, cv2.LINE_AA)
+		self.draw_text(self.base_overlay, "Blank overlay", (10, self.height - 10), 4, color=Color.white)
 
 	def on_message(self, client, userdata, msg):
 		topic = msg.topic
