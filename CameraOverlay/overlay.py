@@ -31,10 +31,13 @@ class Canvas():
 	def clear(self):
 		self.img = np.zeros((self.height, self.width, 4), np.uint8)
 
-	def draw_text(self, text, coord, size=1.8, color=Color.black):
+	def draw_text(self, text, coord, size=1.5, color=Color.black):
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		thickness = round(size + 0.5)
 		cv2.putText(self.img, text, coord, font, size, color.value, thickness, cv2.LINE_AA)
+
+	def draw_rect(self, top_left, bottom_right, color=Color.black):
+		cv2.rectangle(self.img, top_left, bottom_right, color.value, thickness=cv2.FILLED)
 
 	def copy_to(self, dest):
 		""" Writes the contents of self.img over dest, accounting for transpaency
@@ -87,6 +90,8 @@ class Overlay(ABC):
 			"max_speed": 0,
 			"rec_power": 0,
 			"rec_speed": 0,
+			"zdist": 0,
+			"plan_name": "",
 		}
 
 		self.data_types = {
@@ -103,6 +108,8 @@ class Overlay(ABC):
 			"rec_power": float,
 			"rec_speed": float,
 			"max_speed": float,
+			"zdist": float,
+			"plan_name": str,
 		}
 
 	def get_display(self):
