@@ -3,7 +3,7 @@ from enum import Enum, unique
 @unique
 class NeatEnum(Enum):
 	def __str__(self):
-		return self.value[0]
+		return self.value
 
 
 class DAS(NeatEnum):
@@ -27,4 +27,4 @@ class Camera(NeatEnum):
 
 if __name__ == '__main__':
 	x = PowerModel.max_speed
-	print()
+	print(x)

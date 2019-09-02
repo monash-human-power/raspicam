@@ -1,8 +1,9 @@
-import RPi.GPIO as gpio
-from time import sleep
-import subprocess
 import argparse
-import commons
+import subprocess
+from time import sleep
+
+import RPi.GPIO as gpio
+import configs
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--host", type=str, default="192.168.100.100", help="ip address of the broker")
@@ -18,15 +19,18 @@ red_led = 13
 gpio.setmode(gpio.BOARD)
 gpio.setwarnings(False)
 
-gpio.setup(switch, gpio.IN, pull_up_down=gpio.PUD_UP)   #toggle switch
-gpio.setup(green_led, gpio.OUT)    #green LED
+gpio.setup(switch, gpio.IN, pull_up_down=gpio.PUD_UP)  # toggle switch
+gpio.setup(green_led, gpio.OUT)  # green LED
 gpio.setup(red_led, gpio.OUT)
 
+
 def turn_on(led):
-    gpio.output(led,gpio.HIGH)
+	gpio.output(led, gpio.HIGH)
+
 
 def turn_off(led):
-    gpio.output(led,gpio.LOW)
+	gpio.output(led, gpio.LOW)
+
 
 try:
 	while True:
@@ -41,8 +45,8 @@ try:
 				break
 			sleep(0.25)
 		prev_switch_state = switch_state
-        # TODO: Remove hard coding of directory of python script
-		p1 = subprocess.Popen(["python3", commons.get_active_overlay(), "--host", brokerIP])
+		# TODO: Remove hard coding of directory of python script
+		p1 = subprocess.Popen(["python3", configs.get_active_overlay(), "--host", brokerIP])
 		turn_off(red_led)
 		turn_on(green_led)
 		sleep(1)
@@ -60,5 +64,5 @@ try:
 			prev_switch_state = switch_state
 
 except KeyboardInterrupt:
-    subprocess.Popen.kill(p1)
-    gpio.cleanup()
+	subprocess.Popen.kill(p1)
+	gpio.cleanup()
