@@ -8,11 +8,14 @@ class OverlayBlank(Overlay):
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
 
-		self.draw_text(self.base_overlay, "Blank overlay", (10, self.height - 10), 4, color=Color.white)
+		# To draw static text/whatever onto the overlay, draw on the base canvas
+		self.base_canvas.draw_text("Blank overlay", (10, self.height - 10), 4, color=Color.white)
 
 	def on_message(self, client, userdata, msg):
 		topic = msg.topic
 		print(topic + " " + str(msg.payload.decode("utf-8")))
+
+		# Content that changes each frame should be drawn to self.data_canvas here
 
 
 if __name__ == '__main__':
