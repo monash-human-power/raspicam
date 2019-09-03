@@ -1,5 +1,5 @@
 import json
-import configs
+import config
 import argparse
 import time
 import paho.mqtt.client as mqtt
@@ -25,10 +25,10 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
 	print(msg.topic + " " + str(msg.payload))
 	if msg.topic == "camera/get_overlays":
-		configs = configs.read_configs()
+		configs = config.read_configs()
 		client.publish("camera/push_overlays", json.dumps(configs))
 	elif msg.topic == "camera/set_overlay":
-		configs.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
+		config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
 
 
 def on_log(client, userdata, level, buf):
