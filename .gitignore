@@ -3,3 +3,4 @@
 venv/
 env/
 CameraOverlay/__pycache__
+configs.json
