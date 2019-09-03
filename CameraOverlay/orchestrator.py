@@ -1,6 +1,7 @@
 import json
 import configs
 import argparse
+import time
 import paho.mqtt.client as mqtt
 
 parser = argparse.ArgumentParser()
@@ -51,3 +52,5 @@ client.connect_async(broker_ip, 1883, 60)
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
 client.loop_start()
+while True:
+	time.sleep(1)
