@@ -24,7 +24,7 @@ class OverlayAllStats(Overlay):
 		topic_values = map(str, OverlayAllStats.topics)
 		at_most_once_qos = [0]*len(OverlayAllStats.topics)
 		
-		topics_qos = zip(OverlayAllStats.topics, at_most_once_qos)
+		topics_qos = zip(topic_values, at_most_once_qos)
 		client.subscribe(topics_qos)
 
 
