@@ -19,8 +19,14 @@ class OverlayAllStats(Overlay):
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
-		for topic in OverlayAllStats.topics:
-			client.subscribe(str(topic))
+		
+		# https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe
+		topic_values = map(str, OverlayAllStats.topics)
+		at_most_once_qos = [0]*len(OverlayAllStats.topics)
+		
+		topics_qos = zip(OverlayAllStats.topics, at_most_once_qos)
+		client.subscribe(topics_qos)
+
 
 		# Add static text
 		self.base_canvas.draw_text("REC Power:", (5, self.text_height * 1))
