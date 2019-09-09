@@ -11,7 +11,7 @@ try:
 except (ImportError, RuntimeError):
 	ON_PI = False
 
-class Color(Enum):
+class Colour(Enum):
 	# Remember, OpenCV uses BGR(A) not RGB(A)
 	white = (255, 255, 255, 255)
 	black = (0, 0, 0, 255)
@@ -33,19 +33,30 @@ class Canvas():
 		""" Sets the entire canvas contents to transparentBlack """
 		self.img = np.zeros((self.height, self.width, 4), np.uint8)
 
-	def draw_text(self, text, coord, size=1.5, color=Color.black):
+	@staticmethod
+	def _get_colour_tuple(colour):
+		""" Internal method - takes a 3-tulpe, 4-tuple or Colour class and returns a 4-tuple colour """
+		if isinstance(colour, Colour):
+			return colour.value
+		if len(colour) == 3:
+			return colour + (255,)
+		return colour
+
+	def draw_text(self, text, coord, size=1.5, colour=Colour.black):
 		""" Draws text to the canvas.
 		    The bottom left corner of the text is given by the tuple coord.
 		    (the top left of the screen is the origin) """
+		colour = Canvas._get_colour_tuple(colour)
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		thickness = round(size + 0.5)
-		cv2.putText(self.img, text, coord, font, size, color.value, thickness, cv2.LINE_AA)
+		cv2.putText(self.img, text, coord, font, size, colour, thickness, cv2.LINE_AA)
 
-	def draw_rect(self, top_left, bottom_right, color=Color.black):
+	def draw_rect(self, top_left, bottom_right, colour=Colour.black):
 		""" Draws a rectangle to the canvas.
 		    top_left and bottom_right are tuples, and specify the dimensions of the rectangle
 		    (the top left of the screen is the origin) """
-		cv2.rectangle(self.img, top_left, bottom_right, color.value, thickness=cv2.FILLED)
+		colour = Canvas._get_colour_tuple(colour)
+		cv2.rectangle(self.img, top_left, bottom_right, colour, thickness=cv2.FILLED)
 
 	def copy_to(self, dest):
 		""" Writes the contents of self.img over dest, accounting for transpaency

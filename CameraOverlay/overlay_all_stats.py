@@ -1,5 +1,5 @@
 import time
-from overlay import Overlay, Color
+from overlay import Overlay, Colour
 import topics
 
 class OverlayAllStats(Overlay):
@@ -78,12 +78,12 @@ class OverlayAllStats(Overlay):
 					self.data_canvas.draw_text("{0}".format(round(rec_power, 2)), (340, self.text_height * 1))
 					# Display power
 					if power > (rec_power + (rec_power * tolerance)):
-						power_color = Color.red
+						power_colour = Colour.red
 					elif power > rec_power:
-						power_color = Color.green
+						power_colour = Colour.green
 					else:
-						power_color = Color.black
-					self.data_canvas.draw_text("{0}".format(round(power, 2)), (340, self.text_height * 2), color=power_color)
+						power_colour = Colour.black
+					self.data_canvas.draw_text("{0}".format(round(power, 2)), (340, self.text_height * 2), colour=power_colour)
 
 				# Display cadence
 				if self.data["cadence"] != 0:
@@ -110,12 +110,12 @@ class OverlayAllStats(Overlay):
 					speed_pos = (self.width // 2 - 70, self.height - self.speed_height * 0)
 					tolerance = 0.05
 					if speed > (rec_speed + (rec_speed * tolerance)):
-						speed_color = Color.red
+						speed_colour = Colour.red
 					elif speed > rec_speed:
-						speed_color = Color.green
+						speed_colour = Colour.green
 					else:
-						speed_color = Color.black
-					self.data_canvas.draw_text(speed_text, speed_pos, color=speed_color, size=2.5)
+						speed_colour = Colour.black
+					self.data_canvas.draw_text(speed_text, speed_pos, colour=speed_colour, size=2.5)
 
 				# Display reed_distance (distance travelled)
 				if self.data["reed_distance"] != 0:
