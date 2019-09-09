@@ -15,6 +15,7 @@ class Color(Enum):
 	# Remember, OpenCV uses BGR(A) not RGB(A)
 	white = (255, 255, 255, 255)
 	black = (0, 0, 0, 255)
+	transparentBlack = (0, 0, 0, 0)
 	blue = (255, 0, 0, 255)
 	green = (0, 255, 0, 255)
 	red = (0, 0, 255, 255)
@@ -29,14 +30,21 @@ class Canvas():
 		self.clear()
 
 	def clear(self):
+		""" Sets the entire canvas contents to transparentBlack """
 		self.img = np.zeros((self.height, self.width, 4), np.uint8)
 
 	def draw_text(self, text, coord, size=1.5, color=Color.black):
+		""" Draws text to the canvas.
+		    The bottom left corner of the text is given by the tuple coord.
+		    (the top left of the screen is the origin) """
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		thickness = round(size + 0.5)
 		cv2.putText(self.img, text, coord, font, size, color.value, thickness, cv2.LINE_AA)
 
 	def draw_rect(self, top_left, bottom_right, color=Color.black):
+		""" Draws a rectangle to the canvas.
+		    top_left and bottom_right are tuples, and specify the dimensions of the rectangle
+		    (the top left of the screen is the origin) """
 		cv2.rectangle(self.img, top_left, bottom_right, color.value, thickness=cv2.FILLED)
 
 	def copy_to(self, dest):
