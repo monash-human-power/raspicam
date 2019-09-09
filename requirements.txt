@@ -1,5 +1,5 @@
+opencv-python==4.1.0.25
 paho-mqtt==1.4.0
 picamera==1.13
-Pillow==6.0.0
 RPi.GPIO==0.6.5
 python-dotenv==0.10.3
