@@ -15,7 +15,6 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
-
 def on_connect(client, userdata, flags, rc):
     """The callback for when the client receives a CONNACK response from the server."""
     print("Connected with result code " + str(rc))
