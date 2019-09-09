@@ -19,12 +19,13 @@ class OverlayAllStats(Overlay):
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
-		
+
 		# https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe
-		topic_values = map(str, OverlayAllStats.topics)
+		# Basically, construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
+		topic_values = list(map(str, OverlayAllStats.topics))
 		at_most_once_qos = [0]*len(OverlayAllStats.topics)
-		
-		topics_qos = zip(topic_values, at_most_once_qos)
+
+		topics_qos = list(zip(topic_values, at_most_once_qos))
 		client.subscribe(topics_qos)
 
 
