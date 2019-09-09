@@ -21,7 +21,7 @@ class PowerModel(NeatEnum):
 
 class Camera(NeatEnum):
 	get_overlays = 'camera/get_overlays'
-	set_overlays = 'camera/set_overlays'
+	set_overlays = 'camera/set_overlay'
 	push_overlays = 'camera/push_overlays'
 
 
