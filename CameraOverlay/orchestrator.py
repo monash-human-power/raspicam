@@ -1,56 +1,68 @@
+"""Orchestrator script that controls the camera system"""
 import json
-import config
 import argparse
 import time
 import paho.mqtt.client as mqtt
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--host", type=str, default="192.168.100.100", help="ip address of the broker")
-args = parser.parse_args()
-
-broker_ip = args.host
+import config
 
 
-# The callback for when the client receives a CONNACK response from the server.
+def get_args(argv=None):
+    """Get arguments passed into Python script"""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", type=str,
+                        default="192.168.100.100",
+                        help="ip address of the broker")
+    return parser.parse_args(argv)
+
+
 def on_connect(client, userdata, flags, rc):
-	print("Connected with result code " + str(rc))
+    """The callback for when the client receives a CONNACK response from the server."""
+    print("Connected with result code " + str(rc))
 
-	# Subscribing in on_connect() means that if we lose the connection and
-	# reconnect then subscriptions will be renewed.
-	client.subscribe("camera/set_overlay")
-	client.subscribe("camera/get_overlays")
+    # Subscribing in on_connect() means that if we lose the connection and
+    # reconnect then subscriptions will be renewed.
+    client.subscribe("camera/set_overlay")
+    client.subscribe("camera/get_overlays")
 
 
-# The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-	print(msg.topic + " " + str(msg.payload))
-	if msg.topic == "camera/get_overlays":
-		configs = config.read_configs()
-		client.publish("camera/push_overlays", json.dumps(configs))
-	elif msg.topic == "camera/set_overlay":
-		config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
+    """The callback for when a PUBLISH message is received from the server."""
+    print(msg.topic + " " + str(msg.payload))
+    if msg.topic == "camera/get_overlays":
+        configs = config.read_configs()
+        client.publish("camera/push_overlays", json.dumps(configs))
+    elif msg.topic == "camera/set_overlay":
+        config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
 
 
 def on_log(client, userdata, level, buf):
-	print("\nlog: ", buf)
+    """The callback to log all MQTT information"""
+    print("\nlog: ", buf)
 
 
 def on_disconnect(client, userdata, msg):
-	print("Disconnected from broker")
+    """ The callback that is called when user is disconnected from broker"""
+    print("Disconnected from broker")
 
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
-client.on_log = on_log
-client.on_disconnect = on_disconnect
+if __name__ == '__main__':
+    # Get command line arguments
+    ARGS = get_args()
+    BROKER_IP = ARGS.host
 
-client.connect_async(broker_ip, 1883, 60)
+    # Start
+    MQTT_CLIENT = mqtt.Client()
+    MQTT_CLIENT.on_connect = on_connect
+    MQTT_CLIENT.on_message = on_message
+    MQTT_CLIENT.on_log = on_log
+    MQTT_CLIENT.on_disconnect = on_disconnect
 
-# Blocking call that processes network traffic, dispatches callbacks and
-# handles reconnecting.
-# Other loop*() functions are available that give a threaded interface and a
-# manual interface.
-client.loop_start()
-while True:
-	time.sleep(1)
+    MQTT_CLIENT.connect_async(BROKER_IP, 1883, 60)
+
+    # Blocking call that processes network traffic, dispatches callbacks and
+    # handles reconnecting.
+    # Other loop*() functions are available that give a threaded interface and a
+    # manual interface.
+    MQTT_CLIENT.loop_start()
+    while True:
+        time.sleep(1)
