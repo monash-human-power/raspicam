@@ -4,6 +4,7 @@ import argparse
 import time
 import paho.mqtt.client as mqtt
 import config
+import topics
 
 
 def get_args(argv=None):
@@ -21,17 +22,17 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("camera/set_overlay")
-    client.subscribe("camera/get_overlays")
+    client.subscribe(topics.Camera.set_overlay)
+    client.subscribe(topics.Camera.get_overlays)
 
 
 def on_message(client, userdata, msg):
     """The callback for when a PUBLISH message is received from the server."""
     print(msg.topic + " " + str(msg.payload))
-    if msg.topic == "camera/get_overlays":
+    if msg.topic == topics.Camera.get_overlays:
         configs = config.read_configs()
-        client.publish("camera/push_overlays", json.dumps(configs))
-    elif msg.topic == "camera/set_overlay":
+        client.publish(topics.Camera.push_overlays, json.dumps(configs))
+    elif msg.topic == topics.Camera.set_overlay:
         config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
 
 

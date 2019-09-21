@@ -37,5 +37,5 @@ class PowerModel(NeatEnum):
 class Camera(NeatEnum):
 	"""Camera system MQTT Topics"""
 	get_overlays = 'camera/get_overlays'  # Gets the list of overlays on the cameras
-	set_overlays = 'camera/set_overlay'  # Method to set the overlays
+	set_overlay = 'camera/set_overlay'  # Method to set the overlays
 	push_overlays = 'camera/push_overlays'  # To push the overlays to the server
