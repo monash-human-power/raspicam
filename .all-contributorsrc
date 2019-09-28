@@ -1,0 +1,23 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "pdgra1",
+      "name": "pdgra1",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/33751672?v=4",
+      "profile": "https://github.com/pdgra1",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "MHP_Raspicam",
+  "projectOwner": "monash-human-power",
+  "repoType": "github",
+  "repoHost": "https://github.com"
+}
