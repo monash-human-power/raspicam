@@ -23,7 +23,11 @@ To install Pillow (PIL fork), RPi.GPIO, paho-mqtt on Raspberry Pi: **haven't tes
 
 ### Docker
 Docker can be used to quickly get started without installing any other dependencies.
+  - Install Docker
   - `docker build -t mhp/raspicam .`
+  - Make sure you have an X server running
+    - On MacOS install and run [XQuartz](https://www.xquartz.org/)
+    - On Windows install and run [VcXsrv](https://sourceforge.net/projects/vcxsrv/)
   - `./start.sh` on MacOS and Windows
     - `./start-linux.sh` on Linux
 
