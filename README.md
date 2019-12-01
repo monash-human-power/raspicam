@@ -33,8 +33,8 @@ Docker can be used to quickly get started without installing any other dependenc
 
 #### Docker configuration
 These environment variables can be used to configure settings
-  - `MQTT_BROKER_IP` - Address of the MQTT broker
-  - `CAM_PATH` - Full path to camera file. eg. `/dev/video0`
+  - `MQTT_BROKER_IP` - Address of the MQTT broker. Tries to connect to the host by default
+  - `CAM_PATH` - Full path to camera file. Default `/dev/video0`
 
 ## Contributors ✨
 
