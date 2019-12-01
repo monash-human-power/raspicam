@@ -21,6 +21,17 @@ To install Pillow (PIL fork), RPi.GPIO, paho-mqtt on Raspberry Pi: **haven't tes
   - have an ```.env``` file in the ```CameraOverlay``` folder with the variable ```MHP_CAMERA``` set to either ```primary``` or ```secondary```
   - create an ```config.json``` file in the ```CameraOverlay``` directory with attribute ```activeOverlay``` that points to the overlay file that is currently active, for instance it could be ```{ "activeOverlay": "overlay_all_stats.py" }```
 
+### Docker
+Docker can be used to quickly get started without installing any other dependencies.
+  - `docker build -t mhp/raspicam .`
+  - `./start.sh` on MacOS and Windows
+    - `./start-linux.sh` on Linux
+
+#### Docker configuration
+These environment variables can be used to configure settings
+  - `MQTT_BROKER_IP` - Address of the MQTT broker
+  - `CAM_PATH` - Full path to camera file. eg. `/dev/video0`
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
