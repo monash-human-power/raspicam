@@ -20,4 +20,4 @@ class OverlayBlank(Overlay):
 
 if __name__ == '__main__':
 	my_overlay = OverlayBlank()
-	my_overlay.connect(ip="localhost")
+	my_overlay.connect()
