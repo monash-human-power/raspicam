@@ -152,7 +152,7 @@ class Overlay(ABC):
 
 		return frame
 
-	def connect(self, ip=os.environ.get("MQTT_BROKER_IP", "192.168.100.100"), port=1883):
+	def connect(self, ip=os.environ.get("MQTT_BROKER_IP", "localhost"), port=1883):
 		self.client.connect_async(ip, port, 60)
 
 		# mqtt loop (does not block)
