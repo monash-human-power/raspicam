@@ -16,5 +16,5 @@ RUN pip install -r /tmp/optional-requirements.txt; \
 COPY . /cam
 WORKDIR /cam/CameraOverlay
 
-ENTRYPOINT [ "/cam/scripts/entrypoint.sh" ]
+ENTRYPOINT [ "/cam/entrypoint.sh" ]
 CMD [ "overlay_all_stats.py" ]
