@@ -20,9 +20,9 @@ def get_args(argv=None):
 
 class Orchestrator():
 
-    def __init__(self, host , port = 1883):
+    def __init__(self, brokerIP , port = 1883):
 
-        self.host = host
+        self.BROKER_IP = brokerIP
         self.port = port
         self.mqtt_client = None
 
@@ -62,8 +62,11 @@ class Orchestrator():
         self.mqtt_client.on_message = self.on_message
         self.mqtt_client.on_log = self.on_log
         self.mqtt_client.on_disconnect = self.on_disconnect
-        self.mqtt_client.connect_async(self.host, self.port, 60)
-        self.mqtt_client.loop_forever()
+        self.mqtt_client.connect_async(self.BROKER_IP, self.port, 60)
+        
+        self.mqtt_client.loop_start()
+        while True:
+            time.sleep(1)
 
 
 if __name__ == "__main__":
