@@ -1,10 +1,6 @@
-#opencv-python==4.1.0.25 #(could not install)
-
-#opencv-python
-
+opencv-python==4.1.0.25 
 paho-mqtt==1.4.0
 python-dotenv==0.10.3
 pylint==2.3.1
-
-#picamera==1.13  #(could not install)
-#RPi.GPIO==0.6.5 #(could not install)
+picamera==1.13  
+RPi.GPIO==0.6.5

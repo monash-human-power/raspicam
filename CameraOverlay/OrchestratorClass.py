@@ -63,7 +63,6 @@ class Orchestrator():
         self.mqtt_client.on_log = self.on_log
         self.mqtt_client.on_disconnect = self.on_disconnect
         self.mqtt_client.connect_async(self.BROKER_IP, self.port, 60)
-        
         self.mqtt_client.loop_start()
         while True:
             time.sleep(1)
