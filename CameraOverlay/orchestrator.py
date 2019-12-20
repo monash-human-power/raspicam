@@ -17,7 +17,7 @@ class Orchestrator():
 
     def __init__(self, broker_ip , port = 1883):
 
-        self.BROKER_IP = broker_ip
+        self.broker_ip = broker_ip
         self.port = port
         self.mqtt_client = None
 
@@ -57,7 +57,7 @@ class Orchestrator():
         self.mqtt_client.on_message = self.on_message
         self.mqtt_client.on_log = self.on_log
         self.mqtt_client.on_disconnect = self.on_disconnect
-        self.mqtt_client.connect_async(self.BROKER_IP, self.port, 60)
+        self.mqtt_client.connect_async(self.broker_ip, self.port, 60)
 
         # Blocking call that processes network traffic, dispatches callbacks and
         # handles reconnecting.
