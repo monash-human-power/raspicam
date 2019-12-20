@@ -1,22 +1,17 @@
-"Orchestrator Script That Controls The Camera System"
-
-#imports
+"""Orchestrator Script That Controls The Camera System"""
 import json
 import argparse
 import time
 import paho.mqtt.client as mqtt
 import config
 
-#Get arguments passed into Python script
-
 def get_args(argv=None):
+    """Get arguments passed into Python script"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", type=str,
                         default="192.168.100.100",
                         help="ip address of the broker")
     return parser.parse_args(argv)
-
-#Orchestrator Class
 
 class Orchestrator():
 
@@ -56,24 +51,28 @@ class Orchestrator():
 
 
     def start(self):
-        "start Orchestrator"
+        """start Orchestrator"""
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.on_connect = self.on_connect
         self.mqtt_client.on_message = self.on_message
         self.mqtt_client.on_log = self.on_log
         self.mqtt_client.on_disconnect = self.on_disconnect
         self.mqtt_client.connect_async(self.BROKER_IP, self.port, 60)
+
+        # Blocking call that processes network traffic, dispatches callbacks and
+        # handles reconnecting.
+        # Other loop*() functions are available that give a threaded interface and a
+        # manual interface.
         self.mqtt_client.loop_start()
         while True:
             time.sleep(1)
 
 
 if __name__ == "__main__":
-
+    # Get command line arguments
     ARGS = get_args()
     BROKER_IP = ARGS.host
     orchestrator = Orchestrator(BROKER_IP)
+
+    # Start
     orchestrator.start()
-
-
-    
