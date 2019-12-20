@@ -15,9 +15,9 @@ def get_args(argv=None):
 
 class Orchestrator():
 
-    def __init__(self, brokerIP , port = 1883):
+    def __init__(self, broker_ip , port = 1883):
 
-        self.BROKER_IP = brokerIP
+        self.BROKER_IP = broker_ip
         self.port = port
         self.mqtt_client = None
 
