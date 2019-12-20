@@ -1,4 +1,4 @@
-opencv-python==4.1.0.25 
+opencv-python==4.1.0.25 #no version 4.1.0.25 for the computer
 paho-mqtt==1.4.0
 python-dotenv==0.10.3
 pylint==2.3.1
