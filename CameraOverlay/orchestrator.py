@@ -1,10 +1,9 @@
-"""Orchestrator script that controls the camera system"""
+"""Orchestrator Script That Controls The Camera System"""
 import json
 import argparse
 import time
 import paho.mqtt.client as mqtt
 import config
-
 
 def get_args(argv=None):
     """Get arguments passed into Python script"""
@@ -14,55 +13,66 @@ def get_args(argv=None):
                         help="ip address of the broker")
     return parser.parse_args(argv)
 
+class Orchestrator():
 
-def on_connect(client, userdata, flags, rc):
-    """The callback for when the client receives a CONNACK response from the server."""
-    print("Connected with result code " + str(rc))
+    def __init__(self, broker_ip , port = 1883):
 
-    # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
-    client.subscribe("camera/set_overlay")
-    client.subscribe("camera/get_overlays")
+        self.BROKER_IP = broker_ip
+        self.port = port
+        self.mqtt_client = None
+
+   
+    def on_connect(self, client, userdata, flags, rc):
+        """The callback for when the client receives a CONNACK response from the server."""
+        print("Connected with result code " + str(rc))
+
+        # Subscribing in on_connect() means that if we lose the connection and
+        # reconnect then subscriptions will be renewed.
+        client.subscribe("camera/set_overlay")
+        client.subscribe("camera/get_overlays")
+
+    def on_message(self, client, userdata, msg):
+        """The callback for when a PUBLISH message is received from the server."""
+        print(msg.topic + " " + str(msg.payload))
+        if msg.topic == "camera/get_overlays":
+            configs = config.read_configs()
+            client.publish("camera/push_overlays", json.dumps(configs))
+        elif msg.topic == "camera/set_overlay":
+            config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
+
+    def on_log(self, client, userdata, level, buf):
+        """The callback to log all MQTT information"""
+        print("\nlog: ", buf)
 
 
-def on_message(client, userdata, msg):
-    """The callback for when a PUBLISH message is received from the server."""
-    print(msg.topic + " " + str(msg.payload))
-    if msg.topic == "camera/get_overlays":
-        configs = config.read_configs()
-        client.publish("camera/push_overlays", json.dumps(configs))
-    elif msg.topic == "camera/set_overlay":
-        config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
+    def on_disconnect(self, client, userdata, msg):
+        """ The callback that is called when user is disconnected from broker"""
+        print("Disconnected from broker")
 
 
-def on_log(client, userdata, level, buf):
-    """The callback to log all MQTT information"""
-    print("\nlog: ", buf)
+    def start(self):
+        """start Orchestrator"""
+        self.mqtt_client = mqtt.Client()
+        self.mqtt_client.on_connect = self.on_connect
+        self.mqtt_client.on_message = self.on_message
+        self.mqtt_client.on_log = self.on_log
+        self.mqtt_client.on_disconnect = self.on_disconnect
+        self.mqtt_client.connect_async(self.BROKER_IP, self.port, 60)
+
+        # Blocking call that processes network traffic, dispatches callbacks and
+        # handles reconnecting.
+        # Other loop*() functions are available that give a threaded interface and a
+        # manual interface.
+        self.mqtt_client.loop_start()
+        while True:
+            time.sleep(1)
 
 
-def on_disconnect(client, userdata, msg):
-    """ The callback that is called when user is disconnected from broker"""
-    print("Disconnected from broker")
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Get command line arguments
     ARGS = get_args()
     BROKER_IP = ARGS.host
+    orchestrator = Orchestrator(BROKER_IP)
 
     # Start
-    MQTT_CLIENT = mqtt.Client()
-    MQTT_CLIENT.on_connect = on_connect
-    MQTT_CLIENT.on_message = on_message
-    MQTT_CLIENT.on_log = on_log
-    MQTT_CLIENT.on_disconnect = on_disconnect
-
-    MQTT_CLIENT.connect_async(BROKER_IP, 1883, 60)
-
-    # Blocking call that processes network traffic, dispatches callbacks and
-    # handles reconnecting.
-    # Other loop*() functions are available that give a threaded interface and a
-    # manual interface.
-    MQTT_CLIENT.loop_start()
-    while True:
-        time.sleep(1)
+    orchestrator.start()
