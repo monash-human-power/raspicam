@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+python-dotenv = "*"
+flake8 = "*"
+pytest = "*"
+
+[packages]
+opencv-python = "==4.1.0.25"
+paho-mqtt = "==1.4.0"
+picamera = "==1.13"
+"RPi.GPIO" = "==0.6.5"
+
+[requires]
+python_version = "3.6"
