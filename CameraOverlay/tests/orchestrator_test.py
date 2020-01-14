@@ -9,6 +9,7 @@ class TestOrchestrator:
         test_broker_ip = 'localhost'
         test_port = 1883
         test_orchestrator = orchestrator.Orchestrator(test_broker_ip, test_port)
+        
         #Ensure broker ip and port are assigned
         assert test_orchestrator.broker_ip == test_broker_ip, "failed - broker ip not assigned"
         assert test_orchestrator.port == test_port, "failed - port not assigned"

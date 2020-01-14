@@ -10,6 +10,7 @@ class OverlayAllStats(Overlay):
 			topics.DAS.stop,
 			topics.PowerModel.recommended_sp,
 			topics.PowerModel.max_speed,
+			topics.DAShboard.recieve_message,
 	]
 
 	def __init__(self):
@@ -28,12 +29,12 @@ class OverlayAllStats(Overlay):
 		topics_qos = list(zip(topic_values, at_most_once_qos))
 		client.subscribe(topics_qos)
 
-
 		# Add static text
 		self.base_canvas.draw_text("REC Power:", (5, self.text_height * 1))
 		self.base_canvas.draw_text("Power:", (5, self.text_height * 2))
 		self.base_canvas.draw_text("Cadence:", (5, self.text_height * 3))
 		self.base_canvas.draw_text("Distance:", (5, self.text_height * 4))
+		self.base_canvas.draw_text("Message:",(5,self.text_height * 5 ),size = 1)
 
 		speed_x = self.width // 2 - 300
 		self.base_canvas.draw_text("SP:", (speed_x, self.height - self.speed_height * 0), size=2.5)
@@ -45,7 +46,13 @@ class OverlayAllStats(Overlay):
 		print(topic + " " + str(msg.payload.decode("utf-8")))
 		current_time = round(time.time(), 2)
 
-		if topic == str(topics.PowerModel.recommended_sp):
+		if topic == str(topics.DAShboard.recieve_message):
+			#Display Message
+			message = msg.payload.decode("utf-8")
+			while time.time() < current_time + 5:
+				self.data_canvas.draw_text("{0}".format(message), (190, self.text_height * 5), size = 1, colour=Colour.red)
+			self.data_canvas.clear()
+		elif topic == str(topics.PowerModel.recommended_sp):
 			parsed_data = self.parse_data(msg.payload)
 			self.data["rec_power"] = float(parsed_data["rec_power"])
 			self.data["rec_speed"] = float(parsed_data["rec_speed"])
@@ -65,6 +72,7 @@ class OverlayAllStats(Overlay):
 			self.data["count"] = self.data["count"] + 1
 			total_time = current_time - self.start_time
 			update_time = 0.5
+
 			if total_time >= update_time:
 				self.start_time = current_time
 				self.data_canvas.clear()
@@ -129,6 +137,7 @@ class OverlayAllStats(Overlay):
 				self.data["reed_velocity"] = 0
 				self.data["reed_distance"] = 0
 				self.data["count"] = 0
+				self.data["message"] = 0
 
 
 if __name__ == '__main__':
