@@ -28,7 +28,6 @@ class TestGetArgs:
         expected_result = {
             "host": "192.168.100.100"
         }
-        print(test_input)
         assert test_input == expected_result, "failed - default ip in function get_args is incorrect"
 
         test_input = ['--host', 'localhost']
