@@ -10,11 +10,11 @@ class TestOrchestrator:
         port = 1883
         test_orchestrator = orchestrator.Orchestrator(broker_ip, port)
 
-         #Ensure broker ip and port are assigned
+        # Ensure broker ip and port are assigned
         assert test_orchestrator.broker_ip == broker_ip, "failed - broker ip not assigned"
         assert test_orchestrator.port == port, "failed - port not assigned"
 
-         #Ensure MQTT client has not started
+        # Ensure MQTT client has not started
         assert test_orchestrator.mqtt_client is None, "failed - MQTT client has started"
 
 class TestGetArgs:

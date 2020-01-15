@@ -21,6 +21,9 @@ To install Pillow (PIL fork), RPi.GPIO, paho-mqtt on Raspberry Pi: **haven't tes
   - have an ```.env``` file in the ```CameraOverlay``` folder with the variable ```MHP_CAMERA``` set to either ```primary``` or ```secondary```
   - create an ```config.json``` file in the ```CameraOverlay``` directory with attribute ```activeOverlay``` that points to the overlay file that is currently active, for instance it could be ```{ "activeOverlay": "overlay_all_stats.py" }```
 
+## Tests
+1) orchestrator_test.py = Test script for orchestrator.py. Enter 'pytest' in the terminal to run the test file
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
