@@ -137,12 +137,12 @@ class OverlayAllStats(Overlay):
 			message = msg.payload.decode("utf-8")
 
 			# reset counter once message is recieved 
-			self.counter = 0  
+			self.frame_counter = 0  
 
 			# Display Message
 			self.message_canvas.draw_text("{0}".format(message), (190, self.text_height * 5), size= 1, colour=Colour.red)
 		
-		if self.counter >= 70:
+		if self.frame_counter >= 70:
 			self.message_canvas.clear()
 
 if __name__ == '__main__':
