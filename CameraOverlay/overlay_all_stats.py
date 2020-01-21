@@ -17,6 +17,7 @@ class OverlayAllStats(Overlay):
 		super(OverlayAllStats, self).__init__()
 		self.text_height = 50
 		self.speed_height = 70
+		self.msg_recieved_time = 0
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
@@ -46,13 +47,7 @@ class OverlayAllStats(Overlay):
 		print(topic + " " + str(msg.payload.decode("utf-8")))
 		current_time = round(time.time(), 2)
 
-		if topic == str(topics.DAShboard.recieve_message):
-			#Display Message
-			message = msg.payload.decode("utf-8")
-			while time.time() < current_time + 5:
-				self.data_canvas.draw_text("{0}".format(message), (190, self.text_height * 5), size = 1, colour=Colour.red)
-			self.data_canvas.clear()
-		elif topic == str(topics.PowerModel.recommended_sp):
+		if topic == str(topics.PowerModel.recommended_sp):
 			parsed_data = self.parse_data(msg.payload)
 			self.data["rec_power"] = float(parsed_data["rec_power"])
 			self.data["rec_speed"] = float(parsed_data["rec_speed"])
@@ -138,7 +133,18 @@ class OverlayAllStats(Overlay):
 				self.data["reed_distance"] = 0
 				self.data["count"] = 0
 				self.data["message"] = 0
+		
+		elif topic == str(topics.DAShboard.recieve_message):
+			message = msg.payload.decode("utf-8")
 
+			# reset counter once message is recieved 
+			self.counter = 0  
+
+			# Display Message
+			self.message_canvas.draw_text("{0}".format(message), (190, self.text_height * 5), size= 1, colour=Colour.red)
+		
+		if self.counter >= 70:
+			self.message_canvas.clear()
 
 if __name__ == '__main__':
 	my_overlay = OverlayAllStats()

@@ -32,7 +32,7 @@ class Canvas():
 
 	def clear(self):
 		""" Sets the entire canvas contents to transparentBlack """
-		self.img = np.zeros((self.height, self.width, 4), np.uint8)
+		self.img = np.zeros((self.height, self.width, 4), np.uint8) 
 
 	@staticmethod
 	def _get_colour_tuple(colour):
@@ -78,9 +78,11 @@ class Canvas():
 class Overlay(ABC):
 
 	def __init__(self, width=1280, height=740):
+
 		self.width = width
 		self.height = height
 		self.frametime = 17 # ms
+		self.counter = 0
 
 		self.prev_overlay = None
 		self.max_speed = float('-inf')
@@ -93,6 +95,7 @@ class Overlay(ABC):
 
 		self.base_canvas = Canvas(self.width, self.height)
 		self.data_canvas = Canvas(self.width, self.height)
+		self.message_canvas = Canvas(self.width, self.height)
 
 		self.client = mqtt.Client()
 		self.client.on_connect = self.on_connect
@@ -148,9 +151,11 @@ class Overlay(ABC):
 
 		frame = self.base_canvas.copy_to(frame)
 		frame = self.data_canvas.copy_to(frame)
-
+		frame = self.message_canvas.copy_to(frame)
+		self.counter += 1
 		return frame
 
+	
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
@@ -199,4 +204,3 @@ class Overlay(ABC):
 	@abstractmethod
 	def on_message(self, client, userdata, msg):
 		pass
-
