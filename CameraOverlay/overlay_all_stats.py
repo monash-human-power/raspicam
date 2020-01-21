@@ -17,7 +17,6 @@ class OverlayAllStats(Overlay):
 		super(OverlayAllStats, self).__init__()
 		self.text_height = 50
 		self.speed_height = 70
-		self.msg_recieved_time = 0
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
