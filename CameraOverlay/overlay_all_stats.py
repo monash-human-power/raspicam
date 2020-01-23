@@ -34,7 +34,7 @@ class OverlayAllStats(Overlay):
 		self.base_canvas.draw_text("Power:", (5, self.text_height * 2))
 		self.base_canvas.draw_text("Cadence:", (5, self.text_height * 3))
 		self.base_canvas.draw_text("Distance:", (5, self.text_height * 4))
-		self.base_canvas.draw_text("Message:",(5,self.text_height * 5 ),size = 1)
+		self.base_canvas.draw_text("Message:", (5,self.text_height * 5 ),size = 1)
 
 		speed_x = self.width // 2 - 300
 		self.base_canvas.draw_text("SP:", (speed_x, self.height - self.speed_height * 0), size=2.5)
