@@ -28,4 +28,4 @@ class Camera(NeatEnum):
 
 class DAShboard(NeatEnum):
         """DAShboard MQTT Topics"""
-        recieve_message = 'v3/camera-system/primary/message'
+        receive_message = 'v3/camera-system/primary/message'
