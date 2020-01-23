@@ -131,7 +131,6 @@ class OverlayAllStats(Overlay):
 				self.data["reed_velocity"] = 0
 				self.data["reed_distance"] = 0
 				self.data["count"] = 0
-				self.data["message"] = 0
 		
 		elif topic == str(topics.DAShboard.recieve_message):
 			message = msg.payload.decode("utf-8")
