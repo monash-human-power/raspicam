@@ -18,6 +18,7 @@ class OverlayAllStats(Overlay):
 		self.text_height = 50
 		self.speed_height = 70
 		self.frames_per_second = 14
+		self.message_received_time = 0
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
@@ -134,15 +135,13 @@ class OverlayAllStats(Overlay):
 				self.data["count"] = 0
 		
 		elif topic == str(topics.DAShboard.receive_message):
+			self.message_received_time = time.time()
 			message = msg.payload.decode("utf-8")
-
-			# reset counter once message is recieved 
-			self.frame_counter = 0  
 
 			# Display Message
 			self.message_canvas.draw_text(message, (190, self.text_height * 5), size= 1, colour=Colour.red)
-		
-		if self.frame_counter >= 5 * self.frames_per_second:
+
+		if (time.time() - self.message_received_time) >= 5:
 			self.message_canvas.clear()
 
 if __name__ == '__main__':

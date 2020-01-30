@@ -82,7 +82,6 @@ class Overlay(ABC):
 		self.width = width
 		self.height = height
 		self.frametime = 17 # ms
-		self.frame_counter = 0
 
 		self.prev_overlay = None
 		self.max_speed = float('-inf')
@@ -152,7 +151,6 @@ class Overlay(ABC):
 		frame = self.base_canvas.copy_to(frame)
 		frame = self.data_canvas.copy_to(frame)
 		frame = self.message_canvas.copy_to(frame)
-		self.frame_counter += 1
 		return frame
 
 	
