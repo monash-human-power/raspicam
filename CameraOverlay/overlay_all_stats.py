@@ -17,7 +17,6 @@ class OverlayAllStats(Overlay):
 		super(OverlayAllStats, self).__init__()
 		self.text_height = 50
 		self.speed_height = 70
-		self.frames_per_second = 14
 		self.message_received_time = 0
 		self.message_received_flag = False
 
