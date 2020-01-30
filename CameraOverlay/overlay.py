@@ -32,7 +32,7 @@ class Canvas():
 
 	def clear(self):
 		""" Sets the entire canvas contents to transparentBlack """
-		self.img = np.zeros((self.height, self.width, 4), np.uint8) 
+		self.img = np.zeros((self.height, self.width, 4), np.uint8)
 
 	@staticmethod
 	def _get_colour_tuple(colour):

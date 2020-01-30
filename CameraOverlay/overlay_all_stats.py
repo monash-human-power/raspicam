@@ -10,13 +10,14 @@ class OverlayAllStats(Overlay):
 			topics.DAS.stop,
 			topics.PowerModel.recommended_sp,
 			topics.PowerModel.max_speed,
-			topics.DAShboard.recieve_message,
+			topics.DAShboard.receive_message,
 	]
 
 	def __init__(self):
 		super(OverlayAllStats, self).__init__()
 		self.text_height = 50
 		self.speed_height = 70
+		self.frames_per_second = 14
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
@@ -132,16 +133,16 @@ class OverlayAllStats(Overlay):
 				self.data["reed_distance"] = 0
 				self.data["count"] = 0
 		
-		elif topic == str(topics.DAShboard.recieve_message):
+		elif topic == str(topics.DAShboard.receive_message):
 			message = msg.payload.decode("utf-8")
 
 			# reset counter once message is recieved 
 			self.frame_counter = 0  
 
 			# Display Message
-			self.message_canvas.draw_text("{0}".format(message), (190, self.text_height * 5), size= 1, colour=Colour.red)
+			self.message_canvas.draw_text(message, (190, self.text_height * 5), size= 1, colour=Colour.red)
 		
-		if self.frame_counter >= 70:
+		if self.frame_counter >= 5 * self.frames_per_second:
 			self.message_canvas.clear()
 
 if __name__ == '__main__':
