@@ -148,7 +148,7 @@ class OverlayAllStats(Overlay):
 			self.message_canvas.clear()
 
 			# Set displaying_message to False once displayed message is cleared
-			not self.displaying_message
+			self.displaying_message = False
 
 if __name__ == '__main__':
 	my_overlay = OverlayAllStats()
