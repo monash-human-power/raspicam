@@ -134,21 +134,16 @@ class OverlayAllStats(Overlay):
 				self.data["reed_distance"] = 0
 				self.data["count"] = 0
 		
-		elif topic == str(topics.DAShboard.receive_message) and self.displaying_message == False:
+		elif topic == str(topics.DAShboard.receive_message):
 			self.message_received_time = time.time()
 			message = msg.payload.decode("utf-8")
+			self.message_canvas.clear()
 
 			# Display Message
 			self.message_canvas.draw_text(message, (190, self.text_height * 5), size= 1, colour=Colour.red)
 
-			# Set displaying_message to True once a message is received
-			self.displaying_message = True
-
 		if (time.time() - self.message_received_time) >= 5:
 			self.message_canvas.clear()
-
-			# Set displaying_message to False once displayed message is cleared
-			self.displaying_message = False
 
 if __name__ == '__main__':
 	my_overlay = OverlayAllStats()
