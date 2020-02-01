@@ -9,7 +9,7 @@ def get_args(argv=None):
     parser.add_argument("--host", type=str, default="localhost", help="ip address of the host")
     parser.add_argument("--waitTime", type=int, default=8, help="Number of seconds until next message is sent")
     return parser.parse_args(argv)
-    
+
 class MessageTest():
 
     def __init__(self, host_ip, waitTime):
@@ -49,3 +49,13 @@ class MessageTest():
             time.sleep(2)
             self.mqtt_client.publish("/v3/camera/primary/message", "Second Test Message")
             time.sleep(self.waitTime)
+
+if __name__ == "__main__":
+    # Get command line arguments
+    ARGS = get_args()
+    HOST_IP = ARGS.host
+    DISPLAY_TIME = ARGS.waitTime
+    messagetest = MessageTest(HOST_IP, DISPLAY_TIME)
+
+    # Start
+    messagetest.start()
