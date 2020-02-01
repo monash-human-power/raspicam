@@ -10,12 +10,14 @@ class OverlayAllStats(Overlay):
 			topics.DAS.stop,
 			topics.PowerModel.recommended_sp,
 			topics.PowerModel.max_speed,
+			topics.DAShboard.receive_message,
 	]
 
 	def __init__(self):
 		super(OverlayAllStats, self).__init__()
 		self.text_height = 50
 		self.speed_height = 70
+		self.message_received_time = 0
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
@@ -28,12 +30,12 @@ class OverlayAllStats(Overlay):
 		topics_qos = list(zip(topic_values, at_most_once_qos))
 		client.subscribe(topics_qos)
 
-
 		# Add static text
 		self.base_canvas.draw_text("REC Power:", (5, self.text_height * 1))
 		self.base_canvas.draw_text("Power:", (5, self.text_height * 2))
 		self.base_canvas.draw_text("Cadence:", (5, self.text_height * 3))
 		self.base_canvas.draw_text("Distance:", (5, self.text_height * 4))
+		self.base_canvas.draw_text("Message:", (5, self.text_height * 5 ), size = 1)
 
 		speed_x = self.width // 2 - 300
 		self.base_canvas.draw_text("SP:", (speed_x, self.height - self.speed_height * 0), size=2.5)
@@ -65,6 +67,7 @@ class OverlayAllStats(Overlay):
 			self.data["count"] = self.data["count"] + 1
 			total_time = current_time - self.start_time
 			update_time = 0.5
+
 			if total_time >= update_time:
 				self.start_time = current_time
 				self.data_canvas.clear()
@@ -129,7 +132,17 @@ class OverlayAllStats(Overlay):
 				self.data["reed_velocity"] = 0
 				self.data["reed_distance"] = 0
 				self.data["count"] = 0
+		
+		elif topic == str(topics.DAShboard.receive_message):
+			self.message_received_time = time.time()
+			message = msg.payload.decode("utf-8")
+			self.message_canvas.clear()
 
+			# Display Message
+			self.message_canvas.draw_text(message, (190, self.text_height * 5), size=1, colour=Colour.red)
+
+		if time.time() - self.message_received_time >= 5:
+			self.message_canvas.clear()
 
 if __name__ == '__main__':
 	my_overlay = OverlayAllStats()
