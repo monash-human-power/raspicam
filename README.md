@@ -23,7 +23,7 @@ To install Pillow (PIL fork), RPi.GPIO, paho-mqtt on Raspberry Pi: **haven't tes
 
 ## Tests
 1) orchestrator_test.py = Test script for orchestrator.py. Enter 'pytest' in the terminal to run the test file
-2) mqtt_message_test.py = Test script that sends messages to the camera overlay. Intially run mqtt_message_test.py along with mqtt_test.py from the DAS repo, Finally run overlay_all_stats.py.
+2) mqtt_message_test.py = Test script that sends messages to the camera overlay. Initially run mqtt_message_test.py along with mqtt_test.py from the DAS repo, Finally run overlay_all_stats.py.
 
 ## Contributors ✨
 
