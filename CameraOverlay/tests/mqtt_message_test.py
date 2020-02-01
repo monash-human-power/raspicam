@@ -12,11 +12,11 @@ def get_args(argv=None):
 
 class MessageTest():
 
-    def __init__(self, host_ip, waitTime):
-
+    def __init__(self, host_ip, wait_Time):
         self.host_ip = host_ip
-        self.waitTime = waitTime
+        self.wait_Time = wait_Time
         self.mqtt_client = None
+        self.message_topic = '/v3/camera/primary/message'
         
     def on_log(self, client, userdata, level, buf):
         """ The callback to log all MQTT information """
@@ -43,19 +43,19 @@ class MessageTest():
 
         self.mqtt_client.loop_start()
         while True:
-            self.mqtt_client.publish("/v3/camera/primary/message", "Test Message")
+            self.mqtt_client.publish(self.message_topic, "Test Message")
 
             # Send a second message to ensure most recent message is displayed
             time.sleep(2)
-            self.mqtt_client.publish("/v3/camera/primary/message", "Second Test Message")
-            time.sleep(self.waitTime)
+            self.mqtt_client.publish(self.message_topic, "Second Test Message")
+            time.sleep(self.wait_Time)
 
 if __name__ == "__main__":
     # Get command line arguments
     ARGS = get_args()
     HOST_IP = ARGS.host
-    DISPLAY_TIME = ARGS.waitTime
-    messagetest = MessageTest(HOST_IP, DISPLAY_TIME)
+    WAIT_TIME = ARGS.waitTime
+    messagetest = MessageTest(HOST_IP, WAIT_TIME)
 
     # Start
     messagetest.start()
