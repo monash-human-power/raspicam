@@ -7,20 +7,20 @@ def get_args(argv=None):
     """Get arguments passed into Python script"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", type=str, default="localhost", help="ip address of the host")
-    parser.add_argument("--waitTime", type=int, default=8, help="Number of seconds until next message is sent")
+    parser.add_argument("--wait-time", type=int, default=8, help="Number of seconds until next message is sent")
     return parser.parse_args(argv)
 
 class MessageTest():
 
-    def __init__(self, host_ip, wait_Time):
+    def __init__(self, host_ip, wait_time):
         self.host_ip = host_ip
-        self.wait_Time = wait_Time
+        self.wait_time = wait_time
         self.mqtt_client = None
         self.message_topic = '/v3/camera/primary/message'
         
     def on_log(self, client, userdata, level, buf):
         """ The callback to log all MQTT information """
-        print("log: "+buf)
+        print("log: " + buf)
 
     def on_connect(self, client, userdata, flags, rc):
         """ The callback for when the client receives a CONNACK response from the server """
@@ -31,7 +31,7 @@ class MessageTest():
     
     def on_disconnect(self, client, userdata, flags, rc = 0):
         """ The callback that is called when user is disconnected from broker"""
-        print("Disconnected result code "+str(rc))
+        print("Disconnected result code " + str(rc))
 
     def start(self):
         """ start Message Test """
@@ -48,13 +48,13 @@ class MessageTest():
             # Send a second message to ensure most recent message is displayed
             time.sleep(2)
             self.mqtt_client.publish(self.message_topic, "Second Test Message")
-            time.sleep(self.wait_Time)
+            time.sleep(self.wait_time)
 
 if __name__ == "__main__":
     # Get command line arguments
     ARGS = get_args()
     HOST_IP = ARGS.host
-    WAIT_TIME = ARGS.waitTime
+    WAIT_TIME = ARGS.wait_time
     messagetest = MessageTest(HOST_IP, WAIT_TIME)
 
     # Start
