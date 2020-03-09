@@ -1,6 +1,7 @@
 import time
 from overlay import Overlay, Colour
 import topics
+import json
 
 class OverlayAllStats(Overlay):
 
@@ -135,7 +136,7 @@ class OverlayAllStats(Overlay):
 		
 		elif topic == str(topics.DAShboard.receive_message):
 			self.message_received_time = time.time()
-			message = msg.payload.decode("utf-8")
+			message = json.loads(msg.payload.decode("utf-8"))["message"]
 			self.message_canvas.clear()
 
 			# Display Message
