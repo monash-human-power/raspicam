@@ -84,10 +84,12 @@ class Canvas():
 		return cv2.add(dest, img)
 
 	def update_pi_overlay(self, pi_camera: PiCamera, layer: int):
+		""" Adds the overlay to a PiCamera preview, and if the overlay was already added,
+		    removes the old instance. """
 		overlay = pi_camera.add_overlay(self.img, format="rgba", size=(self.width, self.height))
 		overlay.layer = layer
 		overlay.fullscreen = False
-		overlay.window = (0, 20, self.width, self.height)
+		overlay.window = (0, -20, self.width, self.height)
 
 		# Rather than creating and swapping out overlays, the proper way to do this would be with overlay.update()
 		# Unfortunetly, due to a bug in PiCamera 1.13, this will spam us with errors (which don't matter, but still)
@@ -160,33 +162,35 @@ class Overlay(ABC):
 			"plan_name": str,
 		}
 
-	def get_display(self):
-		# Get video feed - source depends on if we're running on a Pi or not
-		if ON_PI:
-			time.sleep(1)
-		else:
-			_, frame = self.webcam.read()
-			frame = cv2.resize(frame, (self.width, self.height))
+	def show_opencv_frame(self):
+		""" Creates the frame using the webcame and canvases, and displays result """
+		_, frame = self.webcam.read()
+		frame = cv2.resize(frame, (self.width, self.height))
 
-			frame = self.base_canvas.copy_to(frame)
-			frame = self.data_canvas.copy_to(frame)
-			frame = self.message_canvas.copy_to(frame)
+		frame = self.base_canvas.copy_to(frame)
+		frame = self.data_canvas.copy_to(frame)
+		frame = self.message_canvas.copy_to(frame)
 
-			cv2.imshow('frame', self.get_display())
-			cv2.waitKey(self.frametime)
+		cv2.imshow('frame', self.get_display())
+		cv2.waitKey(self.frametime)
 
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
 		if ON_PI:
-			self.pi_camera.start_preview(fullscreen=False, window=(0, 20, self.width, self.height))
+			# Start displaying video feed. Non blocking, but runs forever.
+			self.pi_camera.start_preview(fullscreen=False, window=(0, -20, self.width, self.height))
 
 		# mqtt loop (does not block)
 		self.client.loop_start()
 
-		# Display video feed and overlay
 		while True:
-			self.get_display()
+			if ON_PI:
+				# If on a pi, overlays are updated in _on_connect and _on_message
+				time.sleep(1)
+			else:
+				# Create and display the frame using OpenCV
+				self.show_opencv_frame()
 
 	# Convert data to a suitable format
 	def parse_data(self, data):
