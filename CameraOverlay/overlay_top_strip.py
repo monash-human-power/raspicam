@@ -1,5 +1,5 @@
 import time
-from overlay import Overlay, Colour
+from overlay import Overlay, Colour, get_overlay_args
 import topics
 
 
@@ -125,5 +125,6 @@ class OverlayTopStrip(Overlay):
 
 
 if __name__ == '__main__':
+	args = get_overlay_args()
 	my_overlay = OverlayTopStrip()
-	my_overlay.connect(ip="localhost")
+	my_overlay.connect(ip=args.host)

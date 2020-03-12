@@ -1,3 +1,4 @@
+import argparse
 import time
 from enum import Enum
 from abc import ABC, abstractmethod
@@ -10,6 +11,11 @@ try:
 	ON_PI = True
 except (ImportError, RuntimeError):
 	ON_PI = False
+
+def get_overlay_args():
+	parser = argparse.ArgumentParser(description="Overlay displaying all (or just many) statistics", add_help=True)
+	parser.add_argument("--host", action="store", type=str, default="localhost", help="Address of the MQTT broker")
+	return parser.parse_args()
 
 class Colour(Enum):
 	# Remember, OpenCV uses BGR(A) not RGB(A)

@@ -1,5 +1,5 @@
 import time
-from overlay import Overlay, Colour
+from overlay import Overlay, Colour, get_overlay_args
 import topics
 
 class OverlayAllStats(Overlay):
@@ -145,5 +145,6 @@ class OverlayAllStats(Overlay):
 			self.message_canvas.clear()
 
 if __name__ == '__main__':
+	args = get_overlay_args()
 	my_overlay = OverlayAllStats()
-	my_overlay.connect(ip="localhost")
+	my_overlay.connect(ip=args.host)
