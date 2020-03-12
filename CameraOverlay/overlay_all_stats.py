@@ -145,6 +145,6 @@ class OverlayAllStats(Overlay):
 			self.message_canvas.clear()
 
 if __name__ == '__main__':
-	args = get_overlay_args()
+	args = get_overlay_args("Overlay displaying all (or just many) statistics")
 	my_overlay = OverlayAllStats()
 	my_overlay.connect(ip=args.host)

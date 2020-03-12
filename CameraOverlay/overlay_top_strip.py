@@ -125,6 +125,6 @@ class OverlayTopStrip(Overlay):
 
 
 if __name__ == '__main__':
-	args = get_overlay_args()
+	args = get_overlay_args("Shows important statistics in a bar at the top of the screen")
 	my_overlay = OverlayTopStrip()
 	my_overlay.connect(ip=args.host)
