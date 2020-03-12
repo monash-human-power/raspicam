@@ -83,7 +83,7 @@ class Canvas():
 		dest = cv2.bitwise_and(dest, dest, mask=cv2.bitwise_not(mask))
 		return cv2.add(dest, img)
 
-	def update_pi_overlay(self, pi_camera: PiCamera, layer: int):
+	def update_pi_overlay(self, pi_camera, layer):
 		""" Adds the overlay to a PiCamera preview, and if the overlay was already added,
 		    removes the old instance. """
 		overlay = pi_camera.add_overlay(self.img, format="rgba", size=(self.width, self.height))
@@ -171,7 +171,7 @@ class Overlay(ABC):
 		frame = self.data_canvas.copy_to(frame)
 		frame = self.message_canvas.copy_to(frame)
 
-		cv2.imshow('frame', self.get_display())
+		cv2.imshow('frame', frame)
 		cv2.waitKey(self.frametime)
 
 	def connect(self, ip="192.168.100.100", port=1883):
