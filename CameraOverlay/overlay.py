@@ -11,6 +11,11 @@ try:
 except (ImportError, RuntimeError):
 	ON_PI = False
 
+# Layer 2 is the "preview" (video) layer, hence we skip layers 0, 1 and 2
+BASE_LAYER = 3
+DATA_LAYER = 4
+MESSAGE_LAYER = 5
+
 class Colour(Enum):
 	# Remember, OpenCV uses BGR(A) not RGB(A)
 	white = (255, 255, 255, 255)
@@ -78,12 +83,16 @@ class Canvas():
 		dest = cv2.bitwise_and(dest, dest, mask=cv2.bitwise_not(mask))
 		return cv2.add(dest, img)
 
-	def pi_overlay(self, pi_camera: PiCamera, layer: int):
+	def update_pi_overlay(self, pi_camera: PiCamera, layer: int):
 		overlay = pi_camera.add_overlay(self.img, format="rgba", size=(self.width, self.height))
 		overlay.layer = layer
 		overlay.fullscreen = False
 		overlay.window = (0, 20, self.width, self.height)
 
+		# Rather than creating and swapping out overlays, the proper way to do this would be with overlay.update()
+		# Unfortunetly, due to a bug in PiCamera 1.13, this will spam us with errors (which don't matter, but still)
+		# https://github.com/waveform80/picamera/issues/320
+		# https://www.raspberrypi.org/forums/viewtopic.php?t=190120
 		if self.overlay:
 			pi_camera.remove_overlay(self.overlay)
 		self.overlay = overlay
@@ -110,9 +119,9 @@ class Overlay(ABC):
 		self.message_canvas = Canvas(self.width, self.height)
 
 		self.client = mqtt.Client()
-		self.client.on_connect = self.on_connect
+		self.client.on_connect = self._on_connect
 		self.client.on_disconnect = self.on_disconnect
-		self.client.on_message = self.on_message
+		self.client.on_message = self._on_message
 		self.client.on_log = self.on_log
 
 		self.data = {
@@ -154,11 +163,7 @@ class Overlay(ABC):
 	def get_display(self):
 		# Get video feed - source depends on if we're running on a Pi or not
 		if ON_PI:
-			time.sleep(0.017)
-			# Layer 2 is the "preview" (video) layer, hence we skip layers 0, 1 and 2
-			self.base_canvas.pi_overlay(self.pi_camera, 3)
-			self.data_canvas.pi_overlay(self.pi_camera, 4)
-
+			time.sleep(1)
 		else:
 			_, frame = self.webcam.read()
 			frame = cv2.resize(frame, (self.width, self.height))
@@ -212,6 +217,16 @@ class Overlay(ABC):
 	def reset_variables(self, value=0):
 		for key, _ in self.data.items():
 			self.data[key] = value
+
+	def _on_connect(self, client, userdata, flags, rc):
+		self.on_connect(client, userdata, flags, rc)
+		if ON_PI:
+			self.base_canvas.update_pi_overlay(self.pi_camera, BASE_LAYER)
+
+	def _on_message(self, client, userdata, flags):
+		self.on_message(client, userdata, flags)
+		if ON_PI:
+			self.data_canvas.update_pi_overlay(self.pi_camera, DATA_LAYER)
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
