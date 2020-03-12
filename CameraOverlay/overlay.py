@@ -6,7 +6,7 @@ import numpy as np
 import paho.mqtt.client as mqtt
 
 try:
-	from picamera import PiCamera, PiRGBArray
+	from picamera import PiCamera
 	ON_PI = True
 except (ImportError, RuntimeError):
 	ON_PI = False
@@ -29,6 +29,9 @@ class Canvas():
 		self.height = height
 		self.img = None
 		self.clear()
+
+		if ON_PI:
+			self.overlay = None
 
 	def clear(self):
 		""" Sets the entire canvas contents to transparentBlack """
@@ -74,6 +77,16 @@ class Canvas():
 		# Black-out the area behind the canvas on the destination
 		dest = cv2.bitwise_and(dest, dest, mask=cv2.bitwise_not(mask))
 		return cv2.add(dest, img)
+
+	def pi_overlay(self, pi_camera: PiCamera, layer: int):
+		overlay = pi_camera.add_overlay(self.img, format="rgba", size=(self.width, self.height))
+		overlay.layer = layer
+		overlay.fullscreen = False
+		overlay.window = (0, 20, self.width, self.height)
+
+		if self.overlay:
+			pi_camera.remove_overlay(self.overlay)
+		self.overlay = overlay
 
 class Overlay(ABC):
 
@@ -141,29 +154,34 @@ class Overlay(ABC):
 	def get_display(self):
 		# Get video feed - source depends on if we're running on a Pi or not
 		if ON_PI:
-			raw_capture = PiRGBArray(self.pi_camera)
-			self.pi_camera.capture(raw_capture, format="bgr")
-			frame = raw_capture.array
+			time.sleep(0.017)
+			# Layer 2 is the "preview" (video) layer, hence we skip layers 0, 1 and 2
+			self.base_canvas.pi_overlay(self.pi_camera, 3)
+			self.data_canvas.pi_overlay(self.pi_camera, 4)
+
 		else:
 			_, frame = self.webcam.read()
 			frame = cv2.resize(frame, (self.width, self.height))
 
-		frame = self.base_canvas.copy_to(frame)
-		frame = self.data_canvas.copy_to(frame)
-		frame = self.message_canvas.copy_to(frame)
-		return frame
+			frame = self.base_canvas.copy_to(frame)
+			frame = self.data_canvas.copy_to(frame)
+			frame = self.message_canvas.copy_to(frame)
 
-	
+			cv2.imshow('frame', self.get_display())
+			cv2.waitKey(self.frametime)
+
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
+
+		if ON_PI:
+			self.pi_camera.start_preview(fullscreen=False, window=(0, 20, self.width, self.height))
 
 		# mqtt loop (does not block)
 		self.client.loop_start()
 
 		# Display video feed and overlay
 		while True:
-			cv2.imshow('frame', self.get_display())
-			cv2.waitKey(self.frametime)
+			self.get_display()
 
 	# Convert data to a suitable format
 	def parse_data(self, data):
