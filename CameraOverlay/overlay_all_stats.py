@@ -1,5 +1,5 @@
 import time
-from overlay import Overlay, Colour, get_overlay_args
+from overlay import Overlay, Colour
 import topics
 
 class OverlayAllStats(Overlay):

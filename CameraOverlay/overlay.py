@@ -12,11 +12,6 @@ try:
 except (ImportError, RuntimeError):
 	ON_PI = False
 
-def get_overlay_args(overlay_description: str):
-	parser = argparse.ArgumentParser(description=overlay_description, add_help=True)
-	parser.add_argument("--host", action="store", type=str, default="localhost", help="Address of the MQTT broker")
-	return parser.parse_args()
-
 class Colour(Enum):
 	# Remember, OpenCV uses BGR(A) not RGB(A)
 	white = (255, 255, 255, 255)
@@ -208,3 +203,9 @@ class Overlay(ABC):
 	@abstractmethod
 	def on_message(self, client, userdata, msg):
 		pass
+
+	@staticmethod
+	def get_overlay_args(overlay_description: str):
+		parser = argparse.ArgumentParser(description=overlay_description, add_help=True)
+		parser.add_argument("--host", action="store", type=str, default="localhost", help="Address of the MQTT broker")
+		return parser.parse_args()
