@@ -92,7 +92,7 @@ class Canvas():
 		overlay.window = (0, -20, self.width, self.height)
 
 		# Rather than creating and swapping out overlays, the proper way to do this would be with overlay.update()
-		# Unfortunetly, due to a bug in PiCamera 1.13, this will spam us with errors (which don't matter, but still)
+		# Unfortunately, due to a bug in PiCamera 1.13, this will spam us with errors (which don't matter, but still)
 		# https://github.com/waveform80/picamera/issues/320
 		# https://www.raspberrypi.org/forums/viewtopic.php?t=190120
 		if self.overlay:
@@ -163,7 +163,7 @@ class Overlay(ABC):
 		}
 
 	def show_opencv_frame(self):
-		""" Creates the frame using the webcame and canvases, and displays result """
+		""" Creates the frame using the webcam and canvases, and displays result """
 		_, frame = self.webcam.read()
 		frame = cv2.resize(frame, (self.width, self.height))
 
