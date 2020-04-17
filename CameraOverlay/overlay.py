@@ -11,10 +11,11 @@ try:
 except (ImportError, RuntimeError):
 	ON_PI = False
 
-# Layer 2 is the "preview" (video) layer, hence we skip layers 0, 1 and 2
-BASE_LAYER = 3
-DATA_LAYER = 4
-MESSAGE_LAYER = 5
+class OverlayLayer(Enum):
+	video_feed = 2
+	base = 3
+	data = 4
+	message = 5
 
 class Colour(Enum):
 	# Remember, OpenCV uses BGR(A) not RGB(A)
@@ -225,13 +226,13 @@ class Overlay(ABC):
 	def _on_connect(self, client, userdata, flags, rc):
 		self.on_connect(client, userdata, flags, rc)
 		if ON_PI:
-			self.base_canvas.update_pi_overlay(self.pi_camera, BASE_LAYER)
+			self.base_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.base)
 
 	def _on_message(self, client, userdata, flags):
 		self.on_message(client, userdata, flags)
 		if ON_PI:
-			self.data_canvas.update_pi_overlay(self.pi_camera, DATA_LAYER)
-			self.message_canvas.update_pi_overlay(self.pi_camera, MESSAGE_LAYER)
+			self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data_layer)
+			self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
