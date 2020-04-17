@@ -234,7 +234,7 @@ class Overlay(ABC):
 	def _on_message(self, client, userdata, flags):
 		self.on_message(client, userdata, flags)
 		if ON_PI:
-			self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data_layer)
+			self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
 			self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
 
 	@abstractmethod
