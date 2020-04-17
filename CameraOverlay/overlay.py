@@ -11,6 +11,9 @@ try:
 except (ImportError, RuntimeError):
 	ON_PI = False
 
+# Top of window is outside the screen to hide title bar
+PI_WINDOW_TOP_LEFT = (0, -20)
+
 class OverlayLayer(Enum):
 	video_feed = 2
 	base = 3
@@ -90,7 +93,7 @@ class Canvas():
 		overlay = pi_camera.add_overlay(self.img, format="rgba", size=(self.width, self.height))
 		overlay.layer = layer
 		overlay.fullscreen = False
-		overlay.window = (0, -20, self.width, self.height)
+		overlay.window = (*PI_WINDOW_TOP_LEFT, self.width, self.height)
 
 		# Rather than creating and swapping out overlays, the proper way to do this would be with overlay.update()
 		# Unfortunately, due to a bug in PiCamera 1.13, this will spam us with errors (which don't matter, but still)
@@ -180,7 +183,7 @@ class Overlay(ABC):
 
 		if ON_PI:
 			# Start displaying video feed. Non blocking, but runs forever.
-			self.pi_camera.start_preview(fullscreen=False, window=(0, -20, self.width, self.height))
+			self.pi_camera.start_preview(fullscreen=False, window=(*PI_WINDOW_TOP_LEFT, self.width, self.height))
 
 		# mqtt loop (does not block)
 		self.client.loop_start()
