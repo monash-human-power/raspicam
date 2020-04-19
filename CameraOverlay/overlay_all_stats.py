@@ -36,7 +36,6 @@ class OverlayAllStats(Overlay):
 		self.base_canvas.draw_text("Power:", (5, self.text_height * 2))
 		self.base_canvas.draw_text("Cadence:", (5, self.text_height * 3))
 		self.base_canvas.draw_text("Distance:", (5, self.text_height * 4))
-		self.base_canvas.draw_text("Message:", (5, self.text_height * 5 ), size = 1)
 
 		speed_x = self.width // 2 - 300
 		self.base_canvas.draw_text("SP:", (speed_x, self.height - self.speed_height * 0), size=2.5)
@@ -136,11 +135,11 @@ class OverlayAllStats(Overlay):
 		
 		elif topic == str(topics.DAShboard.receive_message):
 			self.message_received_time = time.time()
-			message = json.loads(msg.payload.decode("utf-8"))["message"]
+			message = msg.payload.decode("utf-8")
 			self.message_canvas.clear()
 
 			# Display Message
-			self.message_canvas.draw_text(message, (190, self.text_height * 5), size=1, colour=Colour.red)
+			self.message_canvas.draw_text(message, (5, self.text_height * 5), size=1, colour=Colour.red)
 
 		if time.time() - self.message_received_time >= 5:
 			self.message_canvas.clear()
