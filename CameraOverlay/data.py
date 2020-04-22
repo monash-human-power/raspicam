@@ -43,6 +43,7 @@ class Data:
             "zdist": 0,
             "plan_name": "",
         }
+        self._has_new_data = False
 
     def load_v2_query_string(self, data: str) -> None:
         terms = data.split("&")
@@ -52,9 +53,16 @@ class Data:
                 continue
             cast_func = self.data_types[key]
             self.data[key] = cast_func(value)
+        self._has_new_data = True
 
     def load_v3_module_data(self, data: str) -> None:
         pass
+
+    def has_new_data(self) -> bool:
+        if self._has_new_data:
+            self._has_new_data = False
+            return True
+        return False
 
     # Overload the [] operator
     def __getitem__(self, key: str) -> Any:

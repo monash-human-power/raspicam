@@ -113,7 +113,11 @@ class Overlay(ABC):
 
 		self.width = width
 		self.height = height
-		self.frametime = 17 # ms
+
+		# Time between video frames when running on OpenCV, in milliseconds
+		self.frametime = 17
+		# Time between updating the data layer, in seconds
+		self.data_update_interval = 1
 
 		self.prev_overlay = None
 		self.max_speed = float('-inf')
@@ -158,11 +162,20 @@ class Overlay(ABC):
 		# mqtt loop (does not block)
 		self.client.loop_start()
 
+		prev_data_update = 0 # time that we last updated the data layer
 		while True:
-			if ON_PI:
-				# If on a pi, overlays are updated in _on_connect and _on_message
-				time.sleep(1)
-			else:
+
+			# Update the data overlay only if we have waited enough time and there is new data
+			data_update_due = time.time() > prev_data_update + self.data_update_interval
+			if data_update_due and self.data.has_new_data():
+
+				prev_data_update = time.time()
+				self.update_data_layer()
+				if ON_PI:
+					self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
+					self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
+
+			if not ON_PI:
 				# Create and display the frame using OpenCV
 				self.show_opencv_frame()
 
@@ -186,11 +199,6 @@ class Overlay(ABC):
 		payload = msg.payload.decode("utf-8")
 		if msg.topic in V2_DATA_TOPICS:
 			self.data.load_v2_query_string(payload)
-			self.update_data_layer()
-
-		if ON_PI:
-			self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
-			self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
