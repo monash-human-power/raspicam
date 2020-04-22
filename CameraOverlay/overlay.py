@@ -6,6 +6,9 @@ import cv2
 import numpy as np
 import paho.mqtt.client as mqtt
 
+from CameraOverlay.data import Data, V2_DATA_TOPICS
+import CameraOverlay.topics as topics
+
 try:
 	from picamera import PiCamera
 	ON_PI = True
@@ -131,41 +134,7 @@ class Overlay(ABC):
 		self.client.on_message = self._on_message
 		self.client.on_log = self.on_log
 
-		self.data = {
-			# das data
-			"count": 0,
-			"cadence": 0,
-			"gps": 0,
-			"gps_speed": 0,
-			"power": 0,
-			"reed_distance": 0,
-			"reed_velocity": 0,
-
-			# power model data
-			"predicted_max_speed": 0,
-			"rec_power": 0,
-			"rec_speed": 0,
-			"zdist": 0,
-			"plan_name": "",
-		}
-
-		self.data_types = {
-			# das data
-			"power": int,
-			"cadence": int,
-			"reed_velocity": float,
-			"gps": int,
-			"gps_speed": float,
-			"reed_distance": float,
-			"count": int,
-
-			# power model data
-			"rec_power": float,
-			"rec_speed": float,
-			"predicted_max_speed": float,
-			"zdist": float,
-			"plan_name": str,
-		}
+		self.data = Data()
 
 	def show_opencv_frame(self):
 		""" Creates the frame using the webcam and canvases, and displays result """
@@ -197,18 +166,6 @@ class Overlay(ABC):
 				# Create and display the frame using OpenCV
 				self.show_opencv_frame()
 
-	# Convert data to a suitable format
-	def parse_data(self, data):
-		terms = data.decode("utf-8").split("&")
-		data_dict = {}
-		for term in terms:
-			key, value = term.split("=")
-			if key not in self.data_types:
-				continue
-			cast_func = self.data_types[key]
-			data_dict[key] = cast_func(value)
-		return data_dict
-
 	# Calculate max speed
 	def actual_max(self, cur_speed):
 		return max(self.max_speed, cur_speed)
@@ -220,20 +177,17 @@ class Overlay(ABC):
 	def on_disconnect(self, client, userdata, msg):
 		print("Disconnected from broker")
 
-	def subscribe_topics(self, topics):
-		self.client.subscribe(topics)
-
-	def reset_variables(self, value=0):
-		for key, _ in self.data.items():
-			self.data[key] = value
-
 	def _on_connect(self, client, userdata, flags, rc):
 		self.on_connect(client, userdata, flags, rc)
 		if ON_PI:
 			self.base_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.base)
 
-	def _on_message(self, client, userdata, flags):
-		self.on_message(client, userdata, flags)
+	def _on_message(self, client, userdata, msg):
+		payload = msg.payload.decode("utf-8")
+		if msg.topic in V2_DATA_TOPICS:
+			self.data.load_v2_query_string(payload)
+			self.update_data_layer()
+
 		if ON_PI:
 			self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
 			self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
@@ -243,7 +197,7 @@ class Overlay(ABC):
 		pass
 
 	@abstractmethod
-	def on_message(self, client, userdata, msg):
+	def update_data_layer(self):
 		pass
 
 	@staticmethod
