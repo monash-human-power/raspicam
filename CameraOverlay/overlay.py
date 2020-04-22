@@ -142,7 +142,7 @@ class Overlay(ABC):
 			"reed_velocity": 0,
 
 			# power model data
-			"max_speed": 0,
+			"predicted_max_speed": 0,
 			"rec_power": 0,
 			"rec_speed": 0,
 			"zdist": 0,
@@ -162,7 +162,7 @@ class Overlay(ABC):
 			# power model data
 			"rec_power": float,
 			"rec_speed": float,
-			"max_speed": float,
+			"predicted_max_speed": float,
 			"zdist": float,
 			"plan_name": str,
 		}

@@ -9,7 +9,7 @@ class OverlayAllStats(Overlay):
 			topics.DAS.data,
 			topics.DAS.stop,
 			topics.PowerModel.recommended_sp,
-			topics.PowerModel.max_speed,
+			topics.PowerModel.predicted_max_speed,
 			topics.DAShboard.receive_message,
 	]
 
@@ -51,9 +51,9 @@ class OverlayAllStats(Overlay):
 			parsed_data = self.parse_data(msg.payload)
 			self.data["rec_power"] = float(parsed_data["rec_power"])
 			self.data["rec_speed"] = float(parsed_data["rec_speed"])
-		elif topic == str(topics.PowerModel.max_speed):
-			max_speed = str(msg.payload.decode("utf-8"))
-			self.data["max_speed"] = float(max_speed)
+		elif topic == str(topics.PowerModel.predicted_max_speed):
+			parsed_data = self.parse_data(msg.payload)
+			self.data["predicted_max_speed"] = float(parsed_data["predicted_max_speed"])
 		elif topic == str(topics.DAS.data):
 			data = msg.payload
 			parsed_data = self.parse_data(data)
@@ -96,7 +96,7 @@ class OverlayAllStats(Overlay):
 				# Display speed
 				if self.data["reed_velocity"] != 0:
 					# Max Speed
-					max_speed = self.data["max_speed"]
+					max_speed = self.data["predicted_max_speed"]
 					max_speed_text = "{0} km/h".format(round(max_speed, 2))
 					max_speed_pos = (self.width // 2 - 70, self.height - self.speed_height * 2)
 					self.data_canvas.draw_text(max_speed_text, max_speed_pos, size=2.5)

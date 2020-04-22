@@ -10,7 +10,7 @@ class OverlayTopStrip(Overlay):
 			topics.DAS.data,
 			topics.DAS.stop,
 			topics.PowerModel.recommended_sp,
-			topics.PowerModel.max_speed,
+			topics.PowerModel.predicted_max_speed,
 			topics.PowerModel.plan_name,
 	]
 
@@ -53,8 +53,8 @@ class OverlayTopStrip(Overlay):
 			self.data["rec_power"] = int(parsed_data["rec_power"])
 			self.data["zdist"] = int(parsed_data["zdist"])
 		elif msg.topic == str(topics.PowerModel.predicted_max_speed):
-			max_speed = str(msg.payload.decode("utf-8"))
-			self.data["max_speed"] = float(max_speed)
+			parsed_data = self.parse_data(msg.payload)
+			self.data["predicted_max_speed"] = float(parsed_data["predicted_max_speed"])
 		elif msg.topic == str(topics.PowerModel.plan_name):
 			parsed_data = self.parse_data(msg.payload)
 			self.data["plan_name"] = str(parsed_data["plan_name"])
@@ -96,8 +96,8 @@ class OverlayTopStrip(Overlay):
 				if int(parsed_data["gps"]) == 1:
 					if self.data["gps_speed"] != 0:
 						# Predicted max speed
-						pred_max_speed = self.data["max_speed"]
-						self.data_canvas.draw_text("{0}".format(round(pred_max_speed, 2)), (890, self.top_text_pos), colour=Colour.white)
+						pred_max_speed = self.data["predicted_max_speed"]
+						self.data_canvas.draw_text("{0}".format(round(pred_max_speed, 1)), (890, self.top_text_pos), colour=Colour.white)
 
 						# Actual speed (no colour change)
 						speed = self.data["gps_speed"] / self.data["count"]
