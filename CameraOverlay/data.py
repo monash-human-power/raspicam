@@ -2,9 +2,9 @@ from typing import Any
 import CameraOverlay.topics as topics
 
 V2_DATA_TOPICS = [
-    topics.DAS.data,
-    topics.PowerModel.recommended_sp,
-    topics.PowerModel.predicted_max_speed,
+    str(topics.DAS.data),
+    str(topics.PowerModel.recommended_sp),
+    str(topics.PowerModel.predicted_max_speed),
 ]
 
 class Data:
@@ -49,7 +49,6 @@ class Data:
         for term in terms:
             key, value = term.split("=")
             if key not in self.data_types:
-                print(f"WARNING: invalid data key `{key}` used")
                 continue
             cast_func = self.data_types[key]
             self.data[key] = cast_func(value)

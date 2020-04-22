@@ -65,7 +65,7 @@ class OverlayTopStrip(Overlay):
 
 			# Display power
 			if self.data["power"] != 0:
-				power = self.data["power"] / self.data["count"]
+				power = self.data["power"]
 				rec_power = self.data["rec_power"]
 				# Display recommended power
 				self.data_canvas.draw_text("{0}".format(round(rec_power, 0)), (600, self.top_text_pos), colour=Colour.white)
@@ -80,7 +80,7 @@ class OverlayTopStrip(Overlay):
 					self.data_canvas.draw_text("{0}".format(round(pred_max_speed, 1)), (890, self.top_text_pos), colour=Colour.white)
 
 					# Actual speed (no colour change)
-					speed = self.data["gps_speed"] / self.data["count"]
+					speed = self.data["gps_speed"]
 					self.data_canvas.draw_text("S: {0}".format(round(speed, 2)), (self.bottom_text_pos_x, self.bottom_text_pos_y - self.bottom_text_height), size=self.bottom_text_size, colour=Colour.red)
 
 					# Actual max speed
