@@ -7,10 +7,19 @@ import numpy as np
 import paho.mqtt.client as mqtt
 
 try:
-	from picamera import PiCamera, PiRGBArray
+	from picamera import PiCamera
 	ON_PI = True
 except (ImportError, RuntimeError):
 	ON_PI = False
+
+# Top of window is outside the screen to hide title bar
+PI_WINDOW_TOP_LEFT = (0, -20)
+
+class OverlayLayer(Enum):
+	video_feed = 2
+	base = 3
+	data = 4
+	message = 5
 
 class Colour(Enum):
 	# Remember, OpenCV uses BGR(A) not RGB(A)
@@ -30,6 +39,9 @@ class Canvas():
 		self.height = height
 		self.img = None
 		self.clear()
+
+		if ON_PI:
+			self.overlay = None
 
 	def clear(self):
 		""" Sets the entire canvas contents to transparentBlack """
@@ -76,6 +88,22 @@ class Canvas():
 		dest = cv2.bitwise_and(dest, dest, mask=cv2.bitwise_not(mask))
 		return cv2.add(dest, img)
 
+	def update_pi_overlay(self, pi_camera, layer):
+		""" Adds the overlay to a PiCamera preview, and if the overlay was already added,
+		    removes the old instance. """
+		overlay = pi_camera.add_overlay(self.img, format="rgba", size=(self.width, self.height))
+		overlay.layer = layer
+		overlay.fullscreen = False
+		overlay.window = (*PI_WINDOW_TOP_LEFT, self.width, self.height)
+
+		# Rather than creating and swapping out overlays, the proper way to do this would be with overlay.update()
+		# Unfortunately, due to a bug in PiCamera 1.13, this will spam us with errors (which don't matter, but still)
+		# https://github.com/waveform80/picamera/issues/320
+		# https://www.raspberrypi.org/forums/viewtopic.php?t=190120
+		if self.overlay:
+			pi_camera.remove_overlay(self.overlay)
+		self.overlay = overlay
+
 class Overlay(ABC):
 
 	def __init__(self, width=1280, height=740):
@@ -98,9 +126,9 @@ class Overlay(ABC):
 		self.message_canvas = Canvas(self.width, self.height)
 
 		self.client = mqtt.Client()
-		self.client.on_connect = self.on_connect
+		self.client.on_connect = self._on_connect
 		self.client.on_disconnect = self.on_disconnect
-		self.client.on_message = self.on_message
+		self.client.on_message = self._on_message
 		self.client.on_log = self.on_log
 
 		self.data = {
@@ -139,32 +167,35 @@ class Overlay(ABC):
 			"plan_name": str,
 		}
 
-	def get_display(self):
-		# Get video feed - source depends on if we're running on a Pi or not
-		if ON_PI:
-			raw_capture = PiRGBArray(self.pi_camera)
-			self.pi_camera.capture(raw_capture, format="bgr")
-			frame = raw_capture.array
-		else:
-			_, frame = self.webcam.read()
-			frame = cv2.resize(frame, (self.width, self.height))
+	def show_opencv_frame(self):
+		""" Creates the frame using the webcam and canvases, and displays result """
+		_, frame = self.webcam.read()
+		frame = cv2.resize(frame, (self.width, self.height))
 
 		frame = self.base_canvas.copy_to(frame)
 		frame = self.data_canvas.copy_to(frame)
 		frame = self.message_canvas.copy_to(frame)
-		return frame
 
-	
+		cv2.imshow('frame', frame)
+		cv2.waitKey(self.frametime)
+
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
+
+		if ON_PI:
+			# Start displaying video feed. Non blocking, but runs forever.
+			self.pi_camera.start_preview(fullscreen=False, window=(*PI_WINDOW_TOP_LEFT, self.width, self.height))
 
 		# mqtt loop (does not block)
 		self.client.loop_start()
 
-		# Display video feed and overlay
 		while True:
-			cv2.imshow('frame', self.get_display())
-			cv2.waitKey(self.frametime)
+			if ON_PI:
+				# If on a pi, overlays are updated in _on_connect and _on_message
+				time.sleep(1)
+			else:
+				# Create and display the frame using OpenCV
+				self.show_opencv_frame()
 
 	# Convert data to a suitable format
 	def parse_data(self, data):
@@ -195,6 +226,17 @@ class Overlay(ABC):
 	def reset_variables(self, value=0):
 		for key, _ in self.data.items():
 			self.data[key] = value
+
+	def _on_connect(self, client, userdata, flags, rc):
+		self.on_connect(client, userdata, flags, rc)
+		if ON_PI:
+			self.base_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.base)
+
+	def _on_message(self, client, userdata, flags):
+		self.on_message(client, userdata, flags)
+		if ON_PI:
+			self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
+			self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
