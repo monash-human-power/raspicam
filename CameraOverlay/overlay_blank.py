@@ -19,4 +19,4 @@ class OverlayBlank(Overlay):
 if __name__ == '__main__':
 	args = Overlay.get_overlay_args("An empty, example overlay")
 	my_overlay = OverlayBlank()
-	my_overlay.connect(ip="192.168.1.154")
+	my_overlay.connect(ip=args.host)
