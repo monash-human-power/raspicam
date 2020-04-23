@@ -5,6 +5,7 @@ V2_DATA_TOPICS = [
     str(topics.DAS.data),
     str(topics.PowerModel.recommended_sp),
     str(topics.PowerModel.predicted_max_speed),
+    str(topics.PowerModel.plan_name),
 ]
 
 class Data:
