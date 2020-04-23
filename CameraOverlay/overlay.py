@@ -179,6 +179,15 @@ class Overlay(ABC):
 				# Create and display the frame using OpenCV
 				self.show_opencv_frame()
 
+	def subscribe_to_topic_list(self, topics):
+		# https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe
+		# Basically, construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
+		topic_values = list(map(str, topics))
+		at_most_once_qos = [0]*len(topics)
+
+		topics_qos = list(zip(topic_values, at_most_once_qos))
+		self.client.subscribe(topics_qos)
+
 	# Calculate max speed
 	def actual_max(self, cur_speed):
 		return max(self.max_speed, cur_speed)
@@ -191,6 +200,7 @@ class Overlay(ABC):
 		print("Disconnected from broker")
 
 	def _on_connect(self, client, userdata, flags, rc):
+		self.subscribe_to_topic_list(V2_DATA_TOPICS)
 		self.on_connect(client, userdata, flags, rc)
 		if ON_PI:
 			self.base_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.base)

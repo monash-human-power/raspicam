@@ -5,15 +5,6 @@ import CameraOverlay.topics as topics
 
 class OverlayTopStrip(Overlay):
 
-	topics = [
-			topics.DAS.start,
-			topics.DAS.data,
-			topics.DAS.stop,
-			topics.PowerModel.recommended_sp,
-			topics.PowerModel.predicted_max_speed,
-			topics.PowerModel.plan_name,
-	]
-
 	def __init__(self):
 		super(OverlayTopStrip, self).__init__()
 
@@ -29,14 +20,6 @@ class OverlayTopStrip(Overlay):
 
 	def on_connect(self, client, userdata, flags, rc):
 		print("Connected with rc: " + str(rc))
-
-		# https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe
-		# Basically, construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
-		topic_values = list(map(str, OverlayTopStrip.topics))
-		at_most_once_qos = [0]*len(OverlayTopStrip.topics)
-
-		topics_qos = list(zip(topic_values, at_most_once_qos))
-		client.subscribe(topics_qos)
 
 		self.base_canvas.draw_rect((0, 0), (self.top_box_width, self.top_box_height))
 		self.base_canvas.draw_text("T:", (0, self.top_text_pos), colour=Colour.white)
