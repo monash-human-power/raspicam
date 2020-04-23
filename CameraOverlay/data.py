@@ -1,6 +1,6 @@
 import time
 from typing import Any, Optional
-import CameraOverlay.topics as topics
+import topics as topics
 
 V2_DATA_TOPICS = [
     str(topics.DAS.data),

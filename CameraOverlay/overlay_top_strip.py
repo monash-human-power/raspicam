@@ -1,6 +1,6 @@
 import time
-from CameraOverlay.overlay import Overlay, Colour
-import CameraOverlay.topics as topics
+from overlay import Overlay, Colour
+import topics as topics
 
 
 class OverlayTopStrip(Overlay):

@@ -6,8 +6,8 @@ import cv2
 import numpy as np
 import paho.mqtt.client as mqtt
 
-from CameraOverlay.data import Data, V2_DATA_TOPICS, V3_MESSAGE
-import CameraOverlay.topics as topics
+from data import Data, V2_DATA_TOPICS, V3_MESSAGE
+import topics as topics
 
 try:
 	from picamera import PiCamera
