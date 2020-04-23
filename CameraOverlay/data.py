@@ -1,4 +1,5 @@
-from typing import Any
+import time
+from typing import Any, Optional
 import CameraOverlay.topics as topics
 
 V2_DATA_TOPICS = [
@@ -6,6 +7,10 @@ V2_DATA_TOPICS = [
     str(topics.PowerModel.recommended_sp),
     str(topics.PowerModel.predicted_max_speed),
     str(topics.PowerModel.plan_name),
+]
+
+V3_MESSAGE = [
+    str(topics.DAShboard.receive_message)
 ]
 
 class Data:
@@ -46,6 +51,10 @@ class Data:
         }
         self._has_new_data = False
 
+        self.message_recieved_time = 0
+        self.message_duration = 5 # seconds
+        self.message = None
+
     def load_v2_query_string(self, data: str) -> None:
         terms = data.split("&")
         for term in terms:
@@ -59,11 +68,26 @@ class Data:
     def load_v3_module_data(self, data: str) -> None:
         pass
 
+    def load_v3_message(self, data: str) -> None:
+        self.message_recieved_time = time.time()
+        self.message = data
+
     def has_new_data(self) -> bool:
         if self._has_new_data:
             self._has_new_data = False
             return True
         return False
+
+    def has_message(self) -> bool:
+        if not self.message:
+            return False
+        if time.time() > self.message_recieved_time + self.message_duration:
+            self.message = None
+            return False
+        return True
+
+    def get_message(self) -> Optional[str]:
+        return self.message
 
     # Overload the [] operator
     def __getitem__(self, key: str) -> Any:

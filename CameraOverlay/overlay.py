@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import paho.mqtt.client as mqtt
 
-from CameraOverlay.data import Data, V2_DATA_TOPICS
+from CameraOverlay.data import Data, V2_DATA_TOPICS, V3_MESSAGE
 import CameraOverlay.topics as topics
 
 try:
@@ -200,7 +200,7 @@ class Overlay(ABC):
 		print("Disconnected from broker")
 
 	def _on_connect(self, client, userdata, flags, rc):
-		self.subscribe_to_topic_list(V2_DATA_TOPICS)
+		self.subscribe_to_topic_list(V2_DATA_TOPICS + V3_MESSAGE)
 		self.on_connect(client, userdata, flags, rc)
 		if ON_PI:
 			self.base_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.base)
@@ -209,6 +209,8 @@ class Overlay(ABC):
 		payload = msg.payload.decode("utf-8")
 		if msg.topic in V2_DATA_TOPICS:
 			self.data.load_v2_query_string(payload)
+		elif msg.topic in V3_MESSAGE:
+			self.data.load_v3_message(payload)
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
