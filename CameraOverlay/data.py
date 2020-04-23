@@ -49,7 +49,6 @@ class Data:
             "zdist": 0,
             "plan_name": "",
         }
-        self._has_new_data = False
 
         self.message_recieved_time = 0
         self.message_duration = 5 # seconds
@@ -63,7 +62,6 @@ class Data:
                 continue
             cast_func = self.data_types[key]
             self.data[key] = cast_func(value)
-        self._has_new_data = True
 
     def load_v3_module_data(self, data: str) -> None:
         pass
@@ -71,12 +69,6 @@ class Data:
     def load_v3_message(self, data: str) -> None:
         self.message_recieved_time = time.time()
         self.message = data
-
-    def has_new_data(self) -> bool:
-        if self._has_new_data:
-            self._has_new_data = False
-            return True
-        return False
 
     def has_message(self) -> bool:
         if not self.message:

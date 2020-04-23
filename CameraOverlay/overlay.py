@@ -165,11 +165,10 @@ class Overlay(ABC):
 		prev_data_update = 0 # time that we last updated the data layer
 		while True:
 
-			# Update the data overlay only if we have waited enough time and there is new data
-			data_update_due = time.time() > prev_data_update + self.data_update_interval
-			if data_update_due and self.data.has_new_data():
-
+			# Update the data overlay only if we have waited enough time
+			if time.time() > prev_data_update + self.data_update_interval:
 				prev_data_update = time.time()
+
 				self.update_data_layer()
 				if ON_PI:
 					self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
