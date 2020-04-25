@@ -168,13 +168,20 @@ class Overlay(ABC):
 			if time.time() > prev_data_update + self.data_update_interval:
 				prev_data_update = time.time()
 
+				# Update the data overlay with latest information
 				self.update_data_layer()
+
 				if ON_PI:
+					# Update the overlay images on picamera. Picamera will
+					# retain the overlay images until updated, so we only need
+					# to do this once per overlay update.
 					self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
 					self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
 
 			if not ON_PI:
-				# Create and display the frame using OpenCV
+				# Create and display the frame using OpenCV.
+				# This function fetches the most up-to-date overlay, as OpenCV
+				# needs us to manually add it to each frame.
 				self.show_opencv_frame()
 
 	def subscribe_to_topic_list(self, topics):
@@ -212,10 +219,16 @@ class Overlay(ABC):
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
+		""" Called automatically when the overlay connects successfully to the
+			MQTT broker. Overlay implementations may override for one-off
+			operations (e.g. drawing self.base_canvas) """
 		pass
 
 	@abstractmethod
 	def update_data_layer(self):
+		""" Called automatically at a regular interval defined by
+			self.data_update_interval. Overlay implementations should override
+			this method with code which updates self.data_canvas. """
 		pass
 
 	@staticmethod
