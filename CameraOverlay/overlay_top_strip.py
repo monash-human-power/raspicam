@@ -1,6 +1,5 @@
 import time
 from overlay import Overlay, Colour
-import topics as topics
 
 
 class OverlayTopStrip(Overlay):

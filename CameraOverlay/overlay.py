@@ -7,7 +7,6 @@ import numpy as np
 import paho.mqtt.client as mqtt
 
 from data import Data, V2_DATA_TOPICS, V3_MESSAGE
-import topics as topics
 
 try:
 	from picamera import PiCamera
