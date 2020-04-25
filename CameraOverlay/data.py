@@ -50,7 +50,7 @@ class Data:
             "plan_name": "",
         }
 
-        self.message_recieved_time = 0
+        self.message_received_time = 0
         self.message_duration = 5 # seconds
         self.message = None
 
@@ -67,13 +67,13 @@ class Data:
         pass
 
     def load_v3_message(self, data: str) -> None:
-        self.message_recieved_time = time.time()
+        self.message_received_time = time.time()
         self.message = data
 
     def has_message(self) -> bool:
         if not self.message:
             return False
-        if time.time() > self.message_recieved_time + self.message_duration:
+        if time.time() > self.message_received_time + self.message_duration:
             self.message = None
             return False
         return True
