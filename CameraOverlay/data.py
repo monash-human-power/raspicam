@@ -15,6 +15,7 @@ V3_MESSAGE = [
 
 class Data:
     """ A class to keep track of the most recent bike data for the overlays.
+
         Data comes into the class in the V2/V3 MQTT formats and may be accessed
         by using this class as a dictionary. """
 
@@ -60,9 +61,11 @@ class Data:
         self.message_duration = 5 # seconds
 
     def load_v2_query_string(self, data: str) -> None:
-        """ Updates stored fields with data stored in a V2 query string, e.g.
-            `power=200&cadence=95`. Only the supplied data fields will be
-            updated, the rest remain as they were. """
+        """ Updates stored fields with data stored in a V2 query string,
+            e.g. `power=200&cadence=95`.
+
+            Only the supplied data fields will be updated, the rest remain as
+            they were. """
         terms = data.split("&")
         for term in terms:
             key, value = term.split("=")
@@ -84,8 +87,10 @@ class Data:
 
     def has_message(self) -> bool:
         """ Returns true if a message is available for display on the overlay,
-            otherwise false (when no message exists, or a message has expired)
-            """
+            otherwise false.
+
+            Returning false may mean messages have been sent, or the most recent
+            message has expired. """
         if not self.message:
             return False
         # Clear the message and return false if enough time has past since
@@ -96,14 +101,16 @@ class Data:
         return True
 
     def get_message(self) -> Optional[str]:
-        """ Gets the most recent message from the DAShboard. This should only
-            be called if self.has_message returns true. """
+        """ Gets the most recent message from the DAShboard.
+
+            This should only be called if self.has_message returns true. """
         return self.message
 
     def __getitem__(self, field: str) -> Any:
-        """ Gets a the most recent value of a data field. This overloads the
-            [] operator e.g. call with data_intance["power"]. This only allows
-            fetching the data, not assignment. """
+        """ Gets a the most recent value of a data field.
+
+            This overloads the [] operator e.g. call with data_intance["power"].
+            This only allows fetching the data, not assignment. """
         if field in self.data:
             return self.data[field]
         else:

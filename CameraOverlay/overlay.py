@@ -60,6 +60,7 @@ class Canvas():
 
 	def draw_text(self, text, coord, size=1.5, colour=Colour.black):
 		""" Draws text to the canvas.
+
 		    The bottom left corner of the text is given by the tuple coord.
 		    (the top left of the screen is the origin) """
 		colour = Canvas._get_colour_tuple(colour)
@@ -72,13 +73,15 @@ class Canvas():
 
 	def draw_rect(self, top_left, bottom_right, colour=Colour.black):
 		""" Draws a rectangle to the canvas.
+
 		    top_left and bottom_right are tuples, and specify the dimensions of the rectangle
 		    (the top left of the screen is the origin) """
 		colour = Canvas._get_colour_tuple(colour)
 		cv2.rectangle(self.img, top_left, bottom_right, colour, thickness=cv2.FILLED)
 
 	def copy_to(self, dest):
-		""" Writes the contents of self.img over dest, accounting for transparency
+		""" Writes the contents of self.img over dest, accounting for transparency.
+
 		    Use this method to put the overlay contents over the video feed """
 		# Extract the alpha mask of the BGRA canvas, convert to BGR
 		blue, green, red, alpha = cv2.split(self.img)
@@ -220,15 +223,19 @@ class Overlay(ABC):
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
 		""" Called automatically when the overlay connects successfully to the
-			MQTT broker. Overlay implementations may override for one-off
-			operations (e.g. drawing self.base_canvas) """
+			MQTT broker.
+
+			Overlay implementations may override for one-off operations
+			(e.g. drawing self.base_canvas) """
 		pass
 
 	@abstractmethod
 	def update_data_layer(self):
 		""" Called automatically at a regular interval defined by
-			self.data_update_interval. Overlay implementations should override
-			this method with code which updates self.data_canvas. """
+			self.data_update_interval.
+
+			Overlay implementations should override this method with code which
+			updates self.data_canvas. """
 		pass
 
 	@staticmethod
