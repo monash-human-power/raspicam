@@ -1,18 +1,8 @@
 import time
 from overlay import Overlay, Colour
-import topics
 
 
 class OverlayTopStrip(Overlay):
-
-	topics = [
-			topics.DAS.start,
-			topics.DAS.data,
-			topics.DAS.stop,
-			topics.PowerModel.recommended_sp,
-			topics.PowerModel.max_speed,
-			topics.PowerModel.plan_name,
-	]
 
 	def __init__(self):
 		super(OverlayTopStrip, self).__init__()
@@ -30,14 +20,6 @@ class OverlayTopStrip(Overlay):
 	def on_connect(self, client, userdata, flags, rc):
 		print("Connected with rc: " + str(rc))
 
-		# https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe
-		# Basically, construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
-		topic_values = list(map(str, OverlayTopStrip.topics))
-		at_most_once_qos = [0]*len(OverlayTopStrip.topics)
-
-		topics_qos = list(zip(topic_values, at_most_once_qos))
-		client.subscribe(topics_qos)
-
 		self.base_canvas.draw_rect((0, 0), (self.top_box_width, self.top_box_height))
 		self.base_canvas.draw_text("T:", (0, self.top_text_pos), colour=Colour.white)
 		self.base_canvas.draw_text("ZDL:", (256, self.top_text_pos), colour=Colour.white)
@@ -45,84 +27,58 @@ class OverlayTopStrip(Overlay):
 		self.base_canvas.draw_text("PMV:", (768, self.top_text_pos), colour=Colour.white)
 		self.base_canvas.draw_text("MS:", (1024, self.top_text_pos), colour=Colour.white)
 
-	def on_message(self, client, userdata, msg):
-		print(msg.topic + " " + str(msg.payload.decode("utf-8")))
-		current_time = round(time.time(), 2)
-		if msg.topic == str(topics.PowerModel.recommended_sp):
-			parsed_data = self.parse_data(msg.payload)
-			self.data["rec_power"] = int(parsed_data["rec_power"])
-			self.data["zdist"] = int(parsed_data["zdist"])
-		elif msg.topic == str(topics.PowerModel.predicted_max_speed):
-			max_speed = str(msg.payload.decode("utf-8"))
-			self.data["max_speed"] = float(max_speed)
-		elif msg.topic == str(topics.PowerModel.plan_name):
-			parsed_data = self.parse_data(msg.payload)
-			self.data["plan_name"] = str(parsed_data["plan_name"])
-		elif msg.topic == str(topics.DAS.data):
-			parsed_data = self.parse_data(msg.payload)
-			print(str(parsed_data))
-			self.data["power"] += int(parsed_data["power"])
-			self.data["cadence"] += int(parsed_data["cadence"])
-			if int(parsed_data["gps"]) == 1:
-				self.data["gps_speed"] += float(parsed_data["gps_speed"])
-			self.data["reed_distance"] += float(parsed_data["reed_distance"])
-			self.data["count"] = self.data["count"] + 1
-			if self.prev_time == 0:
-				total_time = current_time - self.start_time
-			else:
-				total_time = current_time - self.prev_time
-			update_time = 1
-			if total_time >= update_time:
-				self.prev_time = current_time
-				# Create a transparent image to attach text
-				self.data_canvas.clear()
+	def update_data_layer(self):
+		# Create a transparent image to attach text
+		self.data_canvas.clear()
 
-				# Display elapsed time:
-				_, rem = divmod(time.time() - self.start_time, 3600)
-				minutes, seconds = divmod(rem, 60)
-				time_string = "{:0>2}:{:0>2}".format(int(minutes), int(seconds))
-				self.data_canvas.draw_text(time_string, (50, self.top_text_pos), colour=Colour.white)
+		# Display elapsed time:
+		_, rem = divmod(time.time() - self.start_time, 3600)
+		minutes, seconds = divmod(rem, 60)
+		time_string = "{:0>2}:{:0>2}".format(int(minutes), int(seconds))
+		self.data_canvas.draw_text(time_string, (50, self.top_text_pos), colour=Colour.white)
 
-				# Display power
-				if self.data["power"] != 0:
-					power = self.data["power"] / self.data["count"]
-					rec_power = self.data["rec_power"]
-					# Display recommended power
-					self.data_canvas.draw_text("{0}".format(round(rec_power, 0)), (600, self.top_text_pos), colour=Colour.white)
-					# Display power (no colour change)
-					self.data_canvas.draw_text("P: {0}".format(round(power, 2)), (self.bottom_text_pos_x, self.bottom_text_pos_y), size=self.bottom_text_size, colour=Colour.red)
+		if self.data["power"] != 0:
+			self.draw_power_rec_power()
 
-				# Display speed
-				if int(parsed_data["gps"]) == 1:
-					if self.data["gps_speed"] != 0:
-						# Predicted max speed
-						pred_max_speed = self.data["max_speed"]
-						self.data_canvas.draw_text("{0}".format(round(pred_max_speed, 2)), (890, self.top_text_pos), colour=Colour.white)
+		if self.data["gps"] == 1:
+			if self.data["gps_speed"] != 0:
+				self.draw_speed_max_speed()
 
-						# Actual speed (no colour change)
-						speed = self.data["gps_speed"] / self.data["count"]
-						self.data_canvas.draw_text("S: {0}".format(round(speed, 2)), (self.bottom_text_pos_x, self.bottom_text_pos_y - self.bottom_text_height), size=self.bottom_text_size, colour=Colour.red)
+		# Display zone distance left (bugged)
+		if self.data["zdist"] != 0:
+			self.draw_zone_dist()
 
-						# Actual max speed
-						self.data_canvas.draw_text("{0}".format(int(self.actual_max(speed))), (1120, self.top_text_pos), colour=Colour.white)
+		# Display plan name and clear after 15 secs
+		if self.data["plan_name"] != '' and time.time() - self.start_time <= 15:
+			self.draw_plan_name()
 
-				# Display zone distance left (bugged)
-				if self.data["zdist"] != 0:
-					zdist_left = self.data["zdist"]
-					self.data_canvas.draw_text("{0}".format(int(zdist_left)), (360, self.top_text_pos), colour=Colour.white)
+	def draw_power_rec_power(self):
+		power = self.data["power"]
+		rec_power = self.data["rec_power"]
+		# Display recommended power
+		self.data_canvas.draw_text("{0}".format(round(rec_power, 0)), (600, self.top_text_pos), colour=Colour.white)
+		# Display power (no colour change)
+		self.data_canvas.draw_text("P: {0}".format(round(power, 2)), (self.bottom_text_pos_x, self.bottom_text_pos_y), size=self.bottom_text_size, colour=Colour.red)
 
-				# Display plan name and clear after 15 secs
-				if self.data["plan_name"] != '' and time.time() - self.start_time <= 15:
-					plan_name = self.data["plan_name"]
-					self.data_canvas.draw_text(plan_name, (0, self.height - 8), colour=Colour.red)
+	def draw_speed_max_speed(self):
+		# Predicted max speed
+		pred_max_speed = self.data["predicted_max_speed"]
+		self.data_canvas.draw_text("{0}".format(round(pred_max_speed, 1)), (890, self.top_text_pos), colour=Colour.white)
 
-				# Reset variables
-				self.data["power"] = 0
-				self.data["cadence"] = 0
-				self.data["gps_speed"] = 0
-				self.data["reed_distance"] = 0
-				self.data["count"] = 0
+		# Actual speed (no colour change)
+		speed = self.data["gps_speed"]
+		self.data_canvas.draw_text("S: {0}".format(round(speed, 2)), (self.bottom_text_pos_x, self.bottom_text_pos_y - self.bottom_text_height), size=self.bottom_text_size, colour=Colour.red)
 
+		# Actual max speed
+		self.data_canvas.draw_text("{0}".format(int(self.actual_max(speed))), (1120, self.top_text_pos), colour=Colour.white)
+
+	def draw_zone_dist(self):
+		zdist_left = self.data["zdist"]
+		self.data_canvas.draw_text("{0}".format(int(zdist_left)), (360, self.top_text_pos), colour=Colour.white)
+
+	def draw_plan_name(self):
+		plan_name = self.data["plan_name"]
+		self.data_canvas.draw_text(plan_name, (0, self.height - 8), colour=Colour.red)
 
 if __name__ == '__main__':
 	args = Overlay.get_overlay_args("Shows important statistics in a bar at the top of the screen")

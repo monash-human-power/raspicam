@@ -11,13 +11,12 @@ class OverlayBlank(Overlay):
 		# To draw static text/whatever onto the overlay, draw on the base canvas
 		self.base_canvas.draw_text("Blank overlay", (10, self.height - 10), 4, colour=Colour.white)
 
-	def on_message(self, client, userdata, msg):
-		topic = msg.topic
-		print(topic + " " + str(msg.payload.decode("utf-8")))
+	def update_data_layer(self):
+		self.data_canvas.clear()
 
 		# Content that changes each frame should be drawn to self.data_canvas here
 
-
 if __name__ == '__main__':
+	args = Overlay.get_overlay_args("An empty, example overlay")
 	my_overlay = OverlayBlank()
-	my_overlay.connect(ip="localhost")
+	my_overlay.connect(ip=args.host)

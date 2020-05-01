@@ -6,6 +6,8 @@ import cv2
 import numpy as np
 import paho.mqtt.client as mqtt
 
+from data import Data, V2_DATA_TOPICS, V3_MESSAGE
+
 try:
 	from picamera import PiCamera
 	ON_PI = True
@@ -58,6 +60,7 @@ class Canvas():
 
 	def draw_text(self, text, coord, size=1.5, colour=Colour.black):
 		""" Draws text to the canvas.
+
 		    The bottom left corner of the text is given by the tuple coord.
 		    (the top left of the screen is the origin) """
 		colour = Canvas._get_colour_tuple(colour)
@@ -70,13 +73,15 @@ class Canvas():
 
 	def draw_rect(self, top_left, bottom_right, colour=Colour.black):
 		""" Draws a rectangle to the canvas.
+
 		    top_left and bottom_right are tuples, and specify the dimensions of the rectangle
 		    (the top left of the screen is the origin) """
 		colour = Canvas._get_colour_tuple(colour)
 		cv2.rectangle(self.img, top_left, bottom_right, colour, thickness=cv2.FILLED)
 
 	def copy_to(self, dest):
-		""" Writes the contents of self.img over dest, accounting for transparency
+		""" Writes the contents of self.img over dest, accounting for transparency.
+
 		    Use this method to put the overlay contents over the video feed """
 		# Extract the alpha mask of the BGRA canvas, convert to BGR
 		blue, green, red, alpha = cv2.split(self.img)
@@ -110,7 +115,11 @@ class Overlay(ABC):
 
 		self.width = width
 		self.height = height
-		self.frametime = 17 # ms
+
+		# Time between video frames when running on OpenCV, in milliseconds
+		self.frametime = 17
+		# Time between updating the data layer, in seconds
+		self.data_update_interval = 1
 
 		self.prev_overlay = None
 		self.max_speed = float('-inf')
@@ -131,41 +140,7 @@ class Overlay(ABC):
 		self.client.on_message = self._on_message
 		self.client.on_log = self.on_log
 
-		self.data = {
-			# das data
-			"count": 0,
-			"cadence": 0,
-			"gps": 0,
-			"gps_speed": 0,
-			"power": 0,
-			"reed_distance": 0,
-			"reed_velocity": 0,
-
-			# power model data
-			"max_speed": 0,
-			"rec_power": 0,
-			"rec_speed": 0,
-			"zdist": 0,
-			"plan_name": "",
-		}
-
-		self.data_types = {
-			# das data
-			"power": int,
-			"cadence": int,
-			"reed_velocity": float,
-			"gps": int,
-			"gps_speed": float,
-			"reed_distance": float,
-			"count": int,
-
-			# power model data
-			"rec_power": float,
-			"rec_speed": float,
-			"max_speed": float,
-			"zdist": float,
-			"plan_name": str,
-		}
+		self.data = Data()
 
 	def show_opencv_frame(self):
 		""" Creates the frame using the webcam and canvases, and displays result """
@@ -189,25 +164,37 @@ class Overlay(ABC):
 		# mqtt loop (does not block)
 		self.client.loop_start()
 
+		prev_data_update = 0 # time that we last updated the data layer
 		while True:
-			if ON_PI:
-				# If on a pi, overlays are updated in _on_connect and _on_message
-				time.sleep(1)
-			else:
-				# Create and display the frame using OpenCV
+
+			# Update the data overlay only if we have waited enough time
+			if time.time() > prev_data_update + self.data_update_interval:
+				prev_data_update = time.time()
+
+				# Update the data overlay with latest information
+				self.update_data_layer()
+
+				if ON_PI:
+					# Update the overlay images on picamera. Picamera will
+					# retain the overlay images until updated, so we only need
+					# to do this once per overlay update.
+					self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
+					self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
+
+			if not ON_PI:
+				# Create and display the frame using OpenCV.
+				# This function fetches the most up-to-date overlay, as OpenCV
+				# needs us to manually add it to each frame.
 				self.show_opencv_frame()
 
-	# Convert data to a suitable format
-	def parse_data(self, data):
-		terms = data.decode("utf-8").split("&")
-		data_dict = {}
-		for term in terms:
-			key, value = term.split("=")
-			if key not in self.data_types:
-				continue
-			cast_func = self.data_types[key]
-			data_dict[key] = cast_func(value)
-		return data_dict
+	def subscribe_to_topic_list(self, topics):
+		# https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe
+		# Basically, construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
+		topic_values = list(map(str, topics))
+		at_most_once_qos = [0]*len(topics)
+
+		topics_qos = list(zip(topic_values, at_most_once_qos))
+		self.client.subscribe(topics_qos)
 
 	# Calculate max speed
 	def actual_max(self, cur_speed):
@@ -220,30 +207,35 @@ class Overlay(ABC):
 	def on_disconnect(self, client, userdata, msg):
 		print("Disconnected from broker")
 
-	def subscribe_topics(self, topics):
-		self.client.subscribe(topics)
-
-	def reset_variables(self, value=0):
-		for key, _ in self.data.items():
-			self.data[key] = value
-
 	def _on_connect(self, client, userdata, flags, rc):
+		self.subscribe_to_topic_list(V2_DATA_TOPICS + V3_MESSAGE)
 		self.on_connect(client, userdata, flags, rc)
 		if ON_PI:
 			self.base_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.base)
 
-	def _on_message(self, client, userdata, flags):
-		self.on_message(client, userdata, flags)
-		if ON_PI:
-			self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
-			self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
+	def _on_message(self, client, userdata, msg):
+		payload = msg.payload.decode("utf-8")
+		if msg.topic in V2_DATA_TOPICS:
+			self.data.load_v2_query_string(payload)
+		elif msg.topic in V3_MESSAGE:
+			self.data.load_v3_message(payload)
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
+		""" Called automatically when the overlay connects successfully to the
+			MQTT broker.
+
+			Overlay implementations may override for one-off operations
+			(e.g. drawing self.base_canvas) """
 		pass
 
 	@abstractmethod
-	def on_message(self, client, userdata, msg):
+	def update_data_layer(self):
+		""" Called automatically at a regular interval defined by
+			self.data_update_interval.
+
+			Overlay implementations should override this method with code which
+			updates self.data_canvas. """
 		pass
 
 	@staticmethod
