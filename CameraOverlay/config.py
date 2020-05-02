@@ -48,8 +48,8 @@ def read_configs(directory=CURRENT_DIRECTORY):
         with open(configs_file) as file:
             configs = json.load(file)
 
-    current_device = os.getenv('MHP_CAMERA')
-    configs['device'] = current_device
+    configs['device'] = os.getenv('MHP_CAMERA')
+    configs['bike'] = os.getenv('MHP_BIKE')
     configs['overlays'] = get_overlays()
     return configs
 
