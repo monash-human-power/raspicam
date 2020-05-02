@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import time
-from typing import Any, Optional
+from typing import Any, List, Optional
 import topics as topics
 
 
@@ -52,6 +52,11 @@ class Data(ABC):
         self.message_received_time = 0
         self.message_duration = 5 # seconds
 
+    def load_message(self, message: str) -> None:
+        """ Stores a message which is made available by self.get_message. """
+        self.message_received_time = time.time()
+        self.message = message
+
     def has_message(self) -> bool:
         """ Returns true if a message is available for display on the overlay,
             otherwise false.
@@ -85,32 +90,52 @@ class Data(ABC):
             return None
 
     @abstractmethod
-    def load_data(self, data: str) -> None:
-        """ Updates stored fields with data stored in an MQTT data packet.
+    def load_data(self, topic: str, data: str) -> None:
+        """ Updates stored fields with data stored in an MQTT data packet from
+            a given topic.
 
             Only the supplied data fields should be updated, the rest remain as
             they were. This should be implemented by all Data subclasses """
         pass
 
+    @staticmethod
     @abstractmethod
-    def load_message(self, data: str) -> None:
-        """ Stores a message which is made available by self.get_message.
-        
-            Should be implemented by all Data subclasses. """
+    def get_topics() -> List[str]:
+        """ Returns a list of the topics the data for the bike comes from.
+
+            Should be implemented by Data subclasses. """
         pass
+
+    @staticmethod
+    def get_data_instance(bike: str) -> "Data":
+        """ Returns an instance of Data corresponding to a given bike name """
+        if bike == "V2":
+            return DataV2()
+        if bike == "V3":
+            return DataV3()
+        raise NotImplementedError()
 
 
 class DataV2(Data):
 
-    data_topics = [
-        str(topics.DAS.data),
-        str(topics.PowerModel.recommended_sp),
-        str(topics.PowerModel.predicted_max_speed),
-        str(topics.PowerModel.plan_name),
-    ]
-    message_topic = str(topics.DAShboard.receive_message)
+    @staticmethod
+    def get_topics() -> List[str]:
+        return [
+            str(topics.DAS.data),
+            str(topics.PowerModel.recommended_sp),
+            str(topics.PowerModel.predicted_max_speed),
+            str(topics.PowerModel.plan_name),
+            str(topics.DAShboard.receive_message),
+        ]
 
-    def load_data(self, data: str) -> None:
+    def load_data(self, topic: str, data: str) -> None:
+        """ Loads V2 query strings and V3 DAShboard messages """
+        if topic == str(topics.DAShboard.receive_message):
+            self.load_message(data)
+        elif topic in DataV2.get_topics():
+            self.load_query_string(data)
+
+    def load_query_string(self, data: str) -> None:
         """ Updates stored fields with data stored in a V2 query string,
             e.g. `power=200&cadence=95`. """
         terms = data.split("&")
@@ -121,23 +146,16 @@ class DataV2(Data):
             cast_func = self.data_types[key]
             self.data[key] = cast_func(value)
 
-    def load_message(self, data: str) -> None:
-        """ Stores a V3 message packet. """
-        self.message_received_time = time.time()
-        self.message = data
-
 
 class DataV3(Data):
 
-    data_topics = []
-    message_topic = str(topics.DAShboard.receive_message)
+    @staticmethod
+    def get_topics() -> List[str]:
+        return [
+            str(topics.DAShboard.receive_message),
+        ]
 
-    def load_data(self, data: str) -> None:
+    def load_data(self, topic: str, data: str) -> None:
         """ Updates stored fields with data from a V3 sensor module data
             packet. """
         pass
-
-    def load_message(self, data: str) -> None:
-        """ Stores a V3 message packet. """
-        self.message_received_time = time.time()
-        self.message = data
