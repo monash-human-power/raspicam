@@ -113,7 +113,7 @@ class Data(ABC):
             return DataV2()
         if bike == "V3":
             return DataV3()
-        raise NotImplementedError()
+        raise NotImplementedError(f"Unknown bike: {bike}")
 
 
 class DataV2(Data):

@@ -17,6 +17,7 @@ except (ImportError, RuntimeError):
 
 # Top of window is outside the screen to hide title bar
 PI_WINDOW_TOP_LEFT = (0, -20)
+DEFAULT_BIKE = "V2"
 
 class OverlayLayer(Enum):
 	video_feed = 2
@@ -136,7 +137,7 @@ class Overlay(ABC):
 		self.message_canvas = Canvas(self.width, self.height)
 
 		configs = read_configs()
-		self.data = Data.get_data_instance(configs["bike"])
+		self.data = Data.get_data_instance(configs["bike"] or DEFAULT_BIKE)
 
 		self.client = mqtt.Client()
 		self.client.on_connect = self._on_connect
@@ -217,7 +218,7 @@ class Overlay(ABC):
 
 	def _on_message(self, client, userdata, msg):
 		payload = msg.payload.decode("utf-8")
-		self.data.load_data(payload)
+		self.data.load_data(msg.topic, payload)
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
