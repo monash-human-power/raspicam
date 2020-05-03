@@ -23,7 +23,6 @@ class DAS(Topic):
 class PowerModel(Topic):
     """Power Model MQTT Topics"""
     plan_name = 'power_model/plan_name'
-    max_speed = 'power_model/max_speed'
     recommended_sp = 'power_model/recommended_SP'
     predicted_max_speed = 'power_model/predicted_max_speed'
 
@@ -37,6 +36,10 @@ class DAShboard(Topic):
     """DAShboard MQTT Topics"""
     receive_message = '/v3/camera/primary/message'
 
-class SensorModule(Topic):
+class SensorModules(Topic):
     """V3 Wireless sensor module topics"""
-    data = "/v3/wireless-module/+/data"
+    all_sensors = "/v3/wireless-module/+/data"
+    front = "/v3/wireless-module/1/data"
+    mid = "/v3/wireless-module/2/data"
+    back = "/v3/wireless-module/3/data"
+    antplus = "/v3/wireless-module/4/data"

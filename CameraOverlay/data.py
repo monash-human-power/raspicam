@@ -3,7 +3,7 @@ from json import loads
 import time
 from typing import Any, List, Optional
 
-import topics as topics
+import topics
 
 
 class Data(ABC):
@@ -134,9 +134,9 @@ class DataV2(Data):
 
     def load_data(self, topic: str, data: str) -> None:
         """ Loads V2 query strings and V3 DAShboard messages """
-        if topic == str(topics.DAShboard.receive_message):
+        if topics.DAShboard.receive_message.matches(topic):
             self.load_message(data)
-        elif topic in DataV2.get_topics():
+        elif str(topic) in DataV2.get_topics():
             self.load_query_string(data)
 
     def load_query_string(self, data: str) -> None:
@@ -162,7 +162,7 @@ class DataV3(Data):
     @staticmethod
     def get_topics() -> List[str]:
         return [
-            str(topics.SensorModule.data),
+            str(topics.SensorModules.all_sensors),
             str(topics.DAShboard.receive_message),
             *DataV3.power_model_topics,
         ]
@@ -172,7 +172,7 @@ class DataV3(Data):
             packet. """
         if topics.DAShboard.receive_message.matches(topic):
             self.load_message(data)
-        elif topics.SensorModule.data.matches(topic):
+        elif topics.SensorModules.all_sensors.matches(topic):
             self.load_sensor_data(data)
         elif topic in DataV3.power_model_topics:
             self.load_v2_boost(data)
@@ -180,7 +180,7 @@ class DataV3(Data):
     def load_sensor_data(self, data: str) -> None:
         """ Loads data in the json V3 wireless sensor module format """
         module_data = loads(data)
-        sensor_data = loads(module_data["sensors"])
+        sensor_data = module_data["sensors"]
 
         for sensor in sensor_data:
             sensor_name = sensor["type"]
@@ -189,9 +189,9 @@ class DataV3(Data):
             if sensor_name == "gps":
                 self.data["gps"] = 1
                 self.data["gps_speed"] = float(sensor_value["speed"])
-            elif sensor_name == "reed_velocity":
-                self.data["reed_velocity"] = float(sensor_value["reedVelocity"])
-            else:
+            elif sensor_name == "reedVelocity":
+                self.data["reed_velocity"] = float(sensor_value)
+            elif sensor_name in self.data_types:
                 cast_func = self.data_types[sensor_name]
                 self.data[sensor_name] = cast_func(sensor_value)
 
