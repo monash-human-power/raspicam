@@ -1,7 +1,7 @@
 # MHP_Raspicam
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors)
 
-This repo contains code used to run the Monash Human Power camera system. It is write protected to ensure it is always left in a working state.
+This repo contains code used to run the Monash Human Power camera system. The `master` branch is write protected to ensure it is always left in a working state.
 
 ## Important-changes log
   - Added `requirements.txt` to work with virtualenv (see Dependencies below)
@@ -9,21 +9,23 @@ This repo contains code used to run the Monash Human Power camera system. It is 
   - Refactor GLOBAL_DATA -> DAS_DATA and REQUIRED_DATA -> POWER_MODEL_DATA
 
 ## Dependencies
-To install Pillow (PIL fork), RPi.GPIO, paho-mqtt on Raspberry Pi: **haven't tested on fresh Raspberry Pi**
+To install OpenCV, RPi.GPIO, paho-mqtt on Raspberry Pi: **haven't tested on fresh Raspberry Pi**
   - install virtual env `sudo pip3 install virualenv`
-  - install system dependencies listed in Pillow's [doc](https://pillow.readthedocs.io/en/latest/installation.html#linux-installation) `sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev`
   - in MHP_Raspicam folder, run 
     ```
     virtualenv venv
     source venv/bin/activate   
-    ````
+    ```
   - install python dependencies `pip3 install -r requirements.txt`
-  - have an ```.env``` file in the ```CameraOverlay``` folder with the variable ```MHP_CAMERA``` set to either ```primary``` or ```secondary```
-  - create an ```config.json``` file in the ```CameraOverlay``` directory with attribute ```activeOverlay``` that points to the overlay file that is currently active, for instance it could be ```{ "activeOverlay": "overlay_all_stats.py" }```
+  - have an `.env` file in the `CameraOverlay` folder with the variable `MHP_CAMERA` set to either `primary` or `secondary` and `MHP_BIKE` set to `V2` or `V3`.
+  - create an ``config.json` file in the `CameraOverlay` directory with attribute `activeOverlay` that points to the overlay file that is currently active, for instance it could be `{ "activeOverlay": "overlay_all_stats.py" }`
 
 ## Tests
-1) orchestrator_test.py = Test script for orchestrator.py. Enter 'pytest' in the terminal to run the test file
-2) mqtt_message_test.py = Test script that sends messages to the camera overlay. Initially run mqtt_message_test.py along with mqtt_test.py from the DAS repo, Finally run overlay_all_stats.py.
+
+Located under `CameraOverlays/tests`. Enter 'pytest' in the terminal to run all tests.
+
+## Utilities
+`mqtt_message_test.py`: Script that sends messages to the camera overlay. First, run `mqtt_message_test.py` along with `mqtt_test.py` from the DAS repo, Finally run `overlay_all_stats.py`.
 
 ## Contributors ✨
 
