@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+from json import loads
 import time
 from typing import Any, List, Optional
+
 import topics as topics
 
 
@@ -15,6 +17,7 @@ class Data(ABC):
         # DAS data
         "power": int,
         "cadence": int,
+        "heartRate": int,
         "gps": int,
         "gps_speed": float,
         "reed_velocity": float,
@@ -35,6 +38,7 @@ class Data(ABC):
             # DAS data
             "power": 0,
             "cadence": 0,
+            "heartRate": 0,
             "gps": 0,
             "gps_speed": 0,
             "reed_velocity": 0,
@@ -149,13 +153,56 @@ class DataV2(Data):
 
 class DataV3(Data):
 
+    power_model_topics = (
+        str(topics.PowerModel.recommended_sp),
+        str(topics.PowerModel.predicted_max_speed),
+        str(topics.PowerModel.plan_name)
+    )
+
     @staticmethod
     def get_topics() -> List[str]:
         return [
+            str(topics.SensorModule.data),
             str(topics.DAShboard.receive_message),
+            *DataV3.power_model_topics,
         ]
 
     def load_data(self, topic: str, data: str) -> None:
         """ Updates stored fields with data from a V3 sensor module data
             packet. """
-        pass
+        if topics.DAShboard.receive_message.matches(topic):
+            self.load_message(data)
+        elif topics.SensorModule.data.matches(topic):
+            self.load_sensor_data(data)
+        elif topic in DataV3.power_model_topics:
+            self.load_v2_boost(data)
+
+    def load_sensor_data(self, data: str) -> None:
+        """ Loads data in the json V3 wireless sensor module format """
+        module_data = loads(data)
+        sensor_data = loads(module_data["sensors"])
+
+        for sensor in sensor_data:
+            sensor_name = sensor["type"]
+            sensor_value = sensor["value"]
+
+            if sensor_name == "gps":
+                self.data["gps"] = 1
+                self.data["gps_speed"] = float(sensor_value["speed"])
+            elif sensor_name == "reed_velocity":
+                self.data["reed_velocity"] = float(sensor_value["reedVelocity"])
+            else:
+                cast_func = self.data_types[sensor_name]
+                self.data[sensor_name] = cast_func(sensor_value)
+
+    def load_v2_boost(self, data: str) -> None:
+        """ Load data from BOOST from V2 query string.
+
+            TODO: Parse V3 JSON when BOOST supports it """
+        terms = data.split("&")
+        for term in terms:
+            key, value = term.split("=")
+            if key not in self.data_types:
+                continue
+            cast_func = self.data_types[key]
+            self.data[key] = cast_func(value)
