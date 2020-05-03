@@ -29,7 +29,7 @@ class PowerModel(Topic):
 class PowerModelV3(Topic):
     """Power Model MQTT Topics"""
     plan_name = 'power-model/plan-name/filename'
-    recommended_sp = 'power-model/recommended-SP'
+    recommended_sp = 'power-model/recommended-sp'
     predicted_max_speed = 'power-model/predicted-max-speed'
 
 class Camera(Topic):
