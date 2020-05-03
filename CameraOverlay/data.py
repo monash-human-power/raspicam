@@ -153,18 +153,14 @@ class DataV2(Data):
 
 class DataV3(Data):
 
-    power_model_topics = (
-        str(topics.PowerModel.recommended_sp),
-        str(topics.PowerModel.predicted_max_speed),
-        str(topics.PowerModel.plan_name)
-    )
-
     @staticmethod
     def get_topics() -> List[str]:
         return [
             str(topics.SensorModules.all_sensors),
             str(topics.DAShboard.receive_message),
-            *DataV3.power_model_topics,
+            str(topics.PowerModelV3.recommended_sp),
+            str(topics.PowerModelV3.predicted_max_speed),
+            str(topics.PowerModelV3.plan_name)
         ]
 
     def load_data(self, topic: str, data: str) -> None:
@@ -174,8 +170,12 @@ class DataV3(Data):
             self.load_message(data)
         elif topics.SensorModules.all_sensors.matches(topic):
             self.load_sensor_data(data)
-        elif topic in DataV3.power_model_topics:
-            self.load_v2_boost(data)
+        elif topics.PowerModelV3.recommended_sp.matches(topic):
+            self.load_recommended_sp(data)
+        elif topics.PowerModelV3.predicted_max_speed.matches(topic):
+            self.load_predicted_max_speed(data)
+        elif topics.PowerModelV3.plan_name.matches(topic):
+            self.load_plan_name(data)
 
     def load_sensor_data(self, data: str) -> None:
         """ Loads data in the json V3 wireless sensor module format """
@@ -195,14 +195,16 @@ class DataV3(Data):
                 cast_func = self.data_types[sensor_name]
                 self.data[sensor_name] = cast_func(sensor_value)
 
-    def load_v2_boost(self, data: str) -> None:
-        """ Load data from BOOST from V2 query string.
+    def load_recommended_sp(self, data: str) -> None:
+        python_data = loads(data)
+        self.data["rec_power"] = python_data["power"]
+        self.data["rec_speed"] = python_data["speed"]
+        self.data["zdist"] = python_data["zoneDistance"]
 
-            TODO: Parse V3 JSON when BOOST supports it """
-        terms = data.split("&")
-        for term in terms:
-            key, value = term.split("=")
-            if key not in self.data_types:
-                continue
-            cast_func = self.data_types[key]
-            self.data[key] = cast_func(value)
+    def load_predicted_max_speed(self, data: str) -> None:
+        python_data = loads(data)
+        self.data["predicted_max_speed"] = python_data["speed"]
+
+    def load_plan_name(self, data: str) -> None:
+        python_data = loads(data)
+        self.data["plan_name"] = python_data["filename"]

@@ -163,3 +163,25 @@ def test_v3_sensor_parsing():
     assert data["power"] == 249
     assert data["cadence"] == 105
     assert data["heartRate"] == 171
+
+def test_v3_power_model_parsing():
+    recommended_sp_data = {
+        "power": 10,
+        "speed": 20,
+        "zoneDistance": 30,
+        "distanceOffset": 40,
+        "distanceLeft": 50
+    }
+    max_speed_data = { "speed": 100 }
+    plan_name_data = { "filename": "default.pkl" }
+
+    data = DataV3()
+    data.load_data(topics.PowerModelV3.recommended_sp, dumps(recommended_sp_data))
+    data.load_data(topics.PowerModelV3.predicted_max_speed, dumps(max_speed_data))
+    data.load_data(topics.PowerModelV3.plan_name, dumps(plan_name_data))
+
+    assert data["rec_power"] == 10
+    assert data["rec_speed"] == 20
+    assert data["zdist"] == 30
+    assert data["predicted_max_speed"] == 100
+    assert data["plan_name"] == "default.pkl"

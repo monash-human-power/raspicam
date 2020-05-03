@@ -26,6 +26,12 @@ class PowerModel(Topic):
     recommended_sp = 'power_model/recommended_SP'
     predicted_max_speed = 'power_model/predicted_max_speed'
 
+class PowerModelV3(Topic):
+    """Power Model MQTT Topics"""
+    plan_name = 'power-model/plan-name/filename'
+    recommended_sp = 'power-model/recommended-SP'
+    predicted_max_speed = 'power-model/predicted-max-speed'
+
 class Camera(Topic):
     """Camera system MQTT Topics"""
     get_overlays = 'camera/get_overlays'
