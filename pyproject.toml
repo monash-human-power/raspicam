@@ -5,8 +5,8 @@ description = "Code for the MHP camera system"
 authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-opencv-python = ">=4.1,<4.2"
+python = "~3.7"
+opencv-python = "4.1.0.25"
 paho-mqtt = "^1.5.0"
 python-dotenv = "^0.13.0"
 # Raspberry Pi uses the ARM platform, so these will only install on a Pi
