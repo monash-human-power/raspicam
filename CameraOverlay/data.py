@@ -110,14 +110,16 @@ class Data(ABC):
             Should be implemented by Data subclasses. """
         pass
 
+
+class DataFactory:
     @staticmethod
-    def get_data_instance(bike: str) -> "Data":
+    def create(bike_version: str) -> Data:
         """ Returns an instance of Data corresponding to a given bike name """
-        if bike == "V2":
+        if bike_version == "V2":
             return DataV2()
-        if bike == "V3":
+        if bike_version == "V3":
             return DataV3()
-        raise NotImplementedError(f"Unknown bike: {bike}")
+        raise NotImplementedError(f"Unknown bike: {bike_version}")
 
 
 class DataV2(Data):

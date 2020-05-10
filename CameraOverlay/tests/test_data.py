@@ -2,16 +2,16 @@ from json import dumps
 import pytest
 from time import sleep
 
-from data import Data, DataV2, DataV3
+from data import DataFactory, DataV2, DataV3
 import topics
 
-def test_get_data_instance():
-    assert isinstance(Data.get_data_instance("V2"), DataV2)
-    assert isinstance(Data.get_data_instance("V3"), DataV3)
+def test_data_factory():
+    assert isinstance(DataFactory.create("V2"), DataV2)
+    assert isinstance(DataFactory.create("V3"), DataV3)
     with pytest.raises(NotImplementedError):
-        Data.get_data_instance(None)
+        DataFactory.create(None)
     with pytest.raises(NotImplementedError):
-        Data.get_data_instance("V9000")
+        DataFactory.create("V9000")
 
 def to_query_string(python_dict):
     """ Converts {key1: value1, key2: value2} to key1=value1&key2value2 """

@@ -7,7 +7,7 @@ import numpy as np
 import paho.mqtt.client as mqtt
 
 from config import read_configs
-from data import Data
+from data import DataFactory
 
 try:
 	from picamera import PiCamera
@@ -137,7 +137,8 @@ class Overlay(ABC):
 		self.message_canvas = Canvas(self.width, self.height)
 
 		configs = read_configs()
-		self.data = Data.get_data_instance(configs["bike"] or DEFAULT_BIKE)
+		bike_version = configs["bike"] or DEFAULT_BIKE
+		self.data = DataFactory.create(bike_version)
 
 		self.client = mqtt.Client()
 		self.client.on_connect = self._on_connect
