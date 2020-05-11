@@ -3,23 +3,27 @@
 
 This repo contains code used to run the Monash Human Power camera system. It is write protected to ensure it is always left in a working state.
 
-## Important-changes log
-  - Added `requirements.txt` to work with virtualenv (see Dependencies below)
-  - Code for V1.5 is in `Legacy` folder, code for V2 is in `CameraOverlay` folder
-  - Refactor GLOBAL_DATA -> DAS_DATA and REQUIRED_DATA -> POWER_MODEL_DATA
+## Installation
 
-## Dependencies
-To install Pillow (PIL fork), RPi.GPIO, paho-mqtt on Raspberry Pi: **haven't tested on fresh Raspberry Pi**
-  - install virtual env `sudo pip3 install virualenv`
-  - install system dependencies listed in Pillow's [doc](https://pillow.readthedocs.io/en/latest/installation.html#linux-installation) `sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev`
-  - in MHP_Raspicam folder, run 
-    ```
-    virtualenv venv
-    source venv/bin/activate   
-    ````
-  - install python dependencies `pip3 install -r requirements.txt`
-  - have an ```.env``` file in the ```CameraOverlay``` folder with the variable ```MHP_CAMERA``` set to either ```primary``` or ```secondary```
-  - create an ```config.json``` file in the ```CameraOverlay``` directory with attribute ```activeOverlay``` that points to the overlay file that is currently active, for instance it could be ```{ "activeOverlay": "overlay_all_stats.py" }```
+Firstly, you'll need to create a `.env` file containing either `MHP_CAMERA=primary` or `MHP_CAMERA=secondary`. Optionally, you may set the overlay run when the physical switch on the display is toggled by modifying `config.json`. An example of this file's contents could be `{ "activeOverlay": "overlay_all_stats.py" }`.
+
+To install dependencies, you will need [poetry](https://python-poetry.org/docs/#installation) installed on your computer. Our guide to poetry may be found on [notion](https://www.notion.so/Getting-Started-with-Poetry-770384c0205c4cf39c4bf7216060d5d2).
+
+At this point in time, you'll also need Python 3.7 installed. Python 3.6 may also work (untested), but right now, the OpenCV version we are using does not have a build available for Python 3.8. I used [pyenv](https://github.com/pyenv/pyenv) to quickly switch between python versions.
+
+With that done, dependencies may be installed using `poetry install --dev`. You may then start a shell with `poetry shell`.
+
+## Usage
+
+*You must be in a poetry shell to run any scripts/tests (see above).*
+
+### Overlay development
+
+Any overlay (e.g. `overlay_top_strip.py`) may be run from the terminal with Python. You will need a computer with a webcam. The `--host` argument can be used to specify an MQTT broker.
+
+### Running on Raspberry Pi displays
+
+Overlays may be run from the terminal, as before. However, for use on the bike, you should have `switch_demo.py` and `orchestrator.py` running on startup. Currently, this is run automatically by `/etc/rc.local` on the display Pis, but they may also be run manually.
 
 ## Tests
 1) orchestrator_test.py = Test script for orchestrator.py. Enter 'pytest' in the terminal to run the test file
