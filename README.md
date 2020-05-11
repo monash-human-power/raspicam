@@ -23,7 +23,7 @@ Any overlay (e.g. `overlay_top_strip.py`) may be run from the terminal with Pyth
 
 ### Running on Raspberry Pi displays
 
-Overlays may be run from the terminal, as before. However, for use on the bike, you should have `switch_demo.py` and `orchestrator.py` running on startup. Currently, this is run automatically by `/etc/rc.local` on the display Pis, but they may also be run manually.
+Overlays may be run from the terminal, as before. However, for use on the bike, you should have `switch.py` and `orchestrator.py` running on startup. Currently, this is run automatically by `/etc/rc.local` on the display Pis, but they may also be run manually.
 
 ## Tests
 1) orchestrator_test.py = Test script for orchestrator.py. Enter 'pytest' in the terminal to run the test file
