@@ -5,7 +5,7 @@ import time
 import paho.mqtt.client as mqtt
 import config
 
-def get_args(argv=None):
+def get_args(argv=[]):
     """Get arguments passed into Python script"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", type=str,
