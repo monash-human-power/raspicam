@@ -115,9 +115,10 @@ class DataFactory:
     @staticmethod
     def create(bike_version: str) -> Data:
         """ Returns an instance of Data corresponding to a given bike name """
-        if bike_version == "V2":
+        bike_version = bike_version.lower()
+        if bike_version == "v2":
             return DataV2()
-        if bike_version == "V3":
+        if bike_version == "v3":
             return DataV3()
         raise NotImplementedError(f"Unknown bike: {bike_version}")
 
