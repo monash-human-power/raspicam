@@ -139,7 +139,6 @@ class Overlay(ABC):
 		configs = read_configs()
 		bike_version = bike or configs["bike"] or DEFAULT_BIKE
 		self.data = DataFactory.create(bike_version)
-		print(type(self.data))
 
 		self.client = mqtt.Client()
 		self.client.on_connect = self._on_connect
