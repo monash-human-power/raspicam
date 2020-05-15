@@ -4,8 +4,8 @@ from overlay import Overlay, Colour
 
 class OverlayTopStrip(Overlay):
 
-	def __init__(self):
-		super(OverlayTopStrip, self).__init__()
+	def __init__(self, bike=None):
+		super(OverlayTopStrip, self).__init__(bike)
 
 		self.prev_time = 0
 
@@ -82,5 +82,5 @@ class OverlayTopStrip(Overlay):
 
 if __name__ == '__main__':
 	args = Overlay.get_overlay_args("Shows important statistics in a bar at the top of the screen")
-	my_overlay = OverlayTopStrip()
+	my_overlay = OverlayTopStrip(args.bike)
 	my_overlay.connect(ip=args.host)

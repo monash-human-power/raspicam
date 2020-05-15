@@ -113,7 +113,7 @@ class Canvas():
 
 class Overlay(ABC):
 
-	def __init__(self, width=1280, height=740, bike=None):
+	def __init__(self, bike, width=1280, height=740):
 
 		self.width = width
 		self.height = height
@@ -139,6 +139,7 @@ class Overlay(ABC):
 		configs = read_configs()
 		bike_version = bike or configs["bike"] or DEFAULT_BIKE
 		self.data = DataFactory.create(bike_version)
+		print(type(self.data))
 
 		self.client = mqtt.Client()
 		self.client.on_connect = self._on_connect
@@ -245,5 +246,5 @@ class Overlay(ABC):
 		parser.add_argument("--host", action="store", type=str, default="localhost",
 			help="Address of the MQTT broker")
 		parser.add_argument("-b", "--bike", action="store", type=str,
-			choices=["V2, V3"], help="Specify the which bike to expect MQTT data from")
+			choices=["v2", "V2", "v3", "V3"], help="Specify the which bike to expect MQTT data from")
 		return parser.parse_args()
