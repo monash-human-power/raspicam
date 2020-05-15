@@ -52,7 +52,7 @@ def test_v2_power_model_parsing():
 
 def test_v3_messages():
     message_packet = { "message": "testing 123" }
-    data = DataV2()
+    data = DataV3()
     data.load_data(topics.DAShboard.receive_message, dumps(message_packet))
     assert data.has_message()
     assert data.get_message() == message_packet["message"]

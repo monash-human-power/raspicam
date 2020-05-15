@@ -170,7 +170,7 @@ class DataV3(Data):
         """ Updates stored fields with data from a V3 sensor module data
             packet. """
         if topics.DAShboard.receive_message.matches(topic):
-            self.load_message(data)
+            self.load_message_json(data)
         elif topics.SensorModules.all_sensors.matches(topic):
             self.load_sensor_data(data)
         elif topics.PowerModelV3.recommended_sp.matches(topic):
@@ -179,6 +179,11 @@ class DataV3(Data):
             self.load_predicted_max_speed(data)
         elif topics.PowerModelV3.plan_name.matches(topic):
             self.load_plan_name(data)
+
+    def load_message_json(self, data: str) -> None:
+        """ Loads a message in the V3 JSON format """
+        message_data = loads(data)
+        self.load_message(message_data["message"])
 
     def load_sensor_data(self, data: str) -> None:
         """ Loads data in the json V3 wireless sensor module format """
