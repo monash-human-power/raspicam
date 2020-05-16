@@ -6,7 +6,7 @@ from data import DataFactory, DataV2, DataV3
 import topics
 
 def test_data_factory():
-    assert isinstance(DataFactory.create("V2"), DataV2)
+    assert isinstance(DataFactory.create("v2"), DataV2)
     assert isinstance(DataFactory.create("V3"), DataV3)
     with pytest.raises(NotImplementedError):
         DataFactory.create(None)
