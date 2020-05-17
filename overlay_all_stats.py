@@ -3,8 +3,8 @@ from overlay import Overlay, Colour
 
 class OverlayAllStats(Overlay):
 
-	def __init__(self):
-		super(OverlayAllStats, self).__init__()
+	def __init__(self, bike=None):
+		super(OverlayAllStats, self).__init__(bike)
 		self.text_height = 50
 		self.speed_height = 70
 		self.message_received_time = 0
@@ -98,5 +98,5 @@ class OverlayAllStats(Overlay):
 
 if __name__ == '__main__':
 	args = Overlay.get_overlay_args("Overlay displaying all (or just many) statistics")
-	my_overlay = OverlayAllStats()
+	my_overlay = OverlayAllStats(args.bike)
 	my_overlay.connect(ip=args.host)

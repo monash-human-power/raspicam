@@ -1,11 +1,13 @@
 # MHP_Raspicam
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors)
 
-This repo contains code used to run the Monash Human Power camera system. It is write protected to ensure it is always left in a working state.
+This repo contains code used to run the Monash Human Power camera system. The `master` branch is write protected to ensure it is always left in a working state.
 
 ## Installation
 
-Firstly, you'll need to create a `.env` file containing either `MHP_CAMERA=primary` or `MHP_CAMERA=secondary`. Optionally, you may set the overlay to run when the physical switch on the display is toggled by modifying `config.json`. An example of this file's contents could be `{ "activeOverlay": "overlay_all_stats.py" }`.
+Firstly, you'll need to create a `.env` file containing either `MHP_CAMERA=primary` or `MHP_CAMERA=secondary`. Similarly, set `MHP_BIKE` to `V2` or `V3` so that the overlays listen for data on the correct MQTT topics. This step may be skipped (and can be overriden with terminal arguments) but should always be done on the actual camera overlays.
+
+Optionally, you may set the overlay to run when the physical switch on the display is toggled by modifying `config.json`. An example of this file's contents could be `{ "activeOverlay": "overlay_all_stats.py" }`.
 
 To install dependencies, you will need [poetry](https://python-poetry.org/docs/#installation) installed on your computer.
 
@@ -30,8 +32,11 @@ Any overlay (e.g. `overlay_top_strip.py`) may be run from the terminal with Pyth
 Overlays may be run from the terminal, as before. However, for use on the bike, you should have `switch.py` and `orchestrator.py` running on startup. Currently, this is run automatically by `/etc/rc.local` on the display Pis, but they may also be run manually.
 
 ## Tests
-1) orchestrator_test.py = Test script for orchestrator.py. Enter 'pytest' in the terminal to run the test file
-2) mqtt_message_test.py = Test script that sends messages to the camera overlay. Initially run mqtt_message_test.py along with mqtt_test.py from the DAS repo, Finally run overlay_all_stats.py.
+
+Located under `CameraOverlays/tests`. Enter 'pytest' in the terminal to run all tests.
+
+## Utilities
+`mqtt_message_test.py`: Script that sends messages to the camera overlay. First, run `mqtt_message_test.py` along with `mqtt_test.py` from the DAS repo, Finally run `overlay_all_stats.py`.
 
 ## Contributors ✨
 

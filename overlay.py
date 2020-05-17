@@ -6,7 +6,8 @@ import cv2
 import numpy as np
 import paho.mqtt.client as mqtt
 
-from data import Data, V2_DATA_TOPICS, V3_MESSAGE
+from config import read_configs
+from data import DataFactory
 
 try:
 	from picamera import PiCamera
@@ -16,6 +17,7 @@ except (ImportError, RuntimeError):
 
 # Top of window is outside the screen to hide title bar
 PI_WINDOW_TOP_LEFT = (0, -20)
+DEFAULT_BIKE = "V2"
 
 class OverlayLayer(Enum):
 	video_feed = 2
@@ -111,7 +113,7 @@ class Canvas():
 
 class Overlay(ABC):
 
-	def __init__(self, width=1280, height=740):
+	def __init__(self, bike, width=1280, height=740):
 
 		self.width = width
 		self.height = height
@@ -134,13 +136,15 @@ class Overlay(ABC):
 		self.data_canvas = Canvas(self.width, self.height)
 		self.message_canvas = Canvas(self.width, self.height)
 
+		configs = read_configs()
+		bike_version = bike or configs["bike"] or DEFAULT_BIKE
+		self.data = DataFactory.create(bike_version)
+
 		self.client = mqtt.Client()
 		self.client.on_connect = self._on_connect
 		self.client.on_disconnect = self.on_disconnect
 		self.client.on_message = self._on_message
 		self.client.on_log = self.on_log
-
-		self.data = Data()
 
 	def show_opencv_frame(self):
 		""" Creates the frame using the webcam and canvases, and displays result """
@@ -208,17 +212,14 @@ class Overlay(ABC):
 		print("Disconnected from broker")
 
 	def _on_connect(self, client, userdata, flags, rc):
-		self.subscribe_to_topic_list(V2_DATA_TOPICS + V3_MESSAGE)
+		self.subscribe_to_topic_list(self.data.get_topics())
 		self.on_connect(client, userdata, flags, rc)
 		if ON_PI:
 			self.base_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.base)
 
 	def _on_message(self, client, userdata, msg):
 		payload = msg.payload.decode("utf-8")
-		if msg.topic in V2_DATA_TOPICS:
-			self.data.load_v2_query_string(payload)
-		elif msg.topic in V3_MESSAGE:
-			self.data.load_v3_message(payload)
+		self.data.load_data(msg.topic, payload)
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
@@ -241,5 +242,8 @@ class Overlay(ABC):
 	@staticmethod
 	def get_overlay_args(overlay_description: str):
 		parser = argparse.ArgumentParser(description=overlay_description, add_help=True)
-		parser.add_argument("--host", action="store", type=str, default="localhost", help="Address of the MQTT broker")
+		parser.add_argument("--host", action="store", type=str, default="localhost",
+			help="Address of the MQTT broker")
+		parser.add_argument("-b", "--bike", action="store", type=str,
+			choices=["v2", "V2", "v3", "V3"], help="Specify the which bike to expect MQTT data from")
 		return parser.parse_args()
