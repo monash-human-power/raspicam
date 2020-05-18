@@ -1,7 +1,6 @@
 import time
 from overlay import Overlay, Colour
 import topics
-import json
 
 class OverlayAllStats(Overlay):
 
