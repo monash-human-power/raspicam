@@ -161,35 +161,40 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		if ON_PI:
-			# Start displaying video feed. Non blocking, but runs forever.
-			self.pi_camera.start_preview(fullscreen=False, window=(*PI_WINDOW_TOP_LEFT, self.width, self.height))
+		try:
+			if ON_PI:
+				# Start displaying video feed. Non blocking, but runs forever.
+				self.pi_camera.start_preview(fullscreen=False, window=(*PI_WINDOW_TOP_LEFT, self.width, self.height))
 
-		# mqtt loop (does not block)
-		self.client.loop_start()
+			# mqtt loop (does not block)
+			self.client.loop_start()
 
-		prev_data_update = 0 # time that we last updated the data layer
-		while True:
+			prev_data_update = 0 # time that we last updated the data layer
+			while True:
 
-			# Update the data overlay only if we have waited enough time
-			if time.time() > prev_data_update + self.data_update_interval:
-				prev_data_update = time.time()
+				# Update the data overlay only if we have waited enough time
+				if time.time() > prev_data_update + self.data_update_interval:
+					prev_data_update = time.time()
 
-				# Update the data overlay with latest information
-				self.update_data_layer()
+					# Update the data overlay with latest information
+					self.update_data_layer()
 
-				if ON_PI:
-					# Update the overlay images on picamera. Picamera will
-					# retain the overlay images until updated, so we only need
-					# to do this once per overlay update.
-					self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
-					self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
+					if ON_PI:
+						# Update the overlay images on picamera. Picamera will
+						# retain the overlay images until updated, so we only need
+						# to do this once per overlay update.
+						self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
+						self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
 
-			if not ON_PI:
-				# Create and display the frame using OpenCV.
-				# This function fetches the most up-to-date overlay, as OpenCV
-				# needs us to manually add it to each frame.
-				self.show_opencv_frame()
+				if not ON_PI:
+					# Create and display the frame using OpenCV.
+					# This function fetches the most up-to-date overlay, as OpenCV
+					# needs us to manually add it to each frame.
+					self.show_opencv_frame()
+
+		finally:
+			if ON_PI:
+				self.pi_camera.stop_preview()
 
 	def subscribe_to_topic_list(self, topics):
 		# https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe
