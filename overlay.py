@@ -1,7 +1,9 @@
-import argparse
-import time
-from enum import Enum
 from abc import ABC, abstractmethod
+import argparse
+from enum import Enum
+import time
+from os import path
+
 import cv2
 import numpy as np
 import paho.mqtt.client as mqtt
@@ -198,14 +200,31 @@ class Overlay(ABC):
 		finally:
 			if ON_PI:
 				self.pi_camera.stop_preview()
+				self.stop_recording()
 
 	def start_recording(self):
-		print("started")
-		pass
+		""" Starts an h264 recording with the first available name located in
+			the recordings folder.
+
+			Should be paired with a call to stop_recording. Must be running
+			with picamera. """
+		output_folder = path.dirname(path.realpath(__file__)) + "/recordings"
+		output_file_pattern = f"{output_folder}/rec_{{}}.h264"
+
+		video_number = 1
+		while path.exists(output_file_pattern.format(video_number)):
+			video_number += 1
+
+		output_file = output_file_pattern.format(video_number)
+		self.pi_camera.start_recording(output_file)
 
 	def stop_recording(self):
-		print("stoped")
-		pass
+		""" Stops and saves any current recording at the location found in
+			start_recording().
+			
+			No action is taken if there was no recording in progress. Must be
+			running with picamera. """
+		self.pi_camera.stop_recording()
 
 	def set_callback_for_topic_list(self, topics, callback):
 		""" Sets the on_message callback for every topic in topics to the
@@ -245,6 +264,8 @@ class Overlay(ABC):
 		self.data.load_data(msg.topic, payload)
 
 	def on_recording_message(self, client, userdata, msg):
+		if not ON_PI:
+			return
 		if DAShboard.recording_start.matches(msg):
 			self.start_recording()
 		elif DAShboard.recording_stop.matches(msg):
