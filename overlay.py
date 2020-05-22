@@ -102,7 +102,7 @@ class Canvas():
 		""" Adds the overlay to a PiCamera preview, and if the overlay was already added,
 		    removes the old instance. """
 		overlay = pi_camera.add_overlay(self.img, format="rgba", size=(self.width, self.height))
-		overlay.layer = layer
+		overlay.layer = layer.value
 		overlay.fullscreen = False
 		overlay.window = (*PI_WINDOW_TOP_LEFT, self.width, self.height)
 
