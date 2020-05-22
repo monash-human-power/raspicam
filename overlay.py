@@ -146,9 +146,9 @@ class Overlay(ABC):
 		self.client.on_disconnect = self.on_disconnect
 		self.client.on_log = self.on_log
 
-		self.client.message_callback_add(self.data.get_topics(), self.on_data_message)
-		self.client.message_callback_add(DAShboard.recording_start, self.start_recording)
-		self.client.message_callback_add(DAShboard.recording_stop, self.stop_recording)
+		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
+		self.client.message_callback_add(str(DAShboard.recording_start), self.start_recording)
+		self.client.message_callback_add(str(DAShboard.recording_stop), self.stop_recording)
 
 	def show_opencv_frame(self):
 		""" Creates the frame using the webcam and canvases, and displays result """
@@ -201,10 +201,18 @@ class Overlay(ABC):
 				self.pi_camera.stop_preview()
 
 	def start_recording(self, client, userdata, msg):
+		print("started")
 		pass
 
 	def stop_recording(self, client, userdata, msg):
+		print("stoped")
 		pass
+
+	def set_callback_for_topic_list(self, topics, callback):
+		""" Sets the on_message callback for every topic in topics to the
+			provided callback """
+		for topic in topics:
+			self.client.message_callback_add(topic, callback)
 
 	def subscribe_to_topic_list(self, topics):
 		# https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe
@@ -228,7 +236,7 @@ class Overlay(ABC):
 
 	def _on_connect(self, client, userdata, flags, rc):
 		self.subscribe_to_topic_list(self.data.get_topics())
-		self.client.subscribe(DAShboard.recording)
+		self.client.subscribe(str(DAShboard.recording))
 		self.on_connect(client, userdata, flags, rc)
 		if ON_PI:
 			self.base_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.base)
