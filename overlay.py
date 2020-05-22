@@ -8,6 +8,7 @@ import paho.mqtt.client as mqtt
 
 from config import read_configs
 from data import DataFactory
+from topics import DAShboard
 
 try:
 	from picamera import PiCamera
@@ -143,8 +144,11 @@ class Overlay(ABC):
 		self.client = mqtt.Client()
 		self.client.on_connect = self._on_connect
 		self.client.on_disconnect = self.on_disconnect
-		self.client.on_message = self._on_message
 		self.client.on_log = self.on_log
+
+		self.client.message_callback_add(self.data.get_topics(), self.on_data_message)
+		self.client.message_callback_add(DAShboard.recording_start, self.start_recording)
+		self.client.message_callback_add(DAShboard.recording_stop, self.stop_recording)
 
 	def show_opencv_frame(self):
 		""" Creates the frame using the webcam and canvases, and displays result """
@@ -196,6 +200,12 @@ class Overlay(ABC):
 			if ON_PI:
 				self.pi_camera.stop_preview()
 
+	def start_recording(self, client, userdata, msg):
+		pass
+
+	def stop_recording(self, client, userdata, msg):
+		pass
+
 	def subscribe_to_topic_list(self, topics):
 		# https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe
 		# Basically, construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
@@ -218,11 +228,12 @@ class Overlay(ABC):
 
 	def _on_connect(self, client, userdata, flags, rc):
 		self.subscribe_to_topic_list(self.data.get_topics())
+		self.client.subscribe(DAShboard.recording)
 		self.on_connect(client, userdata, flags, rc)
 		if ON_PI:
 			self.base_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.base)
 
-	def _on_message(self, client, userdata, msg):
+	def on_data_message(self, client, userdata, msg):
 		payload = msg.payload.decode("utf-8")
 		self.data.load_data(msg.topic, payload)
 
