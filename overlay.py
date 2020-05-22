@@ -147,8 +147,7 @@ class Overlay(ABC):
 		self.client.on_log = self.on_log
 
 		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
-		self.client.message_callback_add(str(DAShboard.recording_start), self.start_recording)
-		self.client.message_callback_add(str(DAShboard.recording_stop), self.stop_recording)
+		self.client.message_callback_add(str(DAShboard.recording), self.on_recording_message)
 
 	def show_opencv_frame(self):
 		""" Creates the frame using the webcam and canvases, and displays result """
@@ -200,11 +199,11 @@ class Overlay(ABC):
 			if ON_PI:
 				self.pi_camera.stop_preview()
 
-	def start_recording(self, client, userdata, msg):
+	def start_recording(self):
 		print("started")
 		pass
 
-	def stop_recording(self, client, userdata, msg):
+	def stop_recording(self):
 		print("stoped")
 		pass
 
@@ -244,6 +243,12 @@ class Overlay(ABC):
 	def on_data_message(self, client, userdata, msg):
 		payload = msg.payload.decode("utf-8")
 		self.data.load_data(msg.topic, payload)
+
+	def on_recording_message(self, client, userdata, msg):
+		if DAShboard.recording_start.matches(msg):
+			self.start_recording()
+		elif DAShboard.recording_stop.matches(msg):
+			self.stop_recording()
 
 	@abstractmethod
 	def on_connect(self, client, userdata, flags, rc):
