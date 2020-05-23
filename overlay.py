@@ -233,6 +233,7 @@ class Overlay(ABC):
 		try:
 			self.pi_camera.start_recording(self.recording_output_file)
 			self.recording_start_time = time.time()
+			self.pi_camera.wait_recording(0.1)
 			self.send_recording_status()
 		except Exception:
 			self.send_recording_error()
