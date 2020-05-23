@@ -282,7 +282,7 @@ class Overlay(ABC):
 		}
 		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
 		self.client.publish(status_topic, dumps(message), retain=True)
-		print(format_exc)
+		print(format_exc())
 
 	def set_callback_for_topic_list(self, topics, callback):
 		""" Sets the on_message callback for every topic in topics to the
