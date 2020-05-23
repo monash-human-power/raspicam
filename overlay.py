@@ -229,7 +229,6 @@ class Overlay(ABC):
 			self.send_recording_status()
 		except Exception:
 			self.send_recording_error()
-			raise
 
 	def stop_recording(self):
 		""" Stops and saves any current recording at the location found in
@@ -244,7 +243,6 @@ class Overlay(ABC):
 			self.send_recording_status()
 		except Exception:
 			self.send_recording_error()
-			raise
 
 	def send_recording_status(self):
 		message = {}
@@ -258,7 +256,6 @@ class Overlay(ABC):
 
 			except Exception:
 				self.send_recording_error()
-				raise
 		else:
 			message["status"] = "off"
 		_, _, free_disk_space = disk_usage(__file__)
@@ -274,6 +271,7 @@ class Overlay(ABC):
 		}
 		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
 		self.client.publish(status_topic, dumps(message), retain=True)
+		print(format_exc)
 
 	def set_callback_for_topic_list(self, topics, callback):
 		""" Sets the on_message callback for every topic in topics to the
