@@ -249,7 +249,8 @@ class Overlay(ABC):
 				message["error"] = err
 		else:
 			message["status"] = "off"
-		message["diskSpaceRemaining"] = disk_usage(self.recording_output_file)
+		_, _, free_disk_space = disk_usage(__file__)
+		message["diskSpaceRemaining"] = free_disk_space
 
 		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
 		self.client.publish(status_topic, dumps(message), retain=True)
