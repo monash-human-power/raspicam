@@ -294,9 +294,9 @@ class Overlay(ABC):
 	def on_recording_message(self, client, userdata, msg):
 		if not ON_PI:
 			return
-		if DAShboard.recording_start.matches(msg):
+		if DAShboard.recording_start.matches(msg.topic):
 			self.start_recording()
-		elif DAShboard.recording_stop.matches(msg):
+		elif DAShboard.recording_stop.matches(msg.topic):
 			self.stop_recording()
 
 	@abstractmethod
