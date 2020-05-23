@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import argparse
 from enum import Enum
 from json import dumps
-from os import path
+from os import mkdir, path
 from shutil import disk_usage
 import time
 
@@ -213,6 +213,9 @@ class Overlay(ABC):
 			with picamera. """
 		output_folder = path.dirname(path.realpath(__file__)) + "/recordings"
 		output_file_pattern = f"{output_folder}/rec_{{}}.h264"
+
+		if not path.exists(output_folder):
+			mkdir(output_folder)
 
 		video_number = 1
 		while path.exists(output_file_pattern.format(video_number)):
