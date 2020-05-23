@@ -254,6 +254,8 @@ class Overlay(ABC):
 			self.send_recording_error()
 
 	def send_recording_status(self):
+		""" Checks if any errors have occured with recording, and sends the
+			current recording status via MQTT """
 		message = {}
 
 		if ON_PI and self.pi_camera.recording:
@@ -277,9 +279,12 @@ class Overlay(ABC):
 		self.prev_recording_status = time.time()
 
 	def send_recording_error(self):
+		""" Sends the most recent exception to the recording status MQTT topic """
+		_, _, free_disk_space = disk_usage(__file__)
 		message = {
 			"status": "error",
 			"error": format_exc(),
+			"diskSpaceRemaining": free_disk_space,
 		}
 		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
 		self.client.publish(status_topic, dumps(message), retain=True)
@@ -292,8 +297,8 @@ class Overlay(ABC):
 			self.client.message_callback_add(topic, callback)
 
 	def subscribe_to_topic_list(self, topics):
-		# https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe
-		# Basically, construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
+		""" Constructs a list in the format [("topic1", qos1), ("topic2", qos2), ...]
+			see https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe """
 		topic_values = list(map(str, topics))
 		at_most_once_qos = [0]*len(topics)
 
@@ -324,6 +329,7 @@ class Overlay(ABC):
 
 	def on_recording_message(self, client, userdata, msg):
 		if not ON_PI:
+			# Recording only works with picamera, for now
 			return
 		if DAShboard.recording_start.matches(msg.topic):
 			self.start_recording()
