@@ -212,6 +212,7 @@ class Overlay(ABC):
 			if ON_PI:
 				self.pi_camera.stop_preview()
 				self.stop_recording()
+				self.pi_camera.close()
 
 	def start_recording(self):
 		""" Starts an h264 recording with the first available name located in
