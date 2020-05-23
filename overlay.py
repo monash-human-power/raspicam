@@ -5,6 +5,7 @@ from json import dumps
 from os import mkdir, path
 from shutil import disk_usage
 import time
+from traceback import format_exc
 
 import cv2
 import numpy as np
@@ -220,12 +221,15 @@ class Overlay(ABC):
 		video_number = 1
 		while path.exists(output_file_pattern.format(video_number)):
 			video_number += 1
-
 		self.recording_output_file = output_file_pattern.format(video_number)
-		self.pi_camera.start_recording(self.recording_output_file)
-		self.recording_start_time = time.time()
 
-		self.send_recording_status()
+		try:
+			self.pi_camera.start_recording(self.recording_output_file)
+			self.recording_start_time = time.time()
+			self.send_recording_status()
+		except Exception:
+			self.send_recording_error()
+			raise
 
 	def stop_recording(self):
 		""" Stops and saves any current recording at the location found in
@@ -233,9 +237,14 @@ class Overlay(ABC):
 			
 			No action is taken if there was no recording in progress. Must be
 			running with picamera. """
-		if self.pi_camera.recording:
-			self.pi_camera.stop_recording()
-		self.send_recording_status()
+
+		try:
+			if self.pi_camera.recording:
+				self.pi_camera.stop_recording()
+			self.send_recording_status()
+		except Exception:
+			self.send_recording_error()
+			raise
 
 	def send_recording_status(self):
 		message = {}
@@ -247,14 +256,22 @@ class Overlay(ABC):
 				message["recordingMinutes"] = (time.time() - self.recording_start_time) / 60
 				message["recordingFile"] = self.recording_output_file
 
-			except picamera.PiCameraError as err:
-				message["status"] = "error"
-				message["error"] = err
+			except Exception:
+				self.send_recording_error()
+				raise
 		else:
 			message["status"] = "off"
 		_, _, free_disk_space = disk_usage(__file__)
 		message["diskSpaceRemaining"] = free_disk_space
 
+		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
+		self.client.publish(status_topic, dumps(message), retain=True)
+
+	def send_recording_error(self):
+		message = {
+			"status": "error",
+			"error": format_exc(),
+		}
 		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
 		self.client.publish(status_topic, dumps(message), retain=True)
 
