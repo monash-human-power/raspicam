@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 import argparse
 from enum import Enum
-import time
+from json import dumps
 from os import path
+from shutil import disk_usage
+import time
 
 import cv2
 import numpy as np
@@ -142,6 +144,7 @@ class Overlay(ABC):
 		configs = read_configs()
 		bike_version = bike or configs["bike"] or DEFAULT_BIKE
 		self.data = DataFactory.create(bike_version)
+		self.device = configs["device"]
 
 		self.client = mqtt.Client()
 		self.client.on_connect = self._on_connect
@@ -215,8 +218,11 @@ class Overlay(ABC):
 		while path.exists(output_file_pattern.format(video_number)):
 			video_number += 1
 
-		output_file = output_file_pattern.format(video_number)
-		self.pi_camera.start_recording(output_file)
+		self.recording_output_file = output_file_pattern.format(video_number)
+		self.pi_camera.start_recording(self.recording_output_file)
+		self.recording_start_time = time.time()
+
+		self.send_recording_status()
 
 	def stop_recording(self):
 		""" Stops and saves any current recording at the location found in
@@ -224,7 +230,29 @@ class Overlay(ABC):
 			
 			No action is taken if there was no recording in progress. Must be
 			running with picamera. """
-		self.pi_camera.stop_recording()
+		if self.pi_camera.recording:
+			self.pi_camera.stop_recording()
+		self.send_recording_status()
+
+	def send_recording_status(self):
+		message = {}
+
+		if ON_PI and self.pi_camera.recording:
+			try:
+				self.pi_camera.wait_recording()
+				message["status"] = "recording"
+				message["recordingMinutes"] = (time.time() - self.recording_start_time) / 60
+				message["recordingFile"] = self.recording_output_file
+
+			except picamera.PiCameraError as err:
+				message["status"] = "error"
+				message["error"] = err
+		else:
+			message["status"] = "off"
+		message["diskSpaceRemaining"] = disk_usage(self.recording_output_file)
+
+		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
+		self.client.publish(status_topic, dumps(message), retain=True)
 
 	def set_callback_for_topic_list(self, topics, callback):
 		""" Sets the on_message callback for every topic in topics to the
