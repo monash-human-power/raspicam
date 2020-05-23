@@ -128,6 +128,10 @@ class Overlay(ABC):
 		self.frametime = 17
 		# Time between updating the data layer, in seconds
 		self.data_update_interval = 1
+		# Time between recording statuses, in seconds
+		self.recording_status_interval = 60
+		# time that we last called self.send_recording_status
+		self.prev_recording_status = 0
 
 		self.prev_overlay = None
 		self.max_speed = float('-inf')
@@ -195,6 +199,9 @@ class Overlay(ABC):
 						self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
 						self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
 
+				if time.time() > self.prev_recording_status + self.recording_status_interval:
+					self.send_recording_status()
+
 				if not ON_PI:
 					# Create and display the frame using OpenCV.
 					# This function fetches the most up-to-date overlay, as OpenCV
@@ -256,6 +263,7 @@ class Overlay(ABC):
 
 			except Exception:
 				self.send_recording_error()
+				return
 		else:
 			message["status"] = "off"
 		_, _, free_disk_space = disk_usage(__file__)
@@ -263,6 +271,8 @@ class Overlay(ABC):
 
 		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
 		self.client.publish(status_topic, dumps(message), retain=True)
+
+		self.prev_recording_status = time.time()
 
 	def send_recording_error(self):
 		message = {
