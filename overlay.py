@@ -95,11 +95,11 @@ class Canvas():
 		dest = cv2.bitwise_and(dest, dest, mask=cv2.bitwise_not(mask))
 		return cv2.add(dest, img)
 
-	def update_pi_overlay(self, pi_camera, layer):
+	def update_pi_overlay(self, pi_camera, layer: OverlayLayer):
 		""" Adds the overlay to a PiCamera preview, and if the overlay was already added,
 		    removes the old instance. """
 		overlay = pi_camera.add_overlay(self.img, format="rgba", size=(self.width, self.height))
-		overlay.layer = layer
+		overlay.layer = layer.value
 		overlay.fullscreen = False
 		overlay.window = (*PI_WINDOW_TOP_LEFT, self.width, self.height)
 
