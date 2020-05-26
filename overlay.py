@@ -157,7 +157,7 @@ class Overlay(ABC):
 		self.client.on_log = self.on_log
 
 		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
-		self.client.message_callback_add(str(DAShboard.recording), self.on_recording_message)
+		self.set_callback_for_topic_list([str(DAShboard.recording)], self.on_recording_message)
 
 	def show_opencv_frame(self):
 		""" Creates the frame using the webcam and canvases, and displays result """
