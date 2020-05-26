@@ -329,7 +329,7 @@ class Overlay(ABC):
 
 	def on_recording_message(self, client, userdata, msg):
 		if not ON_PI:
-			# Recording only works with picamera, for now
+			print("WARNING: Recording is not yet possible with OpenCV")
 			return
 		if DAShboard.recording_start.matches(msg.topic):
 			self.start_recording()
