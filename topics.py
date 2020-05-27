@@ -41,6 +41,10 @@ class Camera(Topic):
 class DAShboard(Topic):
     """DAShboard MQTT Topics"""
     receive_message = '/v3/camera/primary/message'
+    recording = '/v3/camera/recording/+' # Note wildcard does not include status topics
+    recording_start = '/v3/camera/recording/start'
+    recording_stop = '/v3/camera/recording/stop'
+    recording_status_root = '/v3/camera/recording/status'
 
 class SensorModules(Topic):
     """V3 Wireless sensor module topics"""
