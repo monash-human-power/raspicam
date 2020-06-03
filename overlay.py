@@ -35,7 +35,7 @@ class Overlay(ABC):
 		self.max_speed = float('-inf')
 		self.start_time = round(time.time(), 2)
 
-		self.backend = get_backend(width, height)
+		self.backend = get_backend()
 
 		self.base_canvas = Canvas(self.width, self.height)
 		self.data_canvas = Canvas(self.width, self.height)
@@ -106,7 +106,7 @@ class Overlay(ABC):
 	def stop_recording(self):
 		""" Stops and saves any current recording at the location found in
 			start_recording().
-			
+
 			No action is taken if there was no recording in progress. Must be
 			running with picamera. """
 

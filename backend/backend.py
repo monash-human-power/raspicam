@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from overlay import Canvas
 from backend import PiCameraBackend, ON_PI, OpenCVBackend
 
-def get_backend(width, height):
+def get_backend():
     if ON_PI:
         return PiCameraBackend
     else:
@@ -29,7 +29,6 @@ class Backend(ABC):
     def on_loop(self):
         """ Creates the next frame using the webcam and canvases, and displays
             result. """
-        pass
 
     def stop_video(self):
         pass
