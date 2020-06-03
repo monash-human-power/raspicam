@@ -13,7 +13,7 @@ import paho.mqtt.client as mqtt
 
 from config import read_configs
 from data import DataFactory
-from renderer import get_renderer
+from backend import get_backend
 from topics import DAShboard
 
 # Top of window is outside the screen to hide title bar
@@ -123,7 +123,7 @@ class Overlay(ABC):
 		self.max_speed = float('-inf')
 		self.start_time = round(time.time(), 2)
 
-		self.renderer = get_renderer(width, height)
+		self.backend = get_backend(width, height)
 
 		self.base_canvas = Canvas(self.width, self.height)
 		self.data_canvas = Canvas(self.width, self.height)
@@ -145,7 +145,7 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		with self.renderer(self.width, self.height):
+		with self.backend(self.width, self.height):
 
 			# mqtt loop (does not block)
 			self.client.loop_start()
@@ -159,12 +159,12 @@ class Overlay(ABC):
 
 					# Update the data overlay with latest information
 					self.update_data_layer()
-					self.renderer.on_overlays_updated()
+					self.backend.on_overlays_updated()
 
 				if time.time() > self.prev_recording_status + self.recording_status_interval:
 					self.send_recording_status()
 
-				self.renderer.on_loop()
+				self.backend.on_loop()
 
 	def start_recording(self):
 		""" Starts an h264 recording with the first available name located in
@@ -272,7 +272,7 @@ class Overlay(ABC):
 		self.subscribe_to_topic_list(self.data.get_topics())
 		self.client.subscribe(str(DAShboard.recording))
 		self.on_connect(client, userdata, flags, rc)
-		self.renderer.on_base_overlay_update(self.base_canvas)
+		self.backend.on_base_overlay_update(self.base_canvas)
 
 	def on_data_message(self, client, userdata, msg):
 		payload = msg.payload.decode("utf-8")

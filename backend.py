@@ -19,13 +19,13 @@ class PiCameraOverlayLayer(Enum):
     data = 4
     message = 5
 
-def get_renderer(width, height):
+def get_backend(width, height):
     if ON_PI:
-        return PiCameraRenderer
+        return PiCameraBackend
     else:
-        return OpenCVRenderer
+        return OpenCVBackend
 
-class Renderer(ABC):
+class Backend(ABC):
 
     def __init__(self, width, height):
         self.width = width
@@ -51,10 +51,10 @@ class Renderer(ABC):
         pass
 
     def start_recording(self):
-        print(f"WARNING: Recording is not with {type(self).__name__}")
+        print(f"WARNING: Recording is not supported with {type(self).__name__}")
 
     def stop_recording(self):
-        print(f"WARNING: Recording is not with {type(self).__name__}")
+        print(f"WARNING: Recording is not supported with {type(self).__name__}")
 
     def send_recording_status(self):
         pass
@@ -68,7 +68,7 @@ class Renderer(ABC):
     def __exit__(self, exc_type, exc_value, traceback):
         self.stop_video()
 
-class PiCameraRenderer(Renderer):
+class PiCameraBackend(Backend):
 
     def __init__(self):
         super().__init__()
@@ -92,7 +92,7 @@ class PiCameraRenderer(Renderer):
         self.stop_recording()
         self.pi_camera.close()
 
-class OpenCVRenderer(Renderer):
+class OpenCVBackend(Backend):
 
     def __init__(self):
         super().__init__()
