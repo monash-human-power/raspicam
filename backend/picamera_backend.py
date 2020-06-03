@@ -10,6 +10,7 @@ try:
 except (ImportError, RuntimeError):
     ON_PI = False
 
+# Top of window is outside the screen to hide title bar
 PI_WINDOW_TOP_LEFT = (0, -20)
 
 class OverlayLayer(Enum):

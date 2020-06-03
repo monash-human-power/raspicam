@@ -14,8 +14,6 @@ from data import DataFactory
 from backend import get_backend
 from topics import DAShboard
 
-# Top of window is outside the screen to hide title bar
-PI_WINDOW_TOP_LEFT = (0, -20)
 DEFAULT_BIKE = "V2"
 
 class Overlay(ABC):
