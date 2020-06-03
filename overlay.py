@@ -39,9 +39,6 @@ class Canvas():
 		self.img = None
 		self.clear()
 
-		if ON_PI:
-			self.overlay = None
-
 	def clear(self):
 		""" Sets the entire canvas contents to transparentBlack """
 		self.img = np.zeros((self.height, self.width, 4), np.uint8)
@@ -89,22 +86,6 @@ class Canvas():
 		# Black-out the area behind the canvas on the destination
 		dest = cv2.bitwise_and(dest, dest, mask=cv2.bitwise_not(mask))
 		return cv2.add(dest, img)
-
-	def update_pi_overlay(self, pi_camera, layer: OverlayLayer):
-		""" Adds the overlay to a PiCamera preview, and if the overlay was already added,
-		    removes the old instance. """
-		overlay = pi_camera.add_overlay(self.img, format="rgba", size=(self.width, self.height))
-		overlay.layer = layer.value
-		overlay.fullscreen = False
-		overlay.window = (*PI_WINDOW_TOP_LEFT, self.width, self.height)
-
-		# Rather than creating and swapping out overlays, the proper way to do this would be with overlay.update()
-		# Unfortunately, due to a bug in PiCamera 1.13, this will spam us with errors (which don't matter, but still)
-		# https://github.com/waveform80/picamera/issues/320
-		# https://www.raspberrypi.org/forums/viewtopic.php?t=190120
-		if self.overlay:
-			pi_camera.remove_overlay(self.overlay)
-		self.overlay = overlay
 
 class Overlay(ABC):
 
