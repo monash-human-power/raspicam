@@ -13,23 +13,12 @@ import paho.mqtt.client as mqtt
 
 from config import read_configs
 from data import DataFactory
+from renderer import get_renderer
 from topics import DAShboard
-
-try:
-	from picamera import PiCamera
-	ON_PI = True
-except (ImportError, RuntimeError):
-	ON_PI = False
 
 # Top of window is outside the screen to hide title bar
 PI_WINDOW_TOP_LEFT = (0, -20)
 DEFAULT_BIKE = "V2"
-
-class OverlayLayer(Enum):
-	video_feed = 2
-	base = 3
-	data = 4
-	message = 5
 
 class Colour(Enum):
 	# Remember, OpenCV uses BGR(A) not RGB(A)
@@ -124,8 +113,6 @@ class Overlay(ABC):
 		self.width = width
 		self.height = height
 
-		# Time between video frames when running on OpenCV, in milliseconds
-		self.frametime = 17
 		# Time between updating the data layer, in seconds
 		self.data_update_interval = 1
 		# Time between recording statuses, in seconds
@@ -133,14 +120,10 @@ class Overlay(ABC):
 		# time that we last called self.send_recording_status
 		self.prev_recording_status = 0
 
-		self.prev_overlay = None
 		self.max_speed = float('-inf')
 		self.start_time = round(time.time(), 2)
 
-		if ON_PI:
-			self.pi_camera = PiCamera(resolution=(self.width, self.height))
-		else:
-			self.webcam = cv2.VideoCapture(0)
+		self.renderer = get_renderer(width, height)
 
 		self.base_canvas = Canvas(self.width, self.height)
 		self.data_canvas = Canvas(self.width, self.height)
@@ -159,25 +142,10 @@ class Overlay(ABC):
 		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
 		self.set_callback_for_topic_list([str(DAShboard.recording)], self.on_recording_message)
 
-	def show_opencv_frame(self):
-		""" Creates the frame using the webcam and canvases, and displays result """
-		_, frame = self.webcam.read()
-		frame = cv2.resize(frame, (self.width, self.height))
-
-		frame = self.base_canvas.copy_to(frame)
-		frame = self.data_canvas.copy_to(frame)
-		frame = self.message_canvas.copy_to(frame)
-
-		cv2.imshow('frame', frame)
-		cv2.waitKey(self.frametime)
-
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		try:
-			if ON_PI:
-				# Start displaying video feed. Non blocking, but runs forever.
-				self.pi_camera.start_preview(fullscreen=False, window=(*PI_WINDOW_TOP_LEFT, self.width, self.height))
+		with self.renderer(self.width, self.height):
 
 			# mqtt loop (does not block)
 			self.client.loop_start()
@@ -191,28 +159,12 @@ class Overlay(ABC):
 
 					# Update the data overlay with latest information
 					self.update_data_layer()
-
-					if ON_PI:
-						# Update the overlay images on picamera. Picamera will
-						# retain the overlay images until updated, so we only need
-						# to do this once per overlay update.
-						self.data_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.data)
-						self.message_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.message)
+					self.renderer.on_overlays_updated()
 
 				if time.time() > self.prev_recording_status + self.recording_status_interval:
 					self.send_recording_status()
 
-				if not ON_PI:
-					# Create and display the frame using OpenCV.
-					# This function fetches the most up-to-date overlay, as OpenCV
-					# needs us to manually add it to each frame.
-					self.show_opencv_frame()
-
-		finally:
-			if ON_PI:
-				self.pi_camera.stop_preview()
-				self.stop_recording()
-				self.pi_camera.close()
+				self.renderer.on_loop()
 
 	def start_recording(self):
 		""" Starts an h264 recording with the first available name located in
@@ -320,8 +272,7 @@ class Overlay(ABC):
 		self.subscribe_to_topic_list(self.data.get_topics())
 		self.client.subscribe(str(DAShboard.recording))
 		self.on_connect(client, userdata, flags, rc)
-		if ON_PI:
-			self.base_canvas.update_pi_overlay(self.pi_camera, OverlayLayer.base)
+		self.renderer.on_base_overlay_update(self.base_canvas)
 
 	def on_data_message(self, client, userdata, msg):
 		payload = msg.payload.decode("utf-8")
