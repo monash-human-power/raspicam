@@ -1,4 +1,5 @@
 from enum import Enum
+from time import time
 from typing import Dict
 
 from backend import Backend
@@ -60,3 +61,27 @@ class PiCameraBackend(Backend):
         self.pi_camera.stop_preview()
         self.stop_recording()
         self.pi_camera.close()
+
+    def __start_recording(self):
+        try:
+            self.pi_camera.start_recording(self.recording_output_file)
+            self.recording = True
+            self.recording_start_time = time()
+            self.pi_camera.wait_recording(0.1)
+            self.send_recording_status()
+        except Exception:
+            self.recording = self.pi_camera.recording
+            self.send_recording_error()
+
+    def stop_recording(self):
+        try:
+            if self.pi_camera.recording:
+                self.pi_camera.stop_recording()
+            self.send_recording_status()
+        except Exception:
+            self.send_recording_error()
+        finally:
+            self.recording = False
+
+    def check_recording_errors(self):
+        self.pi_camera.wait_recording()
