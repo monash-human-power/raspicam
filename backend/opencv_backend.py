@@ -5,8 +5,9 @@ from overlay import Canvas
 
 class OpenCVBackend(Backend):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, width, height, publish_recording_status_func):
+        super().__init__(width, height, publish_recording_status_func)
+
         self.webcam = cv2.VideoCapture(0)
 
         # Time between video frames when running on OpenCV, in milliseconds

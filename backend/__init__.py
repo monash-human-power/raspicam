@@ -1,4 +1,5 @@
-from .backend import Backend, get_backend
+from .backend import Backend
+from .backend_factory import BackendFactory
 from .picamera_backend import PiCameraBackend, ON_PI
 from .opencv_backend import OpenCVBackend
-__all__ = ["Backend", "get_backend", "PiCameraBackend", "ON_PI", "OpenCVBackend"]
+__all__ = ["Backend", "BackendFactory", "PiCameraBackend", "ON_PI", "OpenCVBackend"]

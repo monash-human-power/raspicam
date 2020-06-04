@@ -6,13 +6,6 @@ from time import time
 from traceback import format_exc
 
 from overlay import Canvas
-from backend import PiCameraBackend, ON_PI, OpenCVBackend
-
-def get_backend():
-    if ON_PI:
-        return PiCameraBackend
-    else:
-        return OpenCVBackend
 
 class Backend(ABC):
 

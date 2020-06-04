@@ -7,7 +7,7 @@ import paho.mqtt.client as mqtt
 from config import read_configs
 from canvas import Canvas
 from data import DataFactory
-from backend import get_backend
+from backend import BackendFactory
 from topics import DAShboard
 
 DEFAULT_BIKE = "V2"
@@ -49,8 +49,7 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		backend_type = get_backend()
-		with backend_type(self.width, self.height, self.publish_recording_status) as self.backend:
+		with BackendFactory.create(self.width, self.height, self.publish_recording_status) as self.backend:
 
 			# mqtt loop (does not block)
 			self.client.loop_start()

@@ -22,8 +22,9 @@ class OverlayLayer(Enum):
 
 class PiCameraBackend(Backend):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, width, height, publish_recording_status_func):
+        super().__init__(width, height, publish_recording_status_func)
+
         self.pi_camera = PiCamera(resolution=(self.width, self.height))
 
         self.prev_overlays: Dict[OverlayLayer, self.pi_camera.PiOverlayRenderer] = {}
