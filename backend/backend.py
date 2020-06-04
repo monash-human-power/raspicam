@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from json import dumps
 from pathlib import Path
 from shutil import disk_usage
@@ -31,14 +31,17 @@ class Backend(ABC):
         # Time between recording statuses, in seconds
         self.recording_status_interval = 60
 
+    @abstractmethod
     def start_video(self) -> None:
         """ Starts the necessary processes to begin displaying camera feed
             video. """
 
+    @abstractmethod
     def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         """ Updates the base canvas which is drawn on the video. Should be
             called whenever the canvas is updated. """
 
+    @abstractmethod
     def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         """ Updates the data and message canvases which are drawn on the
             video. Should be called whenever the canvases are updated. """
@@ -57,12 +60,14 @@ class Backend(ABC):
         if time() > self.prev_recording_status_time + self.recording_status_interval:
             self.send_recording_status()
 
+    @abstractmethod
     def _on_loop(self) -> None:
         """ Implemented by overlays to perform any neccessary operations that
             should be performed on a regular period. This may involve updating
             the display, which may be blocking. Should not be called outside
             of the Backend class. """
 
+    @abstractmethod
     def stop_video(self) -> None:
         """ Stops displaying the video feed and releases any resources
             captured. """

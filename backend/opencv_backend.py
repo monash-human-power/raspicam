@@ -12,7 +12,7 @@ class OpenCVBackend(Backend):
     def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc):
         super().__init__(width, height, publish_recording_status_func)
 
-        self.webcam = cv2.VideoCapture(0)
+        self.webcam = None
 
         # Time between video frames when running on OpenCV, in milliseconds
         self.frametime = 17
@@ -20,6 +20,9 @@ class OpenCVBackend(Backend):
         self.base_canvas = Canvas(self.width, self.height)
         self.data_canvas = Canvas(self.width, self.height)
         self.message_canvas = Canvas(self.width, self.height)
+
+    def start_video(self) -> None:
+        self.webcam = cv2.VideoCapture(0)
 
     def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         self.base_canvas = base_canvas

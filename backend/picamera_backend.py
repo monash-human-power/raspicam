@@ -65,6 +65,10 @@ class PiCameraBackend(Backend):
         self.update_picamera_overlay(data_canvas, OverlayLayer.data)
         self.update_picamera_overlay(message_canvas, OverlayLayer.message)
 
+    def _on_loop(self) -> None:
+        # Nothing to do
+        pass
+
     def stop_video(self) -> None:
         self.pi_camera.stop_preview()
         self.stop_recording()
