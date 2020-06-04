@@ -68,7 +68,7 @@ class Backend(ABC):
             video_number += 1
         self.recording_output_file = output_file_pattern.format(video_number)
 
-        self.__start_recording()
+        self._start_recording()
 
     def _start_recording(self):
         print(f"WARNING: Recording is not supported with {type(self).__name__}")
