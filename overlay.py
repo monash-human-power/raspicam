@@ -4,10 +4,10 @@ import time
 
 import paho.mqtt.client as mqtt
 
+from backend import BackendFactory
 from config import read_configs
 from canvas import Canvas
 from data import DataFactory
-from backend import BackendFactory
 from topics import DAShboard
 
 DEFAULT_BIKE = "V2"
