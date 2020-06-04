@@ -1,6 +1,6 @@
 from abc import ABC
 from json import dumps
-from os import mkdir, path
+from pathlib import Path
 from shutil import disk_usage
 from time import time
 from traceback import format_exc
@@ -57,16 +57,15 @@ class Backend(ABC):
 
             Should be paired with a call to stop_recording."""
 
-        output_folder = path.dirname(path.realpath(__file__)) + "/../recordings"
-        output_file_pattern = f"{output_folder}/rec_{{}}.h264"
+        output_folder = Path(__file__).parent / "recordings"
+        output_file_pattern = "rec_{}.h264"
 
-        if not path.exists(output_folder):
-            mkdir(output_folder)
+        output_folder.mkdir(exist_ok=True)
 
         video_number = 1
-        while path.exists(output_file_pattern.format(video_number)):
+        while (output_folder / output_file_pattern.format(video_number)).exists():
             video_number += 1
-        self.recording_output_file = output_file_pattern.format(video_number)
+        self.recording_output_file = output_folder / output_file_pattern.format(video_number)
 
         self._start_recording()
 
