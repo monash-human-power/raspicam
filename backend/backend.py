@@ -144,6 +144,7 @@ class Backend(ABC):
     def __enter__(self):
         """ Ran when Python's `with ...` syntax is used on an instance of this
             class. """
+        self.start_video()
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
