@@ -2,7 +2,7 @@ from enum import Enum
 from time import time
 from typing import Dict
 
-from backend import Backend
+from backend import Backend, PublishFunc
 from overlay import Canvas
 
 try:
@@ -15,25 +15,32 @@ except (ImportError, RuntimeError):
 PI_WINDOW_TOP_LEFT = (0, -20)
 
 class OverlayLayer(Enum):
+    """ The `picamera` layers which each overlay canvas should be placed on.
+
+        Higher layer numbers are placed in front of lower ones. """
     video_feed = 2
     base = 3
     data = 4
     message = 5
 
 class PiCameraBackend(Backend):
+    """ Gets video and displays using the `picamera` library.
 
-    def __init__(self, width, height, publish_recording_status_func):
+        This backend will only work when the `picamera` library is available,
+        i.e. when running on a Raspberry Pi. """
+
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc):
         super().__init__(width, height, publish_recording_status_func)
 
         self.pi_camera = PiCamera(resolution=(self.width, self.height))
 
         self.prev_overlays: Dict[OverlayLayer, self.pi_camera.PiOverlayRenderer] = {}
 
-    def start_video(self):
+    def start_video(self) -> None:
         # Start displaying video feed. Non blocking, but runs forever in seperate thread.
         self.pi_camera.start_preview(fullscreen=False, window=(*PI_WINDOW_TOP_LEFT, self.width, self.height))
 
-    def update_picamera_overlay(self, canvas: Canvas, layer: OverlayLayer):
+    def update_picamera_overlay(self, canvas: Canvas, layer: OverlayLayer) -> None:
         """ Adds the overlay to a PiCamera preview, and if the overlay was already added,
             removes the old instance. """
         overlay = self.pi_camera.add_overlay(canvas.img, format="rgba", size=(self.width, self.height))
@@ -49,21 +56,21 @@ class PiCameraBackend(Backend):
             self.pi_camera.remove_overlay(self.prev_overlays[layer])
         self.prev_overlays[layer] = overlay
 
-    def on_base_overlay_update(self, base_canvas: Canvas):
+    def on_base_overlay_update(self, base_canvas: Canvas) -> None:
         self.update_picamera_overlay(base_canvas, OverlayLayer.base)
 
-    def on_overlays_updated(self, data_canvas: Canvas, message_canvas: Canvas):
+    def on_overlays_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         """ Picamera will retain the overlay images until updated, so we only need
             to do this once per overlay update. """
         self.update_picamera_overlay(data_canvas, OverlayLayer.data)
         self.update_picamera_overlay(message_canvas, OverlayLayer.message)
 
-    def stop_video(self):
+    def stop_video(self) -> None:
         self.pi_camera.stop_preview()
         self.stop_recording()
         self.pi_camera.close()
 
-    def _start_recording(self):
+    def _start_recording(self) -> None:
         try:
             self.pi_camera.start_recording(self.recording_output_file)
             self.recording = True
@@ -74,7 +81,7 @@ class PiCameraBackend(Backend):
             self.recording = self.pi_camera.recording
             self.send_recording_error()
 
-    def stop_recording(self):
+    def stop_recording(self) -> None:
         self.recording = False
         try:
             if self.pi_camera.recording:
@@ -83,5 +90,5 @@ class PiCameraBackend(Backend):
         except Exception:
             self.send_recording_error()
 
-    def check_recording_errors(self):
+    def check_recording_errors(self) -> None:
         self.pi_camera.wait_recording()

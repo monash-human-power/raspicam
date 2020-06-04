@@ -1,11 +1,15 @@
 import cv2
 
-from backend import Backend
+from backend import Backend, PublishFunc
 from overlay import Canvas
 
 class OpenCVBackend(Backend):
+    """ Gets and displays video using the OpenCV (`cv2`) library.
 
-    def __init__(self, width, height, publish_recording_status_func):
+        This is intended for use with laptops with webcams, not on the
+        Raspberry Pi. """
+
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc):
         super().__init__(width, height, publish_recording_status_func)
 
         self.webcam = cv2.VideoCapture(0)
@@ -17,15 +21,15 @@ class OpenCVBackend(Backend):
         self.data_canvas = Canvas(self.width, self.height)
         self.message_canvas = Canvas(self.width, self.height)
 
-    def on_base_overlay_update(self, base_canvas: Canvas):
+    def on_base_overlay_update(self, base_canvas: Canvas) -> None:
         self.base_canvas = base_canvas
 
-    def on_overlays_updated(self, data_canvas: Canvas, message_canvas: Canvas):
+    def on_overlays_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         self.data_canvas = data_canvas
         self.message_canvas = message_canvas
 
-    def _on_loop(self):
-        """ This function uses the cached overlay, as OpenCV needs us to
+    def _on_loop(self) -> None:
+        """ This function uses the cached overlays, as OpenCV needs us to
             manually add it to each frame. """
         _, frame = self.webcam.read()
         frame = cv2.resize(frame, (self.width, self.height))
@@ -37,6 +41,6 @@ class OpenCVBackend(Backend):
         cv2.imshow('frame', frame)
         cv2.waitKey(self.frametime)
 
-    def stop_video(self):
+    def stop_video(self) -> None:
         self.webcam.release()
         cv2.destroyAllWindows()
