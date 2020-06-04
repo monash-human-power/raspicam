@@ -9,7 +9,7 @@ from typing import Callable
 from canvas import Canvas
 
 # A function which accepts a string and returns None
-PublishFunc: Callable[[str], None]
+PublishFunc = Callable[[str], None]
 
 class Backend(ABC):
     """ Backend for getting and processing video feed.
