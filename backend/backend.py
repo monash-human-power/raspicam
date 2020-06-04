@@ -65,7 +65,7 @@ class Backend(ABC):
         video_number = 1
         while (output_folder / output_file_pattern.format(video_number)).exists():
             video_number += 1
-        self.recording_output_file = output_folder / output_file_pattern.format(video_number)
+        self.recording_output_file = str(output_folder / output_file_pattern.format(video_number))
 
         self._start_recording()
 
