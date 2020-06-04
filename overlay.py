@@ -51,6 +51,8 @@ class Overlay(ABC):
 
 		with BackendFactory.create(self.width, self.height, self.publish_recording_status) as self.backend:
 
+			self.backend.start_video()
+
 			# mqtt loop (does not block)
 			self.client.loop_start()
 
