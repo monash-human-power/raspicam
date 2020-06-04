@@ -40,12 +40,12 @@ class Backend(ABC):
             depending on the backend, the display may be updated during this
             call. This operation may be blocking to ensure the display is
             updated at the correct framerate. """
-        self.__on_loop()
+        self._on_loop()
 
         if time() > self.prev_recording_status_time + self.recording_status_interval:
             self.send_recording_status()
 
-    def __on_loop(self):
+    def _on_loop(self):
         pass
 
     def stop_video(self):
@@ -70,7 +70,7 @@ class Backend(ABC):
 
         self.__start_recording()
 
-    def __start_recording(self):
+    def _start_recording(self):
         print(f"WARNING: Recording is not supported with {type(self).__name__}")
 
     def stop_recording(self):

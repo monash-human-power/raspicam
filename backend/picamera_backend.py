@@ -63,7 +63,7 @@ class PiCameraBackend(Backend):
         self.stop_recording()
         self.pi_camera.close()
 
-    def __start_recording(self):
+    def _start_recording(self):
         try:
             self.pi_camera.start_recording(self.recording_output_file)
             self.recording = True

@@ -24,7 +24,7 @@ class OpenCVBackend(Backend):
         self.data_canvas = data_canvas
         self.message_canvas = message_canvas
 
-    def __on_loop(self):
+    def _on_loop(self):
         """ This function uses the cached overlay, as OpenCV needs us to
             manually add it to each frame. """
         _, frame = self.webcam.read()
