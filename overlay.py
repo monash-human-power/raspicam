@@ -22,9 +22,6 @@ class Overlay(ABC):
 		# Time between updating the data layer, in seconds
 		self.data_update_interval = 1
 
-		self.max_speed = float('-inf')
-		self.start_time = round(time.time(), 2)
-
 		self.backend = None
 
 		self.base_canvas = Canvas(self.width, self.height)
@@ -85,10 +82,6 @@ class Overlay(ABC):
 
 		topics_qos = list(zip(topic_values, at_most_once_qos))
 		self.client.subscribe(topics_qos)
-
-	# Calculate max speed
-	def actual_max(self, cur_speed):
-		return max(self.max_speed, cur_speed)
 
 	# mqtt methods
 	def on_log(self, client, userdata, level, buf):

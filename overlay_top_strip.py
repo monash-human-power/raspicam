@@ -8,7 +8,7 @@ class OverlayTopStrip(Overlay):
 	def __init__(self, bike=None):
 		super(OverlayTopStrip, self).__init__(bike)
 
-		self.prev_time = 0
+		self.start_time = round(time.time(), 2)
 
 		self.bottom_text_height = 70
 		self.bottom_text_pos_x = self.width // 2 - 150
@@ -70,8 +70,7 @@ class OverlayTopStrip(Overlay):
 		speed = self.data["gps_speed"]
 		self.data_canvas.draw_text("S: {0}".format(round(speed, 2)), (self.bottom_text_pos_x, self.bottom_text_pos_y - self.bottom_text_height), size=self.bottom_text_size, colour=Colour.red)
 
-		# Actual max speed
-		self.data_canvas.draw_text("{0}".format(int(self.actual_max(speed))), (1120, self.top_text_pos), colour=Colour.white)
+		self.data_canvas.draw_text("{0}".format(int(speed)), (1120, self.top_text_pos), colour=Colour.white)
 
 	def draw_zone_dist(self):
 		zdist_left = self.data["zdist"]
