@@ -57,7 +57,7 @@ class Backend(ABC):
 
             Should be paired with a call to stop_recording."""
 
-        output_folder = Path(__file__).parent / "recordings"
+        output_folder = Path(__file__).parent.parent / "recordings"
         output_file_pattern = "rec_{}.h264"
 
         output_folder.mkdir(exist_ok=True)
