@@ -63,7 +63,7 @@ class Overlay(ABC):
 
 					# Update the data overlay with latest information
 					self.update_data_layer()
-					self.backend.on_overlays_updated()
+					self.backend.on_overlays_updated(self.data_canvas, self.message_canvas)
 
 				self.backend.on_loop()
 
