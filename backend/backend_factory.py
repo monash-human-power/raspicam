@@ -1,10 +1,10 @@
-from backend import Backend, PiCameraBackend, OpenCVBackend, ON_PI
+import backend
 
 class BackendFactory:
     
     @staticmethod
-    def create(width: int, height: int, publish_recording_status_func) -> Backend:
-        if ON_PI:
-            return PiCameraBackend(width, height, publish_recording_status_func)
+    def create(width: int, height: int, publish_recording_status_func) -> backend.Backend:
+        if backend.ON_PI:
+            return backend.PiCameraBackend(width, height, publish_recording_status_func)
         else:
-            return OpenCVBackend(width, height, publish_recording_status_func)
+            return backend.OpenCVBackend(width, height, publish_recording_status_func)
