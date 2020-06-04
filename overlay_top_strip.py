@@ -1,5 +1,6 @@
 import time
-from overlay import Overlay, Colour
+from overlay import Overlay
+from canvas import Colour
 
 
 class OverlayTopStrip(Overlay):

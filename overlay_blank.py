@@ -1,4 +1,5 @@
-from overlay import Overlay, Colour
+from overlay import Overlay
+from canvas import Colour
 
 class OverlayBlank(Overlay):
 
