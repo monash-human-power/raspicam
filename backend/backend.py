@@ -6,7 +6,7 @@ from time import time
 from traceback import format_exc
 from typing import Callable
 
-from overlay import Canvas
+from canvas import Canvas
 
 # A function which accepts a string and returns None
 PublishFunc: Callable[[str], None]
