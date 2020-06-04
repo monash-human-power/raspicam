@@ -21,10 +21,10 @@ class OpenCVBackend(Backend):
         self.data_canvas = Canvas(self.width, self.height)
         self.message_canvas = Canvas(self.width, self.height)
 
-    def on_base_overlay_update(self, base_canvas: Canvas) -> None:
+    def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         self.base_canvas = base_canvas
 
-    def on_overlays_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
+    def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         self.data_canvas = data_canvas
         self.message_canvas = message_canvas
 

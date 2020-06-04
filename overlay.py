@@ -63,7 +63,7 @@ class Overlay(ABC):
 
 					# Update the data overlay with latest information
 					self.update_data_layer()
-					self.backend.on_overlays_updated(self.data_canvas, self.message_canvas)
+					self.backend.on_canvases_updated(self.data_canvas, self.message_canvas)
 
 				self.backend.on_loop()
 
@@ -93,7 +93,7 @@ class Overlay(ABC):
 		self.subscribe_to_topic_list(self.data.get_topics())
 		self.client.subscribe(str(DAShboard.recording))
 		self.on_connect(client, userdata, flags, rc)
-		self.backend.on_base_overlay_update(self.base_canvas)
+		self.backend.on_base_canvas_updated(self.base_canvas)
 
 	def on_data_message(self, client, userdata, msg):
 		payload = msg.payload.decode("utf-8")

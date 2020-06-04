@@ -56,10 +56,10 @@ class PiCameraBackend(Backend):
             self.pi_camera.remove_overlay(self.prev_overlays[layer])
         self.prev_overlays[layer] = overlay
 
-    def on_base_overlay_update(self, base_canvas: Canvas) -> None:
+    def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         self.update_picamera_overlay(base_canvas, OverlayLayer.base)
 
-    def on_overlays_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
+    def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         """ Picamera will retain the overlay images until updated, so we only need
             to do this once per overlay update. """
         self.update_picamera_overlay(data_canvas, OverlayLayer.data)

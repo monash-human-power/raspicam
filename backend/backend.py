@@ -35,11 +35,11 @@ class Backend(ABC):
         """ Starts the necessary processes to begin displaying camera feed
             video. """
 
-    def on_base_overlay_update(self, base_canvas: Canvas) -> None:
+    def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         """ Updates the base canvas which is drawn on the video. Should be
             called whenever the canvas is updated. """
 
-    def on_overlays_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
+    def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         """ Updates the data and message canvases which are drawn on the
             video. Should be called whenever the canvases are updated. """
 
