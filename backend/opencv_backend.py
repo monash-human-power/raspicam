@@ -36,3 +36,7 @@ class OpenCVBackend(Backend):
 
         cv2.imshow('frame', frame)
         cv2.waitKey(self.frametime)
+
+    def stop_video(self):
+        self.webcam.release()
+        cv2.destroyAllWindows()
