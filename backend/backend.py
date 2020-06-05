@@ -117,6 +117,18 @@ class Backend(ABC):
             Should be paired with a call to start_recording. No action is taken
             if there was no recording in progress. """
 
+        self.recording = False
+        try:
+            self._stop_recording()
+        except Exception:
+            self.send_recording_error()
+        else:
+            self.send_recording_status()
+
+    def _stop_recording(self) -> None:
+        """ Stops recording and saves to the file at self.recording_output_file.
+            Should not be called outside of the Backend class. """
+
         raise NotImplementedError(f"Recording is not supported with {type(self).__name__}")
 
     def check_recording_errors(self) -> None:

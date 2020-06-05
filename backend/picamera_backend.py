@@ -80,15 +80,9 @@ class PiCameraBackend(Backend):
         self.recording_start_time = time()
         self.pi_camera.wait_recording(0.1)
 
-    def stop_recording(self) -> None:
-        self.recording = False
-        try:
-            if self.pi_camera.recording:
-                self.pi_camera.stop_recording()
-        except Exception:
-            self.send_recording_error()
-        else:
-            self.send_recording_status()
+    def _stop_recording(self) -> None:
+        if self.pi_camera.recording:
+            self.pi_camera.stop_recording()
 
     def check_recording_errors(self) -> None:
         self.pi_camera.wait_recording()
