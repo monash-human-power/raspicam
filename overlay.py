@@ -4,7 +4,7 @@ import time
 
 import paho.mqtt.client as mqtt
 
-from backend import BackendFactory
+from backend import BackendFactory, running_on_pi
 from config import read_configs
 from canvas import Canvas
 from data import DataFactory
@@ -49,7 +49,8 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		with BackendFactory.create(self.width, self.height, self.publish_recording_status) as self.backend:
+		backend_name = "picamera" if running_on_pi() else "opencv"
+		with BackendFactory.create(backend_name, self.width, self.height, self.publish_recording_status) as self.backend:
 
 			# mqtt loop (does not block)
 			self.client.loop_start()

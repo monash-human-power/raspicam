@@ -96,3 +96,7 @@ class PiCameraBackend(Backend):
 
     def check_recording_errors(self) -> None:
         self.pi_camera.wait_recording()
+
+def running_on_pi():
+    """ Returns only if the script is being run on a Raspberry Pi. """
+    return ON_PI
