@@ -3,7 +3,7 @@ from time import time
 from typing import Dict
 
 from backend import Backend, PublishFunc
-from overlay import Canvas
+from canvas import Canvas
 
 try:
     from picamera import PiCamera
