@@ -28,7 +28,7 @@ class Canvas():
 
     @staticmethod
     def _get_colour_tuple(colour):
-        """ Internal method - takes a 3-tulpe, 4-tuple or Colour class and
+        """ Internal method - takes a 3-tuple, 4-tuple or Colour class and
             returns a 4-tuple colour """
         if isinstance(colour, Colour):
             return colour.value
