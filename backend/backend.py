@@ -95,7 +95,7 @@ class Backend(ABC):
         """ Starts recording to the file at self.recording_output_file. Should
             not be called outside of the Backend class. """
 
-        print(f"WARNING: Recording is not supported with {type(self).__name__}")
+        raise NotImplementedError(f"Recording is not supported with {type(self).__name__}")
 
     def stop_recording(self) -> None:
         """ Stops and saves any current recording at the location found in
@@ -104,7 +104,7 @@ class Backend(ABC):
             Should be paired with a call to start_recording. No action is taken
             if there was no recording in progress. """
 
-        print(f"WARNING: Recording is not supported with {type(self).__name__}")
+        raise NotImplementedError(f"Recording is not supported with {type(self).__name__}")
 
     def check_recording_errors(self) -> None:
         """ Check if any errors have occured during recording, and if any have
