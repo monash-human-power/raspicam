@@ -45,7 +45,7 @@ class Canvas():
             return colour + (255,)
         return colour
 
-    def draw_text(self, text: str, coord: Coord, size=1.5: float, colour=Colour.black: Colourlike) -> None:
+    def draw_text(self, text: str, coord: Coord, size: float = 1.5, colour: Colourlike = Colour.black) -> None:
         """ Draws text to the canvas.
 
             The bottom left corner of the text is given by the tuple coord.
@@ -58,7 +58,7 @@ class Canvas():
         thickness = round(size + thickness_increase)
         cv2.putText(self.img, text, coord, font, size, colour, thickness, cv2.LINE_AA)
 
-    def draw_rect(self, top_left: Coord, bottom_right: Coord, colour=Colour.black: Colourlike) -> None:
+    def draw_rect(self, top_left: Coord, bottom_right: Coord, colour: Colourlike = Colour.black) -> None:
         """ Draws a rectangle to the canvas.
 
             top_left and bottom_right are tuples, and specify the dimensions of the rectangle
