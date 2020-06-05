@@ -1,7 +1,7 @@
 import cv2
 
 from backend import Backend, PublishFunc
-from cnavas import Canvas
+from canvas import Canvas
 
 class OpenCVBackend(Backend):
     """ Gets and displays video using the OpenCV (`cv2`) library.
