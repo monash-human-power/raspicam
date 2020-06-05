@@ -76,7 +76,13 @@ class Backend(ABC):
         """ Starts an h264 recording with the first available name located in
             the recordings folder.
 
-            Should be paired with a call to stop_recording."""
+            Should be paired with a call to stop_recording. Does nothing if
+            already recording. """
+
+        # If we're already recording just respond with a status
+        if self.recording:
+            self.send_recording_status()
+            return
 
         # Ensure output folder exists
         output_folder = Path(__file__).parent.parent / "recordings"
@@ -89,7 +95,14 @@ class Backend(ABC):
             video_number += 1
         self.recording_output_file = str(output_folder / output_file_pattern.format(video_number))
 
-        self._start_recording()
+        # Start recording. Send an error if one occurs, otherwise a status.
+        try:
+            self._start_recording()
+        except Exception:
+            self.recording = False
+            self.send_recording_error()
+        else:
+            self.send_recording_status()
 
     def _start_recording(self) -> None:
         """ Starts recording to the file at self.recording_output_file. Should
