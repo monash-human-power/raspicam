@@ -23,7 +23,9 @@ class OpenCVBackend(Backend):
         self.message_canvas = Canvas(self.width, self.height)
 
     def start_video(self) -> None:
-        self.webcam = cv2.VideoCapture(0)
+        # Uses whatever OpenCV determines to be the "default camera"
+        default_camera_index = 0
+        self.webcam = cv2.VideoCapture(default_camera_index)
 
     def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         self.base_canvas = base_canvas
