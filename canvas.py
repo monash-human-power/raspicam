@@ -1,4 +1,6 @@
 from enum import Enum
+from typing import Tuple, Union
+
 import cv2
 import numpy as np
 
@@ -12,22 +14,29 @@ class Colour(Enum):
     green = (0, 255, 0, 255)
     red = (0, 0, 255, 255)
 
+ColourTuple3 = Tuple[int, int, int]
+ColourTuple4 = Tuple[int, int, int, int]
+
+Colourlike = Union[ColourTuple3, ColourTuple4, Colour]
+
+Coord = Tuple[int, int]
+
 class Canvas():
     """ A writeable image, for creating overlay content """
 
-    def __init__(self, width, height):
+    def __init__(self, width: int, height: int):
         """ Initialises to plain black and transparent """
         self.width = width
         self.height = height
         self.img = None
         self.clear()
 
-    def clear(self):
+    def clear(self) -> None:
         """ Sets the entire canvas contents to transparent black """
         self.img = np.zeros((self.height, self.width, 4), np.uint8)
 
     @staticmethod
-    def _get_colour_tuple(colour):
+    def _get_colour_tuple(colour: Colourlike) -> ColourTuple4:
         """ Internal method - takes a 3-tuple, 4-tuple or Colour class and
             returns a 4-tuple colour """
         if isinstance(colour, Colour):
@@ -36,7 +45,7 @@ class Canvas():
             return colour + (255,)
         return colour
 
-    def draw_text(self, text, coord, size=1.5, colour=Colour.black):
+    def draw_text(self, text: str, coord: Coord, size=1.5: float, colour=Colour.black: Colourlike) -> None:
         """ Draws text to the canvas.
 
             The bottom left corner of the text is given by the tuple coord.
@@ -49,7 +58,7 @@ class Canvas():
         thickness = round(size + thickness_increase)
         cv2.putText(self.img, text, coord, font, size, colour, thickness, cv2.LINE_AA)
 
-    def draw_rect(self, top_left, bottom_right, colour=Colour.black):
+    def draw_rect(self, top_left: Coord, bottom_right: Coord, colour=Colour.black: Colourlike) -> None:
         """ Draws a rectangle to the canvas.
 
             top_left and bottom_right are tuples, and specify the dimensions of the rectangle
@@ -57,7 +66,7 @@ class Canvas():
         colour = Canvas._get_colour_tuple(colour)
         cv2.rectangle(self.img, top_left, bottom_right, colour, thickness=cv2.FILLED)
 
-    def copy_to(self, dest):
+    def copy_to(self, dest: np.ndarray) -> np.ndarray:
         """ Writes the contents of self.img over dest, accounting for transparency.
 
             Use this method to put the overlay contents over the video feed """
