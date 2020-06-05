@@ -14,8 +14,9 @@ class OpenCVBackend(Backend):
 
         self.webcam = None
 
+        framerate = 60
         # Time between video frames when running on OpenCV, in milliseconds
-        self.frametime = 17
+        self.frametime = 1000 / framerate
 
         self.base_canvas = Canvas(self.width, self.height)
         self.data_canvas = Canvas(self.width, self.height)
