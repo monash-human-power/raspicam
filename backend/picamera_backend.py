@@ -5,6 +5,7 @@ from typing import Dict
 from backend import Backend, PublishFunc
 from canvas import Canvas
 
+# This check needs to be done here, as it's only place we use picamera.
 try:
     from picamera import PiCamera
     ON_PI = True
