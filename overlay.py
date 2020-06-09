@@ -82,7 +82,7 @@ class Canvas():
 		thickness = round(size + thickness_increase)
 
 		if align != "left":
-			width, height = cv2.getTextSize(text, font, size, thickness)
+			(width, height), _ = cv2.getTextSize(text, font, size, thickness)
 			if align == "right":
 				bottom_left = (coord[0] - width, coord[1])
 			elif align == "centre":
@@ -92,7 +92,7 @@ class Canvas():
 		else:
 			bottom_left = coord
 
-		cv2.putText(self.img, text, coord, font, size, colour, thickness, cv2.LINE_AA)
+		cv2.putText(self.img, text, bottom_left, font, size, colour, thickness, cv2.LINE_AA)
 
 	def draw_rect(self, top_left, bottom_right, colour=Colour.black):
 		""" Draws a rectangle to the canvas.
