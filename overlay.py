@@ -4,10 +4,11 @@ import time
 
 import paho.mqtt.client as mqtt
 
-from backend import BackendFactory, running_on_pi
+from backend import BackendFactory
 from config import read_configs
 from canvas import Canvas
 from data import DataFactory
+from platform import machine
 from topics import DAShboard
 
 DEFAULT_BIKE = "V2"
@@ -49,7 +50,8 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		backend_name = "picamera" if running_on_pi() else "opencv"
+		# Raspberry Pis run ARM, PCs run x86_64
+		backend_name = "picamera" if machine() == "armv71" else "opencv"
 		with BackendFactory.create(backend_name, self.width, self.height, self.publish_recording_status) as self.backend:
 
 			# mqtt loop (does not block)

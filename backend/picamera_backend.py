@@ -33,6 +33,9 @@ class PiCameraBackend(Backend):
     def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc):
         super().__init__(width, height, publish_recording_status_func)
 
+        if not ON_PI:
+            raise RuntimeError("`picamera` library unavailable - please run on Pi or install library")
+
         self.pi_camera = PiCamera(resolution=(self.width, self.height))
 
         self.prev_overlays: Dict[PiCameraOverlayLayer, self.pi_camera.PiOverlayRenderer] = {}
@@ -87,7 +90,3 @@ class PiCameraBackend(Backend):
 
     def check_recording_errors(self) -> None:
         self.pi_camera.wait_recording()
-
-def running_on_pi():
-    """ Returns only if the script is being run on a Raspberry Pi. """
-    return ON_PI
