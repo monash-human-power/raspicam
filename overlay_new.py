@@ -43,11 +43,27 @@ class OverlayNew(Overlay):
         self.start_time = time()
 
         spacing = 20
-        first_row_y = self.height - (2 * spacing + DataField.height)
-        second_row_y = self.height - spacing
+        row_coords = [
+            self.height - (2 * spacing + DataField.height),
+            self.height - spacing,
+        ]
+        col_coords = [
+            spacing,
+            2 * spacing + DataField.width,
+            self.width - 2 * (spacing + DataField.width),
+            self.width - (spacing + DataField.width),
+        ]
+        data_field_coord = lambda x, y: (col_coords[x], row_coords[y])
         self.drawables = [
-            DataField("GPS KPH", self.get_data_func("gps_speed", 1), (spacing, first_row_y)),
-            DataField("TIME", self.time_func, (spacing, second_row_y)),
+            DataField("GPS KPH", self.get_data_func("gps_speed", 1), data_field_coord(0, 0)),
+            DataField("TIME", self.time_func, data_field_coord(0, 1)),
+            DataField("RPM", self.get_data_func("cadence"), data_field_coord(1, 0)),
+            DataField("BPM", self.get_data_func("heartRate"), data_field_coord(1, 1)),
+
+            DataField("REC KPH", self.get_data_func("rec_speed", 1), data_field_coord(2, 0)),
+            DataField("ZONE KM", self.get_data_func("zdist", 2, 0.001), data_field_coord(2, 1)),
+            DataField("MAX KPH", self.get_data_func("predicted_max_speed", 1), data_field_coord(3, 0)),
+            DataField("DIST KM", self.get_data_func("reed_distance", 2, 0.001), data_field_coord(3, 1)),
         ]
 
     def on_connect(self, client, userdata, flags, rc):
@@ -62,12 +78,12 @@ class OverlayNew(Overlay):
         for drawable in self.drawables:
             drawable.draw_data(self.data_canvas, self.data)
 
-    def get_data_func(self, data_key: str, decimals=0) -> Callable[[], str]:
+    def get_data_func(self, data_key: str, decimals=0, scalar=1) -> Callable[[], str]:
         """ Returns a lambda function which, when called, returns the current
-            value for the data field `data_key` formatted to `decimals` decimal
-            places. """
+            value for the data field `data_key`, multiplied by `scalar`, and
+            formatted to `decimals` decimal places. """
         format_str = f"{{:.{decimals}f}}"
-        return lambda: format_str.format(self.data[data_key])
+        return lambda: format_str.format(self.data[data_key] * scalar)
 
     def time_func(self) -> str:
         """ Returns the time since the overlay was initialised formatted mm:ss """
