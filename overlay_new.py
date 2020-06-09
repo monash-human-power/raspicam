@@ -12,25 +12,40 @@ class Drawable(ABC):
         pass
 
 class DataField(Drawable):
+
+    width = 137
+
+    title_height = 18
+    data_height = 32
+    spacing = 10
+
+    height = title_height + data_height + spacing
+
     def __init__(self, title, data_key, coordinate):
         self.title = title
         self.data_key = data_key
-        self.coord = coordinate
+        self.title_coord = (coordinate[0] + DataField.width, coordinate[1] - DataField.spacing - DataField.data_height)
+        self.data_coord = (coordinate[0] + DataField.width, coordinate[1])
 
     def drawBase(self, canvas: Canvas):
-        canvas.draw_text(self.title, self.coord, size=1, colour=Colour.white)
+        canvas.draw_text(self.title, self.title_coord, size=0.8, colour=Colour.white, align="right")
 
     def drawData(self, canvas: Canvas, data: Data):
         value = str(data[self.data_key])
-        canvas.draw_text(value, self.coord, size=1.5, colour=Colour.white)
+        value = "101.2"
+        canvas.draw_text(value, self.data_coord, size=1.5, colour=Colour.white, align="right")
 
 class OverlayNew(Overlay):
 
     def __init__(self, bike=None):
         super(OverlayNew, self).__init__(bike)
 
+        spacing = 20
+        first_row_y = self.height - (2 * spacing + DataField.height)
+        second_row_y = self.height - spacing
         self.drawables = [
-            DataField("KPH", "gps_speed", (10, 10)),
+            DataField("GPS KPH", "gps_speed", (spacing, first_row_y)),
+            DataField("TIME", "time", (spacing, second_row_y)),
         ]
 
     def on_connect(self, client, userdata, flags, rc):
