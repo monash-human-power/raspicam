@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
+from time import time
 
 from overlay import Overlay, Canvas, Colour
 from data import Data
+from typing import Callable, Tuple
 
 class Drawable(ABC):
     @abstractmethod
@@ -21,9 +23,9 @@ class DataField(Drawable):
 
     height = title_height + data_height + spacing
 
-    def __init__(self, title, data_key, coordinate):
+    def __init__(self, title: str, value_func: Callable[[], str], coordinate: Tuple[int, int]):
         self.title = title
-        self.data_key = data_key
+        self.value_func = value_func
         self.title_coord = (coordinate[0] + DataField.width, coordinate[1] - DataField.spacing - DataField.data_height)
         self.data_coord = (coordinate[0] + DataField.width, coordinate[1])
 
@@ -31,21 +33,21 @@ class DataField(Drawable):
         canvas.draw_text(self.title, self.title_coord, size=0.8, colour=Colour.white, align="right")
 
     def draw_data(self, canvas: Canvas, data: Data):
-        value = str(data[self.data_key])
-        value = "101.2"
-        canvas.draw_text(value, self.data_coord, size=1.5, colour=Colour.white, align="right")
+        canvas.draw_text(self.value_func(), self.data_coord, size=1.5, colour=Colour.white, align="right")
 
 class OverlayNew(Overlay):
 
     def __init__(self, bike=None):
         super(OverlayNew, self).__init__(bike)
 
+        self.start_time = time()
+
         spacing = 20
         first_row_y = self.height - (2 * spacing + DataField.height)
         second_row_y = self.height - spacing
         self.drawables = [
-            DataField("GPS KPH", "gps_speed", (spacing, first_row_y)),
-            DataField("TIME", "time", (spacing, second_row_y)),
+            DataField("GPS KPH", self.get_data_func("gps_speed", 1), (spacing, first_row_y)),
+            DataField("TIME", self.time_func, (spacing, second_row_y)),
         ]
 
     def on_connect(self, client, userdata, flags, rc):
@@ -59,6 +61,19 @@ class OverlayNew(Overlay):
 
         for drawable in self.drawables:
             drawable.draw_data(self.data_canvas, self.data)
+
+    def get_data_func(self, data_key: str, decimals=0) -> Callable[[], str]:
+        """ Returns a lambda function which, when called, returns the current
+            value for the data field `data_key` formatted to `decimals` decimal
+            places. """
+        format_str = f"{{:.{decimals}f}}"
+        return lambda: format_str.format(self.data[data_key])
+
+    def time_func(self) -> str:
+        """ Returns the time since the overlay was initialised formatted mm:ss """
+        _, rem = divmod(time() - self.start_time, 3600)
+        minutes, seconds = divmod(rem, 60)
+        return "{:0>2}:{:0>2}".format(int(minutes), int(seconds))
 
 if __name__ == '__main__':
     args = Overlay.get_overlay_args("An empty, example overlay")
