@@ -5,10 +5,10 @@ from data import Data
 
 class Drawable(ABC):
     @abstractmethod
-    def drawBase(self, canvas: Canvas):
+    def draw_base(self, canvas: Canvas):
         pass
     @abstractmethod
-    def drawData(self, canvas: Canvas, data: Data):
+    def draw_data(self, canvas: Canvas, data: Data):
         pass
 
 class DataField(Drawable):
@@ -27,10 +27,10 @@ class DataField(Drawable):
         self.title_coord = (coordinate[0] + DataField.width, coordinate[1] - DataField.spacing - DataField.data_height)
         self.data_coord = (coordinate[0] + DataField.width, coordinate[1])
 
-    def drawBase(self, canvas: Canvas):
+    def draw_base(self, canvas: Canvas):
         canvas.draw_text(self.title, self.title_coord, size=0.8, colour=Colour.white, align="right")
 
-    def drawData(self, canvas: Canvas, data: Data):
+    def draw_data(self, canvas: Canvas, data: Data):
         value = str(data[self.data_key])
         value = "101.2"
         canvas.draw_text(value, self.data_coord, size=1.5, colour=Colour.white, align="right")
@@ -52,13 +52,13 @@ class OverlayNew(Overlay):
         print('Connected with rc: {}'.format(rc))
 
         for drawable in self.drawables:
-            drawable.drawBase(self.base_canvas)
+            drawable.draw_base(self.base_canvas)
 
     def update_data_layer(self):
         self.data_canvas.clear()
 
         for drawable in self.drawables:
-            drawable.drawData(self.data_canvas, self.data)
+            drawable.draw_data(self.data_canvas, self.data)
 
 if __name__ == '__main__':
     args = Overlay.get_overlay_args("An empty, example overlay")
