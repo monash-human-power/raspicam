@@ -66,10 +66,13 @@ class Canvas():
 			return colour + (255,)
 		return colour
 
-	def draw_text(self, text, coord, size=1.5, colour=Colour.black):
+	def draw_text(self, text, coord, size=1.5, colour=Colour.black, align="left"):
 		""" Draws text to the canvas.
 
-		    The bottom left corner of the text is given by the tuple coord.
+		    Coord is a tuple specifying the location of the text. With the
+			default left alignment, this is the bottom left corner of the text,
+			with right align it is the bottom right, and with centre align it
+			is the bottom centre.
 		    (the top left of the screen is the origin) """
 		colour = Canvas._get_colour_tuple(colour)
 		font = cv2.FONT_HERSHEY_SIMPLEX
@@ -77,6 +80,18 @@ class Canvas():
 		# but it's a little thin especially on a small screen
 		thickness_increase = 0.5
 		thickness = round(size + thickness_increase)
+
+		if align != "left":
+			width, height = cv2.getTextSize(text, font, size, thickness)
+			if align == "right":
+				bottom_left = (coord[0] - width, coord[1])
+			elif align == "centre":
+				bottom_left = (coord[0] - width // 2, coord[1])
+			else:
+				raise ValueError(f"Invalid text alignment '{align}'")
+		else:
+			bottom_left = coord
+
 		cv2.putText(self.img, text, coord, font, size, colour, thickness, cv2.LINE_AA)
 
 	def draw_rect(self, top_left, bottom_right, colour=Colour.black):
