@@ -1,20 +1,49 @@
-from overlay import Overlay, Colour
+from abc import ABC, abstractmethod
+
+from overlay import Overlay, Canvas, Colour
+from data import Data
+
+class Drawable(ABC):
+    @abstractmethod
+    def drawBase(self, canvas: Canvas):
+        pass
+    @abstractmethod
+    def drawData(self, canvas: Canvas, data: Data):
+        pass
+
+class DataField(Drawable):
+    def __init__(self, title, data_key, coordinate):
+        self.title = title
+        self.data_key = data_key
+        self.coord = coordinate
+
+    def drawBase(self, canvas: Canvas):
+        canvas.draw_text(self.title, self.coord, size=1, colour=Colour.white)
+
+    def drawData(self, canvas: Canvas, data: Data):
+        value = str(data[self.data_key])
+        canvas.draw_text(value, self.coord, size=1.5, colour=Colour.white)
 
 class OverlayNew(Overlay):
 
     def __init__(self, bike=None):
         super(OverlayNew, self).__init__(bike)
 
+        self.drawables = [
+            DataField("KPH", "gps_speed", (10, 10)),
+        ]
+
     def on_connect(self, client, userdata, flags, rc):
         print('Connected with rc: {}'.format(rc))
 
-        # To draw static text/whatever onto the overlay, draw on the base canvas
-        self.base_canvas.draw_text("Blank overlay", (10, self.height - 10), 4, colour=Colour.white)
+        for drawable in self.drawables:
+            drawable.drawBase(self.base_canvas)
 
     def update_data_layer(self):
         self.data_canvas.clear()
 
-        # Content that changes each frame should be drawn to self.data_canvas here
+        for drawable in self.drawables:
+            drawable.drawData(self.data_canvas, self.data)
 
 if __name__ == '__main__':
     args = Overlay.get_overlay_args("An empty, example overlay")
