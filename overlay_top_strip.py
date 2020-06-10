@@ -5,8 +5,8 @@ from canvas import Colour
 
 class OverlayTopStrip(Overlay):
 
-	def __init__(self, bike=None):
-		super(OverlayTopStrip, self).__init__(bike)
+	def __init__(self, bike=None, bg=None):
+		super(OverlayTopStrip, self).__init__(bike, bg=bg)
 
 		self.start_time = round(time.time(), 2)
 
@@ -82,5 +82,5 @@ class OverlayTopStrip(Overlay):
 
 if __name__ == '__main__':
 	args = Overlay.get_overlay_args("Shows important statistics in a bar at the top of the screen")
-	my_overlay = OverlayTopStrip(args.bike)
+	my_overlay = OverlayTopStrip(args.bike, args.bg)
 	my_overlay.connect(ip=args.host)
