@@ -39,6 +39,40 @@ class DataField(Drawable):
     def draw_data(self, canvas: Canvas, data: Data):
         canvas.draw_text(self.value_func(), self.data_coord, size=DataField.data_size, colour=Colour.white, align="right")
 
+class CentrePower(Drawable):
+
+    power_size = 2.5
+    rec_power_size = 1.5
+    _, rec_power_height = Canvas.get_text_dimensions("500w", rec_power_size)
+    spacing = 10
+
+    power_tolerance = 0.05
+
+    def __init__(self, screen_w: int, screen_h: int):
+        self.power_coord = (screen_w // 2, screen_h - 30 - CentrePower.spacing - CentrePower.rec_power_height)
+        self.rec_power_coord = (screen_w // 2, screen_h - 30)
+
+    def draw_base(self, canvas: Canvas):
+        pass
+
+    def draw_data(self, canvas: Canvas, data: Data):
+        power = data["power"]
+        rec_power = data["rec_power"]
+
+        power_str = f"{power:.0f}w"
+        rec_power_str = f"{rec_power:.0f}w rec"
+
+        if rec_power == 0:
+            power_colour = Colour.black
+        else:
+            power_diff = abs(power / rec_power - 1)
+            # Colour.green is to light against the white fairing
+            dark_green = (0, 191, 0, 255)
+            power_colour = dark_green if power_diff <= CentrePower.power_tolerance else Colour.red
+
+        canvas.draw_text(power_str, self.power_coord, CentrePower.power_size, power_colour, "centre")
+        canvas.draw_text(rec_power_str, self.rec_power_coord, CentrePower.rec_power_size, Colour.black, "centre")
+
 class OverlayNew(Overlay):
 
     def __init__(self, bike=None):
@@ -68,6 +102,8 @@ class OverlayNew(Overlay):
             DataField("ZONE KM", self.get_data_func("zdist", 2, 0.001), data_field_coord(2, 1)),
             DataField("MAX KPH", self.get_data_func("predicted_max_speed", 1), data_field_coord(3, 0)),
             DataField("DIST KM", self.get_data_func("reed_distance", 2, 0.001), data_field_coord(3, 1)),
+
+            CentrePower(self.width, self.height),
         ]
 
     def on_connect(self, client, userdata, flags, rc):
