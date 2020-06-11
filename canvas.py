@@ -24,6 +24,8 @@ Coord = Tuple[int, int]
 class Canvas():
     """ A writeable image, for creating overlay content """
 
+    font = cv2.FONT_HERSHEY_SIMPLEX
+
     def __init__(self, width: int, height: int):
         """ Initialises to plain black and transparent """
         self.width = width
@@ -45,6 +47,23 @@ class Canvas():
             return colour + (255,)
         return colour
 
+    @staticmethod
+    def _get_text_thickness(size: float) -> int:
+        """ Gets the OpenCV thickness to be used for a given text size.
+
+            By default thickness = size if thickness isn't specified,
+            but it's a little thin especially on a small screen. """
+        thickness_increase = 0.5
+        return round(size + thickness_increase)
+
+    @staticmethod
+    def get_text_dimensions(text, size: float) -> Tuple[int, int]:
+        """ Gets the width and height in pixels of some given text at a given
+            size. """
+        thickness = Canvas._get_text_thickness(size)
+        width_height_tuple, _ = cv2.getTextSize(text, Canvas.font, size, thickness)
+        return width_height_tuple
+
     def draw_text(self, text, coord, size=1.5, colour=Colour.black, align="left"):
         """ Draws text to the canvas.
 
@@ -54,14 +73,10 @@ class Canvas():
             is the bottom centre.
             (the top left of the screen is the origin) """
         colour = Canvas._get_colour_tuple(colour)
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        # By default thickness = size if thickness isn't specified,
-        # but it's a little thin especially on a small screen
-        thickness_increase = 0.5
-        thickness = round(size + thickness_increase)
+        thickness = Canvas._get_text_thickness(size)
 
         if align != "left":
-            (width, height), _ = cv2.getTextSize(text, font, size, thickness)
+            width, _ = self.get_text_dimensions(text, size)
             if align == "right":
                 bottom_left = (coord[0] - width, coord[1])
             elif align == "centre":
@@ -71,7 +86,7 @@ class Canvas():
         else:
             bottom_left = coord
 
-        cv2.putText(self.img, text, bottom_left, font, size, colour, thickness, cv2.LINE_AA)
+        cv2.putText(self.img, text, bottom_left, Canvas.font, size, colour, thickness, cv2.LINE_AA)
 
     def draw_rect(self, top_left: Coord, bottom_right: Coord, colour: Colourlike = Colour.black) -> None:
         """ Draws a rectangle to the canvas.

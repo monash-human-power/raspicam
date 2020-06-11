@@ -16,25 +16,28 @@ class Drawable(ABC):
 
 class DataField(Drawable):
 
-    width = 137
+    title_size = 0.8
+    data_size = 1.5
 
-    title_height = 18
-    data_height = 32
+    width, data_height = Canvas.get_text_dimensions("100.0", data_size)
+    _, title_height = Canvas.get_text_dimensions("KPH", title_size)
+
     spacing = 10
 
     height = title_height + data_height + spacing
 
     def __init__(self, title: str, value_func: Callable[[], str], coordinate: Tuple[int, int]):
+        """ `coordinate` specifies the bottom-left coordinate of the data field. """
         self.title = title
         self.value_func = value_func
         self.title_coord = (coordinate[0] + DataField.width, coordinate[1] - DataField.spacing - DataField.data_height)
         self.data_coord = (coordinate[0] + DataField.width, coordinate[1])
 
     def draw_base(self, canvas: Canvas):
-        canvas.draw_text(self.title, self.title_coord, size=0.8, colour=Colour.white, align="right")
+        canvas.draw_text(self.title, self.title_coord, size=DataField.title_size, colour=Colour.white, align="right")
 
     def draw_data(self, canvas: Canvas, data: Data):
-        canvas.draw_text(self.value_func(), self.data_coord, size=1.5, colour=Colour.white, align="right")
+        canvas.draw_text(self.value_func(), self.data_coord, size=DataField.data_size, colour=Colour.white, align="right")
 
 class OverlayNew(Overlay):
 
