@@ -16,6 +16,8 @@ class Drawable(ABC):
         pass
 
 class DataField(Drawable):
+    """ A simple data field containing a large value below a title in a smaller
+        font. Text is right-aligned. """
 
     title_size = 0.8
     data_size = 1.5
@@ -35,12 +37,18 @@ class DataField(Drawable):
         self.data_coord = (coordinate[0] + DataField.width, coordinate[1])
 
     def draw_base(self, canvas: Canvas):
-        canvas.draw_text(self.title, self.title_coord, size=DataField.title_size, colour=Colour.white, align="right")
+        canvas.draw_text(self.title, self.title_coord, DataField.title_size, Colour.white, "right")
 
     def draw_data(self, canvas: Canvas, data: Data):
-        canvas.draw_text(self.value_func(), self.data_coord, size=DataField.data_size, colour=Colour.white, align="right")
+        canvas.draw_text(self.value_func(), self.data_coord, DataField.data_size, Colour.white, "right")
 
 class CentrePower(Drawable):
+    """ Displays the current and recommended power at the bottom-centre of the
+        screen.
+
+        If the current power is within 5% of recommended, it is coloured green,
+        otherwise red. If no recommended power is available, it is coloured
+        black. """
 
     power_size = 2.5
     rec_power_size = 1.5
@@ -75,6 +83,11 @@ class CentrePower(Drawable):
         canvas.draw_text(rec_power_str, self.rec_power_coord, CentrePower.rec_power_size, Colour.black, "centre")
 
 class Message(Drawable):
+    """ A drawable which displays any existing messages at the top of the
+        screen.
+
+        Lines are wrapped appropriately to ensure the entire message is
+        visible. """
 
     text_size = 1
     spacing = 10
@@ -90,6 +103,7 @@ class Message(Drawable):
         message = data.get_message()
         display_str = f"Message: {message}"
 
+        # Display each line of the message
         line_y_coord = Message.spacing + Message.text_height
         for line in wrap(display_str, Message.chars_per_line):
             coord = (Message.spacing, line_y_coord)
@@ -103,6 +117,8 @@ class OverlayNew(Overlay):
 
         self.start_time = time()
 
+        # Generate coordinates for each of the data fields in the bottom corners.
+        # Note that these coordinates are for the bottom left corner of each field.
         spacing = 20
         row_coords = [
             self.height - (2 * spacing + DataField.height),
@@ -114,7 +130,10 @@ class OverlayNew(Overlay):
             self.width - 2 * (spacing + DataField.width),
             self.width - (spacing + DataField.width),
         ]
+        # This lambda returns the coordinates of the data field in column x, row y
         data_field_coord = lambda x, y: (col_coords[x], row_coords[y])
+
+        # Create all drawable overlay objects
         self.drawables = [
             DataField("GPS KPH", self.get_data_func("gps_speed", 1), data_field_coord(0, 0)),
             DataField("TIME", self.time_func, data_field_coord(0, 1)),
