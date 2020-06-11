@@ -92,7 +92,7 @@ class Message(Drawable):
     text_size = 1
     spacing = 10
     _, text_height = Canvas.get_text_dimensions("blah", text_size)
-    chars_per_line = 70
+    chars_per_line = 75
 
     def draw_base(self, canvas: Canvas):
         pass
