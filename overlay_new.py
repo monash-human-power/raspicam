@@ -29,7 +29,7 @@ class DataField(Drawable):
 
     height = title_height + data_height + spacing
 
-    def __init__(self, title: str, value_func: Callable[[], str], coordinate: Tuple[int, int]):
+    def __init__(self, title: str, value_func: Callable[[Data], str], coordinate: Tuple[int, int]):
         """ `coordinate` specifies the bottom-left coordinate of the data field. """
         self.title = title
         self.value_func = value_func
@@ -40,7 +40,23 @@ class DataField(Drawable):
         canvas.draw_text(self.title, self.title_coord, DataField.title_size, Colour.white, "right")
 
     def draw_data(self, canvas: Canvas, data: Data):
-        canvas.draw_text(self.value_func(), self.data_coord, DataField.data_size, Colour.white, "right")
+        canvas.draw_text(self.value_func(data), self.data_coord, DataField.data_size, Colour.white, "right")
+
+class SpeedField(DataField):
+    """ A specialised version of DataField which prefers to display GPS speed,
+        but falls back to reed velocity if GPS is unavailable """
+
+    def __init__(self, coordinate: Tuple[int, int]):
+        value_func = lambda data: "{:.1f}".format(data["gps_speed"] or data["reed_velocity"])
+        super().__init__("", value_func, coordinate)
+
+    def draw_base(self, canvas: Canvas):
+        pass
+
+    def draw_data(self, canvas: Canvas, data: Data):
+        self.title = "GPS KPH" if data["gps_speed"] else "REED KPH"
+        super().draw_base(canvas)
+        super().draw_data(canvas, data)
 
 class CentrePower(Drawable):
     """ Displays the current and recommended power at the bottom-centre of the
@@ -135,7 +151,7 @@ class OverlayNew(Overlay):
 
         # Create all drawable overlay objects
         self.drawables = [
-            DataField("GPS KPH", self.get_data_func("gps_speed", 1), data_field_coord(0, 0)),
+            SpeedField(data_field_coord(0, 0)),
             DataField("TIME", self.time_func, data_field_coord(0, 1)),
             DataField("RPM", self.get_data_func("cadence"), data_field_coord(1, 0)),
             DataField("BPM", self.get_data_func("heartRate"), data_field_coord(1, 1)),
@@ -162,14 +178,14 @@ class OverlayNew(Overlay):
         for drawable in self.drawables:
             drawable.draw_data(self.data_canvas, self.data)
 
-    def get_data_func(self, data_key: str, decimals=0, scalar=1) -> Callable[[], str]:
+    def get_data_func(self, data_key: str, decimals=0, scalar=1) -> Callable[[Data], str]:
         """ Returns a lambda function which, when called, returns the current
             value for the data field `data_key`, multiplied by `scalar`, and
             formatted to `decimals` decimal places. """
         format_str = f"{{:.{decimals}f}}"
-        return lambda: format_str.format(self.data[data_key] * scalar)
+        return lambda data: format_str.format(data[data_key] * scalar)
 
-    def time_func(self) -> str:
+    def time_func(self, _: Data) -> str:
         """ Returns the time since the overlay was initialised formatted mm:ss """
         _, rem = divmod(time() - self.start_time, 3600)
         minutes, seconds = divmod(rem, 60)
