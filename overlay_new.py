@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from time import time
 
-from overlay import Overlay, Canvas, Colour
+from canvas import Canvas, Colour
 from data import Data
+from overlay import Overlay
 from typing import Callable, Tuple
 
 class Drawable(ABC):
