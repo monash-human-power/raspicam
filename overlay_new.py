@@ -4,6 +4,7 @@ from time import time
 from canvas import Canvas, Colour
 from data import Data
 from overlay import Overlay
+from textwrap import wrap
 from typing import Callable, Tuple
 
 class Drawable(ABC):
@@ -73,6 +74,28 @@ class CentrePower(Drawable):
         canvas.draw_text(power_str, self.power_coord, CentrePower.power_size, power_colour, "centre")
         canvas.draw_text(rec_power_str, self.rec_power_coord, CentrePower.rec_power_size, Colour.black, "centre")
 
+class Message(Drawable):
+
+    text_size = 1
+    spacing = 10
+    _, text_height = Canvas.get_text_dimensions("blah", text_size)
+    chars_per_line = 70
+
+    def draw_base(self, canvas: Canvas):
+        pass
+
+    def draw_data(self, canvas: Canvas, data: Data):
+        if not data.has_message():
+            return
+        message = data.get_message()
+        display_str = f"Message: {message}"
+
+        line_y_coord = Message.spacing + Message.text_height
+        for line in wrap(display_str, Message.chars_per_line):
+            coord = (Message.spacing, line_y_coord)
+            canvas.draw_text(line, coord, Message.text_size)
+            line_y_coord += Message.text_height + Message.spacing
+
 class OverlayNew(Overlay):
 
     def __init__(self, bike=None):
@@ -104,6 +127,8 @@ class OverlayNew(Overlay):
             DataField("DIST KM", self.get_data_func("reed_distance", 2, 0.001), data_field_coord(3, 1)),
 
             CentrePower(self.width, self.height),
+
+            Message(),
         ]
 
     def on_connect(self, client, userdata, flags, rc):
