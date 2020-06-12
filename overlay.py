@@ -15,7 +15,7 @@ DEFAULT_BIKE = "V2"
 
 class Overlay(ABC):
 
-	def __init__(self, bike, width=1280, height=740):
+	def __init__(self, bike, width=1280, height=740, bg: str=None):
 
 		self.width = width
 		self.height = height
@@ -24,6 +24,15 @@ class Overlay(ABC):
 		self.data_update_interval = 1
 
 		self.backend = None
+		self.bg_path = None
+		if bg is not None:
+			self.backend_name = "opencv_static_image"
+			self.bg_path = bg
+		# Raspberry Pis run ARM, PCs run x86_64
+		elif machine() == "armv71":
+			self.backend_name = "picamera"
+		else:
+			self.backend_name = "opencv"
 
 		self.base_canvas = Canvas(self.width, self.height)
 		self.data_canvas = Canvas(self.width, self.height)
@@ -50,9 +59,10 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		# Raspberry Pis run ARM, PCs run x86_64
-		backend_name = "picamera" if machine() == "armv71" else "opencv"
-		with BackendFactory.create(backend_name, self.width, self.height, self.publish_recording_status) as self.backend:
+		with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status) as self.backend:
+
+			if self.backend_name == "opencv_static_image":
+				self.backend.set_background(self.bg_path)
 
 			# mqtt loop (does not block)
 			self.client.loop_start()
@@ -133,4 +143,6 @@ class Overlay(ABC):
 			help="Address of the MQTT broker")
 		parser.add_argument("-b", "--bike", action="store", type=str,
 			choices=["v2", "V2", "v3", "V3"], help="Specify the which bike to expect MQTT data from")
+		parser.add_argument("--bg", action="store", type=str,
+			help="Replaces the video feed with a static background image at a given location")
 		return parser.parse_args()

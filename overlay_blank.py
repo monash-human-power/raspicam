@@ -3,8 +3,8 @@ from canvas import Colour
 
 class OverlayBlank(Overlay):
 
-	def __init__(self, bike=None):
-		super(OverlayBlank, self).__init__(bike)
+	def __init__(self, bike=None, bg=None):
+		super(OverlayBlank, self).__init__(bike, bg=bg)
 
 	def on_connect(self, client, userdata, flags, rc):
 		print('Connected with rc: {}'.format(rc))
@@ -19,5 +19,5 @@ class OverlayBlank(Overlay):
 
 if __name__ == '__main__':
 	args = Overlay.get_overlay_args("An empty, example overlay")
-	my_overlay = OverlayBlank(args.bike)
+	my_overlay = OverlayBlank(args.bike, args.bg)
 	my_overlay.connect(ip=args.host)
