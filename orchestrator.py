@@ -16,13 +16,13 @@ def get_args():
 
 class Orchestrator():
 
-    def __init__(self, broker_ip , port = 1883):
+    def __init__(self, broker_ip, port=1883):
 
         self.broker_ip = broker_ip
         self.port = port
         self.mqtt_client = None
 
-   
+
     def on_connect(self, client, userdata, flags, rc):
         """The callback for when the client receives a CONNACK response from the server."""
         print("Connected with result code " + str(rc))
