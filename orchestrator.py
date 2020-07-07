@@ -1,18 +1,19 @@
 """Orchestrator Script That Controls The Camera System"""
 import json
 import argparse
+import sys
 import time
 import paho.mqtt.client as mqtt
 import config
 import topics
 
-def get_args():
+def get_args(argv=[]):
     """Get arguments passed into Python script"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", type=str,
                         default="192.168.100.100",
                         help="ip address of the broker")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 class Orchestrator():
 
@@ -71,7 +72,7 @@ class Orchestrator():
 
 if __name__ == "__main__":
     # Get command line arguments
-    ARGS = get_args()
+    ARGS = get_args(sys.argv[1:])
     BROKER_IP = ARGS.host
     orchestrator = Orchestrator(BROKER_IP)
 
