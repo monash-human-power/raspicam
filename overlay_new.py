@@ -91,7 +91,7 @@ class CentrePower(Drawable):
             power_colour = Colour.black
         else:
             power_diff = abs(power / rec_power - 1)
-            # Colour.green is to light against the white fairing
+            # Colour.green is too light against the white fairing
             dark_green = (0, 191, 0, 255)
             power_colour = dark_green if power_diff <= CentrePower.power_tolerance else Colour.red
 
