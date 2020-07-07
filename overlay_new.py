@@ -152,10 +152,10 @@ class OverlayNew(Overlay):
 
         # Create all drawable overlay objects
         self.drawables = [
-            SpeedField(data_field_coord(0, 0)),
-            DataField("TIME", self.time_func, data_field_coord(0, 1)),
-            DataField("RPM", self.get_data_func("cadence"), data_field_coord(1, 0)),
-            DataField("BPM", self.get_data_func("heartRate"), data_field_coord(1, 1)),
+            DataField("RPM", self.get_data_func("cadence"), data_field_coord(0, 0)),
+            DataField("BPM", self.get_data_func("heartRate"), data_field_coord(0, 1)),
+            SpeedField(data_field_coord(1, 0)),
+            DataField("TIME", self.time_func, data_field_coord(1, 1)),
 
             DataField("REC KPH", self.get_data_func("rec_speed", 1), data_field_coord(2, 0)),
             DataField("ZONE KM", self.get_data_func("zdist", 2, 0.001), data_field_coord(2, 1)),
