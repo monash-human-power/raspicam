@@ -37,7 +37,7 @@ class Orchestrator():
         print(msg.topic + " " + str(msg.payload))
         if topics.Camera.get_overlays.matches(msg.topic):
             configs = config.read_configs()
-            client.publish(topics.Camera.push_overlays, json.dumps(configs))
+            client.publish(str(topics.Camera.push_overlays), json.dumps(configs))
         elif topics.Camera.set_overlay.matches(msg.topic):
             config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
 
