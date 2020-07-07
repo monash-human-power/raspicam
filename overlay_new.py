@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
+from textwrap import wrap
 from time import time
+from typing import Callable, Tuple
 
 from canvas import Canvas, Colour
 from data import Data
 from overlay import Overlay
-from textwrap import wrap
-from typing import Callable, Tuple
 
 class Drawable(ABC):
     @abstractmethod
