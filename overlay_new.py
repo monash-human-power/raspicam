@@ -22,7 +22,8 @@ class DataField(Drawable):
     title_size = 0.8
     data_size = 1.5
 
-    width, data_height = Canvas.get_text_dimensions("100.0", data_size)
+    # Set widths and heights large enough to fit the largest expected strings
+    width, data_height = Canvas.get_text_dimensions("00:00", data_size)
     _, title_height = Canvas.get_text_dimensions("KPH", title_size)
 
     spacing = 10
