@@ -1,0 +1,59 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "pdgra1",
+      "name": "pdgra1",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/33751672?v=4",
+      "profile": "https://github.com/pdgra1",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "khanguslee",
+      "name": "Angus Lee",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/18709969?v=4",
+      "profile": "https://khlee.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "harsilspatel",
+      "name": "Harsil Patel",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/25992839?v=4",
+      "profile": "https://twitter.com/harsilspatel",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lakshjaisinghani",
+      "name": "Laksh Jaisinghani",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/45281017?v=4",
+      "profile": "https://github.com/lakshjaisinghani",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "hallgchris",
+      "name": "Christopher Hall",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/17876556?v=4",
+      "profile": "https://github.com/hallgchris",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "raspicam",
+  "projectOwner": "monash-human-power",
+  "repoType": "github",
+  "repoHost": "https://github.com"
+}
