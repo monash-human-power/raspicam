@@ -128,8 +128,8 @@ class Message(Drawable):
 
 class OverlayNew(Overlay):
 
-    def __init__(self, bike=None):
-        super(OverlayNew, self).__init__(bike)
+    def __init__(self, bike=None, bg=None):
+        super(OverlayNew, self).__init__(bike, bg=bg)
 
         self.start_time = time()
 
@@ -193,5 +193,5 @@ class OverlayNew(Overlay):
 
 if __name__ == '__main__':
     args = Overlay.get_overlay_args("An empty, example overlay")
-    my_overlay = OverlayNew(args.bike)
+    my_overlay = OverlayNew(args.bike, args.bg)
     my_overlay.connect(ip=args.host)
