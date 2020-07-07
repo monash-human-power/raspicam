@@ -129,7 +129,7 @@ class Message(Drawable):
 class OverlayNew(Overlay):
 
     def __init__(self, bike=None, bg=None):
-        super(OverlayNew, self).__init__(bike, bg=bg)
+        super().__init__(bike, bg=bg)
 
         self.start_time = time()
 
