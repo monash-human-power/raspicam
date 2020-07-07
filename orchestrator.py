@@ -6,13 +6,13 @@ import paho.mqtt.client as mqtt
 import config
 import topics
 
-def get_args(argv=[]):
+def get_args():
     """Get arguments passed into Python script"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", type=str,
                         default="192.168.100.100",
                         help="ip address of the broker")
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 class Orchestrator():
 
