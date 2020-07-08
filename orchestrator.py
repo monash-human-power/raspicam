@@ -1,9 +1,11 @@
 """Orchestrator Script That Controls The Camera System"""
 import json
 import argparse
+import sys
 import time
 import paho.mqtt.client as mqtt
 import config
+import topics
 
 def get_args(argv=[]):
     """Get arguments passed into Python script"""
@@ -15,29 +17,29 @@ def get_args(argv=[]):
 
 class Orchestrator():
 
-    def __init__(self, broker_ip , port = 1883):
+    def __init__(self, broker_ip, port=1883):
 
         self.broker_ip = broker_ip
         self.port = port
         self.mqtt_client = None
 
-   
+
     def on_connect(self, client, userdata, flags, rc):
         """The callback for when the client receives a CONNACK response from the server."""
         print("Connected with result code " + str(rc))
 
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
-        client.subscribe("camera/set_overlay")
-        client.subscribe("camera/get_overlays")
+        client.subscribe(str(topics.Camera.set_overlay))
+        client.subscribe(str(topics.Camera.get_overlays))
 
     def on_message(self, client, userdata, msg):
         """The callback for when a PUBLISH message is received from the server."""
         print(msg.topic + " " + str(msg.payload))
-        if msg.topic == "camera/get_overlays":
+        if topics.Camera.get_overlays.matches(msg.topic):
             configs = config.read_configs()
-            client.publish("camera/push_overlays", json.dumps(configs))
-        elif msg.topic == "camera/set_overlay":
+            client.publish(str(topics.Camera.push_overlays), json.dumps(configs))
+        elif topics.Camera.set_overlay.matches(msg.topic):
             config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
 
     def on_log(self, client, userdata, level, buf):
@@ -70,7 +72,7 @@ class Orchestrator():
 
 if __name__ == "__main__":
     # Get command line arguments
-    ARGS = get_args()
+    ARGS = get_args(sys.argv[1:])
     BROKER_IP = ARGS.host
     orchestrator = Orchestrator(BROKER_IP)
 
