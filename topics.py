@@ -15,7 +15,7 @@ class Topic(Enum):
         return topic_matches_sub(str(self), str(other_topic))
 
 class DAS(Topic):
-    """DAS MQTT Topics"""
+    """V2 DAS MQTT Topics"""
     data = 'data'
     start = 'start'
     stop = 'stop'
@@ -35,7 +35,7 @@ class PowerModelV3(Topic):
 class Camera(Topic):
     """Camera system MQTT Topics"""
     get_overlays = 'camera/get_overlays'
-    set_overlays = 'camera/set_overlay'
+    set_overlay = 'camera/set_overlay'
     push_overlays = 'camera/push_overlays'
 
 class DAShboard(Topic):
