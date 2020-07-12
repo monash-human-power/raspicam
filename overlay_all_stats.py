@@ -18,6 +18,7 @@ class OverlayAllStats(Overlay):
 		self.base_canvas.draw_text("Power:", (5, self.text_height * 2))
 		self.base_canvas.draw_text("Cadence:", (5, self.text_height * 3))
 		self.base_canvas.draw_text("Distance:", (5, self.text_height * 4))
+		self.base_canvas.draw_text("Message:", (5, self.text_height * 5))
 
 		speed_x = self.width // 2 - 300
 		self.base_canvas.draw_text("SP:", (speed_x, self.height - self.speed_height * 0), size=2.5)
@@ -94,7 +95,7 @@ class OverlayAllStats(Overlay):
 
 	def draw_messages(self):
 		message = self.data.get_message()
-		self.message_canvas.draw_text(message, (190, self.text_height * 5), size=1, colour=Colour.red)
+		self.message_canvas.draw_text(message, (340, self.text_height * 5), size=1.2, colour=Colour.red)
 
 if __name__ == '__main__':
 	args = Overlay.get_overlay_args("Overlay displaying all (or just many) statistics")
