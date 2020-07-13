@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 import argparse
 import time
+from typing import Callable
 
 import paho.mqtt.client as mqtt
 
 from backend import BackendFactory
 from config import read_configs
 from canvas import Canvas
-from data import DataFactory
+from data import DataFactory, Data
 from platform import machine
 from topics import DAShboard
 
@@ -50,6 +51,8 @@ class Overlay(ABC):
 
 		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
 		self.set_callback_for_topic_list([str(DAShboard.recording)], self.on_recording_message)
+
+		self.start_time = time.time()
 
 	def publish_recording_status(self, message: str) -> None:
 		""" Sends a message on the current device's recording status topic. """
@@ -94,6 +97,19 @@ class Overlay(ABC):
 
 		topics_qos = list(zip(topic_values, at_most_once_qos))
 		self.client.subscribe(topics_qos)
+
+	def get_data_func(self, data_key: str, decimals=0, scalar=1) -> Callable[[Data], str]:
+		""" Returns a lambda function which, when called, returns the current
+			value for the data field `data_key`, multiplied by `scalar`, and
+			formatted to `decimals` decimal places. """
+		format_str = f"{{:.{decimals}f}}"
+		return lambda data: format_str.format(data[data_key] * scalar)
+
+	def time_func(self, _: Data) -> str:
+		""" Returns the time since the overlay was initialised formatted mm:ss """
+		_, rem = divmod(time.time() - self.start_time, 3600)
+		minutes, seconds = divmod(rem, 60)
+		return "{:0>2}:{:0>2}".format(int(minutes), int(seconds))
 
 	# mqtt methods
 	def on_log(self, client, userdata, level, buf):

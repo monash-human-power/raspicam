@@ -1,16 +1,10 @@
-from time import time
-from typing import Callable
-
 from components import DataField, SpeedField, CentrePower, Message
-from data import Data
 from overlay import Overlay
 
 class OverlayNew(Overlay):
 
     def __init__(self, bike=None, bg=None):
         super().__init__(bike, bg=bg)
-
-        self.start_time = time()
 
         # Generate coordinates for each of the data fields in the bottom corners.
         # Note that these coordinates are for the bottom left corner of each field.
@@ -56,19 +50,6 @@ class OverlayNew(Overlay):
 
         for component in self.components:
             component.draw_data(self.data_canvas, self.data)
-
-    def get_data_func(self, data_key: str, decimals=0, scalar=1) -> Callable[[Data], str]:
-        """ Returns a lambda function which, when called, returns the current
-            value for the data field `data_key`, multiplied by `scalar`, and
-            formatted to `decimals` decimal places. """
-        format_str = f"{{:.{decimals}f}}"
-        return lambda data: format_str.format(data[data_key] * scalar)
-
-    def time_func(self, _: Data) -> str:
-        """ Returns the time since the overlay was initialised formatted mm:ss """
-        _, rem = divmod(time() - self.start_time, 3600)
-        minutes, seconds = divmod(rem, 60)
-        return "{:0>2}:{:0>2}".format(int(minutes), int(seconds))
 
 if __name__ == '__main__':
     args = Overlay.get_overlay_args("An empty, example overlay")
