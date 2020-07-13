@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from canvas import Canvas
 from data import Data
 
-class Drawable(ABC):
+class Component(ABC):
     @abstractmethod
     def draw_base(self, canvas: Canvas):
         pass

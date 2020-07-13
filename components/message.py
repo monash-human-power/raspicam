@@ -1,12 +1,11 @@
 from textwrap import wrap
 
 from canvas import Canvas
-from components import Drawable
+from components import Component
 from data import Data
 
-class Message(Drawable):
-    """ A drawable which displays any existing messages at the top of the
-        screen.
+class Message(Component):
+    """ Displays any existing messages at the top of the screen.
 
         Lines are wrapped appropriately to ensure the entire message is
         visible. """

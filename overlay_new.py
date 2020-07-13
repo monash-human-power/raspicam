@@ -28,8 +28,8 @@ class OverlayNew(Overlay):
         # This lambda returns the coordinates of the data field in column x, row y
         data_field_coord = lambda x, y: (col_coords[x], row_coords[y])
 
-        # Create all drawable overlay objects
-        self.drawables = [
+        # Create all overlay components
+        self.components = [
             DataField("RPM", self.get_data_func("cadence"), data_field_coord(0, 0)),
             DataField("BPM", self.get_data_func("heartRate"), data_field_coord(0, 1)),
             SpeedField(data_field_coord(1, 0)),
@@ -48,14 +48,14 @@ class OverlayNew(Overlay):
     def on_connect(self, client, userdata, flags, rc):
         print('Connected with rc: {}'.format(rc))
 
-        for drawable in self.drawables:
-            drawable.draw_base(self.base_canvas)
+        for component in self.components:
+            component.draw_base(self.base_canvas)
 
     def update_data_layer(self):
         self.data_canvas.clear()
 
-        for drawable in self.drawables:
-            drawable.draw_data(self.data_canvas, self.data)
+        for component in self.components:
+            component.draw_data(self.data_canvas, self.data)
 
     def get_data_func(self, data_key: str, decimals=0, scalar=1) -> Callable[[Data], str]:
         """ Returns a lambda function which, when called, returns the current

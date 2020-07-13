@@ -1,8 +1,8 @@
 from canvas import Canvas, Colour
-from components import Drawable
+from components import Component
 from data import Data
 
-class CentrePower(Drawable):
+class CentrePower(Component):
     """ Displays the current and recommended power at the bottom-centre of the
         screen.
 

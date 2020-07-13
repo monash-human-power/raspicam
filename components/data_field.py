@@ -1,10 +1,10 @@
 from typing import Callable, Tuple
 
 from canvas import Canvas, Colour
-from components import Drawable
+from components import Component
 from data import Data
 
-class DataField(Drawable):
+class DataField(Component):
     """ A simple data field containing a large value below a title in a smaller
         font. Text is right-aligned. """
 
