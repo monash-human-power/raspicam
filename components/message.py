@@ -12,6 +12,7 @@ class Message(Component):
 
     text_size = 1
     spacing = 10
+    # Set height tall enough to fit the largest expected string
     _, text_height = Canvas.get_text_dimensions("blah", text_size)
     chars_per_line = 75
 

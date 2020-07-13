@@ -12,6 +12,7 @@ class CentrePower(Component):
 
     power_size = 2.5
     rec_power_size = 1.5
+    # Set height tall enough to fit the largest expected string
     _, rec_power_height = Canvas.get_text_dimensions("500w", rec_power_size)
     spacing = 10
 
