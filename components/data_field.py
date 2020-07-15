@@ -19,9 +19,10 @@ class DataField(Component):
 
     height = title_height + data_height + spacing
 
-    def __init__(self, title: str, value_func: Callable[[Data], str], coordinate: Tuple[int, int]):
+    def __init__(self, title: str, value_func: Callable[[Data], str], coordinate: Tuple[int, int], is_title_static: bool=True):
         """ `coordinate` specifies the bottom-left coordinate of the data field. """
         self.title = title
+        self.is_title_static = is_title_static
         self.value_func = value_func
         self.title_coord = (coordinate[0] + DataField.width, coordinate[1] - DataField.spacing - DataField.data_height)
         self.data_coord = (coordinate[0] + DataField.width, coordinate[1])
@@ -30,6 +31,8 @@ class DataField(Component):
         canvas.draw_text(self.title, self.title_coord, DataField.title_size, Colour.white, "right")
 
     def draw_data(self, canvas: Canvas, data: Data):
+        if not self.is_title_static:
+            DataField.draw_base(self, canvas)
         canvas.draw_text(self.value_func(data), self.data_coord, DataField.data_size, Colour.white, "right")
 
 class SpeedField(DataField):
@@ -38,12 +41,11 @@ class SpeedField(DataField):
 
     def __init__(self, coordinate: Tuple[int, int]):
         value_func = lambda data: "{:.1f}".format(data["gps_speed"] or data["reed_velocity"])
-        super().__init__("", value_func, coordinate)
+        super().__init__("", value_func, coordinate, False)
 
     def draw_base(self, canvas: Canvas):
         pass
 
     def draw_data(self, canvas: Canvas, data: Data):
         self.title = "GPS KPH" if data["gps_speed"] else "REED KPH"
-        super().draw_base(canvas)
         super().draw_data(canvas, data)
