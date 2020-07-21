@@ -45,6 +45,7 @@ class DAShboard(Topic):
     recording_start = '/v3/camera/recording/start'
     recording_stop = '/v3/camera/recording/stop'
     recording_status_root = '/v3/camera/recording/status'
+    errors = '/v3/camera/error'
 
 class SensorModules(Topic):
     """V3 Wireless sensor module topics"""
