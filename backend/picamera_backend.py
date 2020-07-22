@@ -65,13 +65,23 @@ class PiCameraBackend(Backend):
         self.prev_overlays[layer] = overlay
 
     def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
-        self.update_picamera_overlay(base_canvas, PiCameraOverlayLayer.base)
+        try:
+            self.update_picamera_overlay(base_canvas, PiCameraOverlayLayer.base)
+        except:
+            self.send_camera_errors()
 
     def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         """ Picamera will retain the overlay images until updated, so we only need
             to do this once per overlay update. """
-        self.update_picamera_overlay(data_canvas, PiCameraOverlayLayer.data)
-        self.update_picamera_overlay(message_canvas, PiCameraOverlayLayer.message)
+        try: 
+            self.update_picamera_overlay(data_canvas, PiCameraOverlayLayer.data)
+        except: 
+            self.send_camera_error() # data overlay error
+
+        try:
+            self.update_picamera_overlay(message_canvas, PiCameraOverlayLayer.message)
+        except: 
+            self.send_camera_error() # message overlay error
 
     def _on_loop(self) -> None:
         # Nothing to do
