@@ -34,7 +34,11 @@ class PiCameraBackend(Backend):
         super().__init__(width, height, publish_recording_status_func, publish_errors_func)
 
         if not ON_PI:
-            raise RuntimeError("`picamera` library unavailable - please run on Pi or install library")
+            try:
+                raise RuntimeError("`picamera` library unavailable - please run on Pi or install library")
+            except RuntimeError:
+                self.send_camera_errors()
+                raise
 
         self.pi_camera = PiCamera(resolution=(self.width, self.height))
 
