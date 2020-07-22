@@ -131,8 +131,13 @@ class Overlay(ABC):
 		self.backend.on_base_canvas_updated(self.base_canvas)
 
 	def on_data_message(self, client, userdata, msg):
-		payload = msg.payload.decode("utf-8")
-		self.data.load_data(msg.topic, payload)
+		try:
+			payload = msg.payload.decode("utf-8")
+			self.data.load_data(msg.topic, payload)
+		except Exception as error_message:
+			message = { "error": error_message }
+			self.publish_errors(message)
+			print(error)
 
 	def on_recording_message(self, client, userdata, msg):
 		if DAShboard.recording_start.matches(msg.topic):
