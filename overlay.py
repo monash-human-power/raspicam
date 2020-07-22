@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import argparse
 import time
+from json import dumps
 from typing import Callable
 
 import paho.mqtt.client as mqtt
@@ -53,6 +54,11 @@ class Overlay(ABC):
 		self.set_callback_for_topic_list([str(DAShboard.recording)], self.on_recording_message)
 
 		self.start_time = time.time()
+
+	def publish_camera_errors(self, message: dict) -> None:
+		message['camera'] = self.device
+		status_topic = f"{str(DAShboard.errors)}"
+		self.client.publish(status_topic, dumps(message), retain=True)
 
 	def publish_recording_status(self, message: str) -> None:
 		""" Sends a message on the current device's recording status topic. """
