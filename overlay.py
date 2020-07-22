@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import argparse
 import time
 from json import dumps
+from traceback import format_exc
 from typing import Callable
 
 import paho.mqtt.client as mqtt
@@ -134,8 +135,8 @@ class Overlay(ABC):
 		try:
 			payload = msg.payload.decode("utf-8")
 			self.data.load_data(msg.topic, payload)
-		except Exception as error_message:
-			message = { "error": error_message }
+		except:
+			message = { "error": format_exc() }
 			self.publish_errors(message)
 			print(error)
 
