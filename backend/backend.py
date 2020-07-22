@@ -17,10 +17,11 @@ class Backend(ABC):
         Handles combining the video feed with overlays and displaying, and
         recording the video feed to a file. """
 
-    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc):
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_errors_func: PublishFunc):
         self.width = width
         self.height = height
         self.publish_recording_status_func = publish_recording_status_func
+        self.publish_errors_func = publish_errors_func
 
         self.recording = False
         self.recording_output_file = None
@@ -72,7 +73,7 @@ class Backend(ABC):
         message = {
             "error": format_exc(),
         }
-        self.publish_error_func(message)
+        self.publish_errors_func(message)
         print(format_exc())
 
     @abstractmethod

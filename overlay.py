@@ -55,7 +55,7 @@ class Overlay(ABC):
 
 		self.start_time = time.time()
 
-	def publish_camera_errors(self, message: dict) -> None:
+	def publish_errors(self, message: dict) -> None:
 		message['camera'] = self.device
 		status_topic = f"{str(DAShboard.errors)}"
 		self.client.publish(status_topic, dumps(message), retain=True)
@@ -68,7 +68,7 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status) as self.backend:
+		with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status, self.publish_errors) as self.backend:
 
 			if self.backend_name == "opencv_static_image":
 				self.backend.set_background(self.bg_path)
