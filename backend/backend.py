@@ -68,18 +68,16 @@ class Backend(ABC):
             the display, which may be blocking. Should not be called outside
             of the Backend class. """
 
-    def send_camera_errors(self) -> None:
-        """ Sends the most recent exception for camera to the MQTT errors topic"""
-        message = {
-            "error": format_exc(),
-        }
-        self.publish_errors_func(message)
-        print(format_exc())
-
     @abstractmethod
     def stop_video(self) -> None:
         """ Stops displaying the video feed and releases any resources
             captured. """
+
+    def send_camera_errors(self) -> None:
+        """ Sends the most recent exception for camera to the MQTT errors topic"""
+        message = { "error": format_exc() }
+        self.publish_errors_func(message)
+        print(format_exc())
 
     def start_recording(self) -> None:
         """ Starts an h264 recording with the first available name located in
