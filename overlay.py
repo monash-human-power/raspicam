@@ -138,7 +138,7 @@ class Overlay(ABC):
 		except:
 			message = { "error": format_exc() }
 			self.publish_errors(message)
-			print(error)
+			print(format_exc())
 
 	def on_recording_message(self, client, userdata, msg):
 		if DAShboard.recording_start.matches(msg.topic):
