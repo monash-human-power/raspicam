@@ -73,7 +73,7 @@ class Backend(ABC):
         """ Stops displaying the video feed and releases any resources
             captured. """
 
-    def send_camera_errors(self) -> None:
+    def send_camera_error(self) -> None:
         """ Sends the most recent exception for camera to the MQTT errors topic"""
         message = { "error": format_exc() }
         self.publish_errors_func(message)

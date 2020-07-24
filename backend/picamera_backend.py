@@ -64,7 +64,7 @@ class PiCameraBackend(Backend):
         try:
             self.update_picamera_overlay(base_canvas, PiCameraOverlayLayer.base)
         except:
-            self.send_camera_errors()
+            self.send_camera_error()
 
     def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         """ Picamera will retain the overlay images until updated, so we only need
