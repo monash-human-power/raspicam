@@ -69,26 +69,36 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status, self.publish_errors) as self.backend:
+		try:
+			with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status, self.publish_errors) as self.backend:
 
-			if self.backend_name == "opencv_static_image":
-				self.backend.set_background(self.bg_path)
+				if self.backend_name == "opencv_static_image":
+					self.backend.set_background(self.bg_path)
 
-			# mqtt loop (does not block)
+				# mqtt loop (does not block)
+				self.client.loop_start()
+
+				prev_data_update = 0 # time that we last updated the data layer
+				while True:
+
+					# Update the data overlay only if we have waited enough time
+					if time.time() > prev_data_update + self.data_update_interval:
+						prev_data_update = time.time()
+
+						# Update the data overlay with latest information
+						self.update_data_layer()
+						self.backend.on_canvases_updated(self.data_canvas, self.message_canvas)
+
+					self.backend.on_loop()
+		except:
 			self.client.loop_start()
 
-			prev_data_update = 0 # time that we last updated the data layer
 			while True:
-
-				# Update the data overlay only if we have waited enough time
-				if time.time() > prev_data_update + self.data_update_interval:
-					prev_data_update = time.time()
-
-					# Update the data overlay with latest information
-					self.update_data_layer()
-					self.backend.on_canvases_updated(self.data_canvas, self.message_canvas)
-
-				self.backend.on_loop()
+				# Set up backend error message and publish
+				message = { "error": format_exc() }
+				self.publish_errors(message)
+				print(format_exc())
+				time.sleep(10) # Gives MQTT client time to publish 
 
 	def set_callback_for_topic_list(self, topics, callback):
 		""" Sets the on_message callback for every topic in topics to the
