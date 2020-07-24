@@ -136,9 +136,7 @@ class Overlay(ABC):
 			payload = msg.payload.decode("utf-8")
 			self.data.load_data(msg.topic, payload)
 		except:
-			message = { "error": format_exc() }
-			self.publish_errors(message)
-			print(format_exc())
+			self.backend.send_camera_error()
 
 	def on_recording_message(self, client, userdata, msg):
 		if DAShboard.recording_start.matches(msg.topic):
