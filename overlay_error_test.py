@@ -17,14 +17,12 @@ class TestOverlay(OverlayNew):
     def on_connect(self, client, userdata, flags, rc):
         super().on_connect(client, userdata, flags, rc)
 
-        message = [] # JSON should not accept array inputs
+        # MQTT Payload should not accept array inputs
+        invalid_message = [] 
         while True:
-            try:
-                # Attempts to decode invalid message but will throw an error
-                self.on_data_message(client, userdata, message)
-            except:
-                self.backend.send_camera_error()
-                print("Broken message sent")
+            # Attempts to decode invalid message but function will throw an error
+            self.on_data_message(client, userdata, invalid_message)
+            print("Broken message sent")
             
             time.sleep(10)
 
