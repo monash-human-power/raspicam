@@ -29,22 +29,12 @@ class OpenCVStaticImageBackend(Backend):
         background_original = cv2.imread(cv2.samples.findFile(image_path))
         self.background = cv2.resize(background_original, (self.width, self.height))
 
-    def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
-        try:
-            self.base_canvas = base_canvas
-        except:
-            self.send_camera_error()
+    def _on_base_canvas_updated(self, base_canvas: Canvas) -> None:
+        self.base_canvas = base_canvas
 
-    def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
-        try:
-            self.data_canvas = data_canvas
-        except:
-            self.send_camera_error() # data overlay error
-        
-        try:
-            self.message_canvas = message_canvas
-        except:
-            self.send_camera_error() # message overlay error
+    def _on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
+        self.data_canvas = data_canvas
+        self.message_canvas = message_canvas
 
     def _on_loop(self) -> None:
         """ This function uses the cached overlays, as OpenCV needs us to

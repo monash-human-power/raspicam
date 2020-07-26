@@ -37,15 +37,33 @@ class Backend(ABC):
         """ Starts the necessary processes to begin displaying camera feed
             video. """
 
-    @abstractmethod
     def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
-        """ Updates the base canvas which is drawn on the video. Should be
-            called whenever the canvas is updated. """
+        """ Catches any errors that occurs while the base canvas is being
+            updated. """
+        try:
+            self._on_base_canvas_updated(base_canvas)
+        except:
+            self.send_camera_error()
 
     @abstractmethod
+    def _on_base_canvas_updated(self, base_canvas: Canvas) -> None:
+        """ Updates the base canvas which is drawn on the video. Should be
+            called whenever the canvas is updated. """
+        raise NotImplementedError("No instructions for base layer found. ")
+
     def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
+        """ Catches any errors that occurs while either the data or message 
+            canvas is being updated. """
+        try:
+            self._on_canvases_updated(data_canvas, message_canvas)
+        except:
+            self.send_camera_error()
+
+    @abstractmethod
+    def _on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         """ Updates the data and message canvases which are drawn on the
             video. Should be called whenever the canvases are updated. """
+        raise NotImplementedError("No instructions for data/message layer found. ")
 
     def on_loop(self) -> None:
         """ Executes all operations that should run every iteration of the
