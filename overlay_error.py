@@ -1,5 +1,3 @@
-import time
-
 from overlay_new import OverlayNew, Overlay
 
 DEFAULT_TEST_BIKE = "v3"
@@ -17,14 +15,11 @@ class TestOverlay(OverlayNew):
     def on_connect(self, client, userdata, flags, rc):
         super().on_connect(client, userdata, flags, rc)
 
-        # MQTT Payload should not accept array inputs
-        invalid_message = [] 
-        while True:
-            # Attempts to decode invalid message but function will throw an error
-            self.on_data_message(client, userdata, invalid_message)
-            print("Broken message sent")
-            
-            time.sleep(10)
+        # Forcing an exception to occur
+        try: 
+            raise Exception("Test error")
+        except:
+            self.backend.send_camera_error(True) # Set to true to block the broker until error is published
 
 if __name__ == '__main__':
     args = Overlay.get_overlay_args("Test Overlay")
