@@ -75,9 +75,10 @@ class Backend(ABC):
 
     def send_camera_error(self) -> None:
         """ Sends the most recent exception for camera to the MQTT errors topic"""
-        message = { "error": format_exc() }
+        message = { "trace": format_exc() }
         self.publish_errors_func(message)
         print(format_exc())
+        # TODO: Replace format_exc() with a logger
 
     def start_recording(self) -> None:
         """ Starts an h264 recording with the first available name located in

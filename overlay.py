@@ -59,7 +59,7 @@ class Overlay(ABC):
 	def publish_errors(self, message: dict) -> None:
 		message['camera'] = self.device
 		status_topic = f"{str(DAShboard.errors)}"
-		self.client.publish(status_topic, dumps(message), retain=True)
+		self.client.publish(status_topic, dumps(message))
 
 	def publish_recording_status(self, message: str) -> None:
 		""" Sends a message on the current device's recording status topic. """
@@ -91,14 +91,11 @@ class Overlay(ABC):
 
 					self.backend.on_loop()
 		except:
-			self.client.loop_start()
-
-			while True:
-				# Set up backend error message and publish
-				message = { "error": format_exc() }
-				self.publish_errors(message)
-				print(format_exc())
-				time.sleep(10) # Gives MQTT client time to publish 
+			# Set up backend error message and publish
+			message = { "trace": format_exc() }
+			self.publish_errors(message)
+			print(format_exc())
+			time.sleep(10) # Gives MQTT client time to publish 
 
 	def set_callback_for_topic_list(self, topics, callback):
 		""" Sets the on_message callback for every topic in topics to the
