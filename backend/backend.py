@@ -91,10 +91,10 @@ class Backend(ABC):
         """ Stops displaying the video feed and releases any resources
             captured. """
 
-    def send_camera_error(self) -> None:
+    def send_camera_error(self, wait_for_publish: bool = False) -> None:
         """ Sends the most recent exception for camera to the MQTT errors topic"""
         message = { "trace": format_exc() }
-        self.publish_errors_func(message)
+        self.publish_errors_func(message, wait_for_publish)
         print(format_exc())
         # TODO: Replace format_exc() with a logger
 
