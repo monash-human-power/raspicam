@@ -32,3 +32,4 @@ if __name__ == '__main__':
     args = Overlay.get_overlay_args("Test Overlay")
     my_overlay = TestOverlay(args.bike, args.bg)
     my_overlay.connect(ip=args.host)
+    
