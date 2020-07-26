@@ -12,7 +12,7 @@ from config import read_configs
 from canvas import Canvas
 from data import DataFactory, Data
 from platform import machine
-from topics import DAShboard
+from topics import DAShboard, Camera
 
 DEFAULT_BIKE = "V2"
 
@@ -56,10 +56,22 @@ class Overlay(ABC):
 
 		self.start_time = time.time()
 
-	def publish_errors(self, message: dict) -> None:
+	def publish_errors(self, message: dict, wait_for_publish: bool) -> None:
+		""" Sends camera error messages to the MQTT errors topic. Setting the 
+			wait_for_publish argument to True will block the broker until the 
+			message is published. """
+		# Setting up the message
 		message['camera'] = self.device
-		status_topic = f"{str(DAShboard.errors)}"
-		self.client.publish(status_topic, dumps(message))
+		message['backend'] = self.backend_name
+		message['bg_path'] = self.bg_path
+		# message['configs'] = configs
+
+		# Publishing the message to the topic
+		status_topic = f"{str(Camera.errors)}"
+		publish_result = self.client.publish(status_topic, dumps(message))
+
+		if wait_for_publish:
+			publish_result.wait_for_publish()
 
 	def publish_recording_status(self, message: str) -> None:
 		""" Sends a message on the current device's recording status topic. """
@@ -90,12 +102,11 @@ class Overlay(ABC):
 						self.backend.on_canvases_updated(self.data_canvas, self.message_canvas)
 
 					self.backend.on_loop()
-		except:
+		except Exception:
 			# Set up backend error message and publish
 			message = { "trace": format_exc() }
-			self.publish_errors(message)
-			print(format_exc())
-			time.sleep(10) # Gives MQTT client time to publish 
+			self.publish_errors(message, True)
+			print(format_exc()) 
 
 	def set_callback_for_topic_list(self, topics, callback):
 		""" Sets the on_message callback for every topic in topics to the
