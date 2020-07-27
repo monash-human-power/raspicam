@@ -21,7 +21,7 @@ class Backend(ABC):
         self.width = width
         self.height = height
         self.publish_recording_status_func = publish_recording_status_func
-        self.publish_errors_func = publish_errors_func
+        self.publish_camera_error = publish_errors_func
 
         self.recording = False
         self.recording_output_file = None
@@ -43,7 +43,7 @@ class Backend(ABC):
         try:
             self._on_base_canvas_updated(base_canvas)
         except:
-            self.send_camera_error()
+            self.publish_camera_error()
 
     @abstractmethod
     def _on_base_canvas_updated(self, base_canvas: Canvas) -> None:
@@ -57,7 +57,7 @@ class Backend(ABC):
         try:
             self._on_canvases_updated(data_canvas, message_canvas)
         except:
-            self.send_camera_error()
+            self.publish_camera_error()
 
     @abstractmethod
     def _on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
@@ -90,13 +90,6 @@ class Backend(ABC):
     def stop_video(self) -> None:
         """ Stops displaying the video feed and releases any resources
             captured. """
-
-    def send_camera_error(self, wait_for_publish: bool = False) -> None:
-        """ Sends the most recent exception for camera to the MQTT errors topic"""
-        message = { "trace": format_exc() }
-        self.publish_errors_func(message, wait_for_publish)
-        print(format_exc())
-        # TODO: Replace format_exc() with a logger
 
     def start_recording(self) -> None:
         """ Starts an h264 recording with the first available name located in
