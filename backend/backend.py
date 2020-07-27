@@ -42,8 +42,8 @@ class Backend(ABC):
             updated. """
         try:
             self._on_base_canvas_updated(base_canvas)
-        except Exception:
-            self.publish_camera_error()
+        except Exception as error_message:
+            self.publish_camera_error(error_message)
 
     @abstractmethod
     def _on_base_canvas_updated(self, base_canvas: Canvas) -> None:
@@ -56,8 +56,8 @@ class Backend(ABC):
             canvas is being updated. """
         try:
             self._on_canvases_updated(data_canvas, message_canvas)
-        except Exception:
-            self.publish_camera_error()
+        except Exception as error_message:
+            self.publish_camera_error(error_message)
 
     @abstractmethod
     def _on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:

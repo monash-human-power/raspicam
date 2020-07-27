@@ -18,8 +18,8 @@ class TestOverlay(OverlayNew):
         # Forcing an exception to occur
         try: 
             raise Exception("Test error")
-        except:
-            self.backend.send_camera_error(True) # Set to true to block the broker until error is published
+        except Exception as error_message:
+            self.publish_errors(error_message) 
 
 if __name__ == '__main__':
     args = Overlay.get_overlay_args("Test Overlay")

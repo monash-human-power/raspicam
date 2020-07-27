@@ -56,7 +56,7 @@ class Overlay(ABC):
 
 		self.start_time = time.time()
 
-	def publish_errors(self, error_message: str, wait_for_publish: bool) -> None:
+	def publish_errors(self, error_message: Exception, wait_for_publish: bool = False) -> None:
 		""" Sends camera error messages to the MQTT errors topic. Setting the 
 			wait_for_publish argument to True will block the broker until the 
 			message is published. """
@@ -66,7 +66,7 @@ class Overlay(ABC):
 			"bg_path": self.bg_path, 
 			"configs": read_configs(),
 			"traceback": format_exc(),
-			"message": error_message
+			"message": str(error_message)
 		}
 
 		# Publishing the message to the topic
@@ -149,8 +149,8 @@ class Overlay(ABC):
 		try:
 			payload = msg.payload.decode("utf-8")
 			self.data.load_data(msg.topic, payload)
-		except Exception:
-			self.publish_errors()
+		except Exception as error_message:
+			self.publish_errors(error_message)
 
 	def on_recording_message(self, client, userdata, msg):
 		if DAShboard.recording_start.matches(msg.topic):
