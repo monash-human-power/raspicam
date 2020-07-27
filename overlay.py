@@ -28,14 +28,15 @@ class Overlay(ABC):
 
 		self.backend = None
 		self.bg_path = None
-		if bg is not None:
-			self.backend_name = "opencv_static_image"
-			self.bg_path = bg
-		# Raspberry Pis run ARM, PCs run x86_64
-		elif machine() == "armv71":
-			self.backend_name = "picamera"
-		else:
-			self.backend_name = "opencv"
+		# if bg is not None:
+		# 	self.backend_name = "opencv_static_image"
+		# 	self.bg_path = bg
+		# # Raspberry Pis run ARM, PCs run x86_64
+		# elif machine() == "armv71":
+		# 	self.backend_name = "picamera"
+		# else:
+		# 	self.backend_name = "opencv"
+		self.backend_name = "jesus"
 
 		self.base_canvas = Canvas(self.width, self.height)
 		self.data_canvas = Canvas(self.width, self.height)
@@ -81,32 +82,26 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		try:
-			with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status, self.publish_errors) as self.backend:
+		with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status, self.publish_errors) as self.backend:
 
-				if self.backend_name == "opencv_static_image":
-					self.backend.set_background(self.bg_path)
+			if self.backend_name == "opencv_static_image":
+				self.backend.set_background(self.bg_path)
 
-				# mqtt loop (does not block)
-				self.client.loop_start()
+			# mqtt loop (does not block)
+			self.client.loop_start()
 
-				prev_data_update = 0 # time that we last updated the data layer
-				while True:
+			prev_data_update = 0 # time that we last updated the data layer
+			while True:
 
-					# Update the data overlay only if we have waited enough time
-					if time.time() > prev_data_update + self.data_update_interval:
-						prev_data_update = time.time()
+				# Update the data overlay only if we have waited enough time
+				if time.time() > prev_data_update + self.data_update_interval:
+					prev_data_update = time.time()
 
-						# Update the data overlay with latest information
-						self.update_data_layer()
-						self.backend.on_canvases_updated(self.data_canvas, self.message_canvas)
+					# Update the data overlay with latest information
+					self.update_data_layer()
+					self.backend.on_canvases_updated(self.data_canvas, self.message_canvas)
 
-					self.backend.on_loop()
-		except Exception:
-			# Set up backend error message and publish
-			message = { "trace": format_exc() }
-			self.publish_errors(message, True)
-			print(format_exc()) 
+				self.backend.on_loop()
 
 	def set_callback_for_topic_list(self, topics, callback):
 		""" Sets the on_message callback for every topic in topics to the
@@ -154,7 +149,7 @@ class Overlay(ABC):
 			payload = msg.payload.decode("utf-8")
 			self.data.load_data(msg.topic, payload)
 		except:
-			self.backend.send_camera_error()
+			self.publish_errors()
 
 	def on_recording_message(self, client, userdata, msg):
 		if DAShboard.recording_start.matches(msg.topic):
