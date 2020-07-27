@@ -149,7 +149,7 @@ class Overlay(ABC):
 		try:
 			payload = msg.payload.decode("utf-8")
 			self.data.load_data(msg.topic, payload)
-		except:
+		except Exception:
 			self.publish_errors()
 
 	def on_recording_message(self, client, userdata, msg):

@@ -42,7 +42,7 @@ class Backend(ABC):
             updated. """
         try:
             self._on_base_canvas_updated(base_canvas)
-        except:
+        except Exception:
             self.publish_camera_error()
 
     @abstractmethod
@@ -56,7 +56,7 @@ class Backend(ABC):
             canvas is being updated. """
         try:
             self._on_canvases_updated(data_canvas, message_canvas)
-        except:
+        except Exception:
             self.publish_camera_error()
 
     @abstractmethod
