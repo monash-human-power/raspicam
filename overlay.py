@@ -74,6 +74,8 @@ class Overlay(ABC):
 		publish_result = self.client.publish(status_topic, dumps(message))
 		if wait_for_publish:
 			publish_result.wait_for_publish()
+		print(format_exc())
+		# TODO: Write logger to replace format_exc()
 
 	def publish_recording_status(self, message: str) -> None:
 		""" Sends a message on the current device's recording status topic. """
