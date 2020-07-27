@@ -28,15 +28,14 @@ class Overlay(ABC):
 
 		self.backend = None
 		self.bg_path = None
-		# if bg is not None:
-		# 	self.backend_name = "opencv_static_image"
-		# 	self.bg_path = bg
-		# # Raspberry Pis run ARM, PCs run x86_64
-		# elif machine() == "armv71":
-		# 	self.backend_name = "picamera"
-		# else:
-		# 	self.backend_name = "opencv"
-		self.backend_name = "jesus"
+		if bg is not None:
+			self.backend_name = "opencv_static_image"
+			self.bg_path = bg
+		# Raspberry Pis run ARM, PCs run x86_64
+		elif machine() == "armv71":
+			self.backend_name = "picamera"
+		else:
+			self.backend_name = "opencv"
 
 		self.base_canvas = Canvas(self.width, self.height)
 		self.data_canvas = Canvas(self.width, self.height)
@@ -61,7 +60,6 @@ class Overlay(ABC):
 		""" Sends camera error messages to the MQTT errors topic. Setting the 
 			wait_for_publish argument to True will block the broker until the 
 			message is published. """
-		# Setting up the message
 		message = {
 			"camera": self.device,
 			"backend": self.backend_name,
@@ -74,7 +72,6 @@ class Overlay(ABC):
 		# Publishing the message to the topic
 		status_topic = f"{str(Camera.errors)}"
 		publish_result = self.client.publish(status_topic, dumps(message))
-
 		if wait_for_publish:
 			publish_result.wait_for_publish()
 
