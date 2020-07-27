@@ -73,8 +73,10 @@ class Backend(ABC):
             depending on the backend, the display may be updated during this
             call. This operation may be blocking to ensure the display is
             updated at the correct framerate. """
-
-        self._on_loop()
+        try:
+            self._on_loop()
+        except Exception as error_message:
+            self.publish_camera_error(error_message)
 
         if time() > self.prev_recording_status_time + self.recording_status_interval:
             self.send_recording_status()
