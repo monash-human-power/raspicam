@@ -12,7 +12,7 @@ class OverlayBlank(Overlay):
 		# To draw static text/whatever onto the overlay, draw on the base canvas
 		self.base_canvas.draw_text("Blank overlay", (10, self.height - 10), 4, colour=Colour.white)
 
-	def update_data_layer(self):
+	def _update_data_layer(self):
 		self.data_canvas.clear()
 
 		# Content that changes each frame should be drawn to self.data_canvas here

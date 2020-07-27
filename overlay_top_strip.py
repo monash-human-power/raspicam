@@ -28,7 +28,7 @@ class OverlayTopStrip(Overlay):
 		self.base_canvas.draw_text("PMV:", (768, self.top_text_pos), colour=Colour.white)
 		self.base_canvas.draw_text("MS:", (1024, self.top_text_pos), colour=Colour.white)
 
-	def update_data_layer(self):
+	def _update_data_layer(self):
 		# Create a transparent image to attach text
 		self.data_canvas.clear()
 

@@ -167,8 +167,16 @@ class Overlay(ABC):
 			(e.g. drawing self.base_canvas) """
 		pass
 
-	@abstractmethod
 	def update_data_layer(self):
+		""" Catches any errors that occurs while the data layer is being
+			updated. """
+		try:
+			self._update_data_layer()
+		except Exception as error_message:
+			self.publish_errors(error_message)
+
+	@abstractmethod
+	def _update_data_layer(self):
 		""" Called automatically at a regular interval defined by
 			self.data_update_interval.
 

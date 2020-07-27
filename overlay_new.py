@@ -45,7 +45,7 @@ class OverlayNew(Overlay):
         for component in self.components:
             component.draw_base(self.base_canvas)
 
-    def update_data_layer(self):
+    def _update_data_layer(self):
         self.data_canvas.clear()
 
         for component in self.components:
