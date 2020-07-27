@@ -1,3 +1,10 @@
+"""
+Tests whether an error will be published onto the MQTT Camera Errors topic
+'/v3/camera/errors'
+
+This overlay should not be used for any purpose other than testing. This script should
+not be triggered by Pytest.
+"""
 from overlay_new import OverlayNew, Overlay
 
 DEFAULT_TEST_BIKE = "v3"
