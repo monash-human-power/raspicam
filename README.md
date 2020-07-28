@@ -5,27 +5,37 @@ This repo contains code used to run the Monash Human Power camera system. The `m
 
 ## Installation
 
-Firstly, you'll need to create a `.env` file containing either `MHP_CAMERA=primary` or `MHP_CAMERA=secondary`. Similarly, set `MHP_BIKE` to `V2` or `V3` so that the overlays listen for data on the correct MQTT topics. This step may be skipped (and can be overriden with terminal arguments) but should always be done on the actual camera overlays.
+1. **Setup `.env` file**
 
-Optionally, you may set the overlay to run when the physical switch on the display is toggled by modifying `config.json`. An example of this file's contents could be `{ "activeOverlay": "overlay_all_stats.py" }`.
+    Firstly, you'll need to create a `.env` file containing either `MHP_CAMERA=primary` or `MHP_CAMERA=secondary`. Similarly, set `MHP_BIKE` to `V2` or `V3` so that the overlays listen for data on the correct MQTT topics. This step may be skipped (and can be overriden with terminal arguments) but should always be done on the actual camera overlays.
 
-To install dependencies, you will need [poetry](https://python-poetry.org/docs/#installation) installed on your computer.
+2. **Configure `config.json`**
 
-At this point in time, you'll also need Python 3.7 installed. Python 3.6 may also work (untested), but right now, the OpenCV version we are using does not have a build available for Python 3.8. [pyenv](https://github.com/pyenv/pyenv) may be used to quickly switch between python versions. To do this,
-- Install `pyenv` (easy installer [here](https://github.com/pyenv/pyenv-installer), and dependencies [here](https://github.com/pyenv/pyenv/wiki/Common-build-problems) (use Debian dependencies fo the Raspbery Pi)),
-- Install Python 3.7 with `pyenv install 3.7.7`,
-- and finally, set it as your current python version with `pyenv local 3.7.7`.
+    Optionally, you may set the overlay to run when the physical switch on the display is toggled by modifying `config.json`. An example of this file's contents could be `{ "activeOverlay": "overlay_all_stats.py" }`.
 
-You will likely need to install some dependencies for OpenCV to run, especially if you are on a Raspberry Pi. To do this, run
-```bash
-sudo apt install libgtk-3-0 libavformat58 libtiff5 libcairo2 libqt4-test libpango-1.0-0 libopenexr23 libavcodec58 libilmbase23 libatk1.0-0 libpangocairo-1.0-0 libwebp6 libqtgui4 libavutil56 libjasper1 libqtcore4 libcairo-gobject2 libswscale5 libgdk-pixbuf2.0-0
-```
+3. **Install Python 3.7 with `pyenv`**
 
-With that done, `raspicam` dependencies may be installed using `poetry install --dev`. You may then start a shell with `poetry shell`.
+    At this point in time, you'll also need Python 3.7 installed, as currently, the OpenCV version we are using does not have a build available for Python 3.8. [pyenv](https://github.com/pyenv/pyenv) may be used to quickly switch between python versions. To do this,
+    - Install `pyenv` (easy installer [here](https://github.com/pyenv/pyenv-installer), and dependencies [here](https://github.com/pyenv/pyenv/wiki/Common-build-problems) (use Debian dependencies fo the Raspbery Pi)),
+    - Install Python 3.7 with `pyenv install 3.7.7`,
+    - and finally, set it as your current python version with `pyenv local 3.7.7`.
+
+4. **Install OpenCV dependencies**
+
+    You will likely need to install some dependencies for OpenCV to run, especially if you are on a Raspberry Pi. To do this, run
+    ```bash
+    sudo apt install libgtk-3-0 libavformat58 libtiff5 libcairo2 libqt4-test libpango-1.0-0 libopenexr23 libavcodec58 libilmbase23 libatk1.0-0 libpangocairo-1.0-0 libwebp6 libqtgui4 libavutil56 libjasper1 libqtcore4 libcairo-gobject2 libswscale5 libgdk-pixbuf2.0-0
+    ```
+
+5. **Install poetry and python dependencies**
+
+    To install dependencies, you will need [poetry](https://python-poetry.org/docs/#installation) installed on your computer.
+
+    With that done, `raspicam` dependencies may be installed using `poetry install --dev`.
 
 ## Usage
 
-*You must be in a poetry shell to run any scripts/tests (see above).*
+**Important:** *You must be in a poetry shell to run any scripts/tests.* To start a poetry shell, run `poetry shell`. You may exit the shell at any time with `exit`.
 
 ### Overlay development
 
