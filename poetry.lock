@@ -146,7 +146,7 @@ proxy = ["pysocks"]
 [[package]]
 category = "main"
 description = "A pure Python interface for the Raspberry Pi camera module."
-marker = "platform_machine == \"armv71\""
+marker = "platform_machine == \"armv7l\""
 name = "picamera"
 optional = false
 python-versions = "*"
@@ -244,11 +244,10 @@ cli = ["click (>=5.0)"]
 [[package]]
 category = "main"
 description = "A module to control Raspberry Pi GPIO channels"
-marker = "platform_machine == \"armv71\""
 name = "rpi.gpio"
 optional = false
 python-versions = "*"
-version = "0.2.0"
+version = "0.7.0"
 
 [[package]]
 category = "dev"
@@ -305,7 +304,8 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "4113ce425cdd52a5fd8533a3a08509cfe07f75bc354b76da30dfb5be2de95dc0"
+content-hash = "d7fcf84bcef9c4e5bdde43566400796975accf49340ce29993245fe671640c3d"
+lock-version = "1.0"
 python-versions = "~3.7"
 
 [metadata.files]
@@ -451,7 +451,7 @@ python-dotenv = [
     {file = "python_dotenv-0.13.0-py2.py3-none-any.whl", hash = "sha256:25c0ff1a3e12f4bde8d592cc254ab075cfe734fc5dd989036716fd17ee7e5ec7"},
 ]
 "rpi.gpio" = [
-    {file = "RPi.GPIO-0.2.0.tar.gz", hash = "sha256:fcfd97dc9687dde76b13b9d12c122e71b13e2ba09a62913d7b8d9ddbb3e8cabf"},
+    {file = "RPi.GPIO-0.7.0.tar.gz", hash = "sha256:7424bc6c205466764f30f666c18187a0824077daf20b295c42f08aea2cb87d3f"},
 ]
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
