@@ -16,7 +16,11 @@ This repo contains code used to run the Monash Human Power camera system. The `m
 3. **Install Python 3.7 with `pyenv`**
 
     At this point in time, you'll also need Python 3.7 installed, as currently, the OpenCV version we are using does not have a build available for Python 3.8. [pyenv](https://github.com/pyenv/pyenv) may be used to quickly switch between python versions. To do this,
-    - Install `pyenv` (easy installer [here](https://github.com/pyenv/pyenv-installer), and dependencies [here](https://github.com/pyenv/pyenv/wiki/Common-build-problems) (use Debian dependencies fo the Raspbery Pi)),
+
+    - Install `pyenv`.
+        - Linux installation (including Pi) [here](https://github.com/pyenv/pyenv-installer). You may need to install these dependencies from [here](https://github.com/pyenv/pyenv/wiki/Common-build-problems) (use Debian dependencies fo the Raspbery Pi)
+        - macOS installation: See [pyenv's github](https://github.com/pyenv/pyenv)
+        - Windows installation: See [pyenv-win](https://github.com/pyenv-win/pyenv-win)
     - Install Python 3.7 with `pyenv install 3.7.7`,
     - and finally, set it as your current python version with `pyenv local 3.7.7`.
 
