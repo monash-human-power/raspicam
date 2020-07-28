@@ -15,7 +15,6 @@ At this point in time, you'll also need Python 3.7 installed. Python 3.6 may als
 - Install `pyenv` (easy installer [here](https://github.com/pyenv/pyenv-installer), and dependencies [here](https://github.com/pyenv/pyenv/wiki/Common-build-problems) (use Debian dependencies fo the Raspbery Pi)),
 - Install Python 3.7 with `pyenv install 3.7.7`,
 - and finally, set it as your current python version with `pyenv local 3.7.7`.
-- When you're done, go back to your system version with `pyenv local --unset`.
 
 You will likely need to install some dependencies for OpenCV to run, especially if you are on a Raspberry Pi. To do this, run
 ```bash
