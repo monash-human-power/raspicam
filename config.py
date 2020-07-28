@@ -49,7 +49,13 @@ def read_configs(directory=CURRENT_DIRECTORY):
             configs = json.load(file)
 
     configs['device'] = os.getenv('MHP_CAMERA')
+    if not configs['device']:
+        print('WARNING: MHP_CAMERA has not been set in .env')
+
     configs['bike'] = os.getenv('MHP_BIKE')
+    if not configs['bike']:
+        print('WARNING: MHP_BIKE has not been set in .env')
+
     configs['overlays'] = get_overlays()
     return configs
 
