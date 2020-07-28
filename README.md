@@ -39,7 +39,7 @@ This repo contains code used to run the Monash Human Power camera system. The `m
 
 ### Overlay development
 
-Any overlay (e.g. `overlay_top_strip.py`) may be run from the terminal with Python. You will need a computer with a webcam. The `--host` argument can be used to specify an MQTT broker.
+Any overlay (e.g. `overlay_top_strip.py`) may be run from the terminal with Python. If your computer does not have a webcam, you may replace the video feed with a static background specified with the `--bg` option. The `--host` argument can be used to specify an MQTT broker.
 
 ### Running on Raspberry Pi displays
 
