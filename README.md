@@ -12,7 +12,7 @@ Optionally, you may set the overlay to run when the physical switch on the displ
 To install dependencies, you will need [poetry](https://python-poetry.org/docs/#installation) installed on your computer.
 
 At this point in time, you'll also need Python 3.7 installed. Python 3.6 may also work (untested), but right now, the OpenCV version we are using does not have a build available for Python 3.8. [pyenv](https://github.com/pyenv/pyenv) may be used to quickly switch between python versions. To do this,
-- Install `pyenv`,
+- Install `pyenv` (easy installer [here](https://github.com/pyenv/pyenv-installer)),
 - Install Python 3.7 with `pyenv install 3.7.7`,
 - and finally, set it as your current python version with `pyenv local 3.7.7`.
 - When you're done, go back to your system version with `pyenv local --unset`.
