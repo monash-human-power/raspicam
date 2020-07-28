@@ -17,9 +17,9 @@ At this point in time, you'll also need Python 3.7 installed. Python 3.6 may als
 - and finally, set it as your current python version with `pyenv local 3.7.7`.
 - When you're done, go back to your system version with `pyenv local --unset`.
 
-You will likely need to install some dependencies for OpenCV to run, especially if you are on a Raspberry Pi. To do this, run (I hope I listed all of them...)
+You will likely need to install some dependencies for OpenCV to run, especially if you are on a Raspberry Pi. To do this, run
 ```bash
-sudo apt install -y libatlas-base-dev libswscale-dev libavformat-dev openexr libjasper1 libqtgui4 libqt4-test
+sudo apt install libgtk-3-0 libavformat58 libtiff5 libcairo2 libqt4-test libpango-1.0-0 libopenexr23 libavcodec58 libilmbase23 libatk1.0-0 libpangocairo-1.0-0 libwebp6 libqtgui4 libavutil56 libjasper1 libqtcore4 libcairo-gobject2 libswscale5 libgdk-pixbuf2.0-0
 ```
 
 With that done, `raspicam` dependencies may be installed using `poetry install --dev`. You may then start a shell with `poetry shell`.
