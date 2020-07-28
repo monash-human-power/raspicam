@@ -37,7 +37,7 @@ Overlays may be run from the terminal, as before. However, for use on the bike, 
 
 ## Tests
 
-Located under `CameraOverlays/tests`. Enter 'pytest' in the terminal to run all tests.
+Located under `tests`. Enter 'pytest' in the terminal to run all tests.
 
 ## Utilities
 `mqtt_message_test.py`: Script that sends messages to the camera overlay. First, run `mqtt_message_test.py` along with `mqtt_test.py` from the DAS repo, Finally run `overlay_all_stats.py`.
