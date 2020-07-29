@@ -1,31 +1,33 @@
+"""
+Exception handler for the Raspicam 
+
+Used alongside the 'with' magic Python word.
+"""
 from json import dumps
+from traceback import format_exc
 
 from config import read_configs
 from topics import Camera
 
 class CameraException:
-    def __init__(self, client:paho.mqtt.client.Client, camera:str, backend:str, bg_path:str):
+    def __init__(self, client, backend:str):
+        self.configs = read_configs()
         self.client = client
-        self.camera = camera
+        self.camera = self.configs["device"]
         self.backend = backend
-        self.bg_path = bg_path
 
     def __enter__(self):
         return self
 
     def __exit__(self, type, value, traceback):
-        message = {
-            "camera": self.camera,
-            "backend": self.backend,
-            "bg_path": self.bg_path,
-            "configs": read_configs(),
-            "traceback": traceback,
-            "message": value
-        }
+        if type is Exception: 
+            message = {
+                "camera": self.camera,
+                "backend": self.backend,
+                "configs": self.configs,
+                "traceback": format_exc(),
+                "message": str(value)
+            }
 
-        status_topic = f"{str(Camera.errors)}"
-        publish_result = self.client.publish(status_topic, dumps(message))
-
-if __name__ == '__main__':
-    with CameraErrorHandler():
-        raise Exception("Test error")
+            status_topic = f"{str(Camera.errors)}"
+            publish_result = self.client.publish(status_topic, dumps(message))
