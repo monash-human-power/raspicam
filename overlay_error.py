@@ -6,6 +6,7 @@ This overlay should not be used for any purpose other than testing. This script 
 not be triggered by Pytest.
 """
 from overlay_new import OverlayNew, Overlay
+from camera_error_handler import CameraException
 
 DEFAULT_TEST_BIKE = "v3"
 
@@ -23,10 +24,8 @@ class TestOverlay(OverlayNew):
         super().on_connect(client, userdata, flags, rc)
 
         # Forcing an exception to occur
-        try: 
+        with CameraException(self.client, self.backend_name):
             raise Exception("Test error")
-        except Exception as error_message:
-            self.publish_errors(error_message) 
 
 if __name__ == '__main__':
     args = Overlay.get_overlay_args("Test Overlay")
