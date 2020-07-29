@@ -5,12 +5,12 @@ Tests whether an error will be published onto the MQTT Camera Errors topic
 This overlay should not be used for any purpose other than testing. This script should
 not be triggered by Pytest.
 """
-from overlay_new import OverlayNew, Overlay
+from overlay_new import OverlayNew
 from camera_error_handler import CameraException
 
 DEFAULT_TEST_BIKE = "v3"
 
-class TestOverlay(OverlayNew):
+class OverlayErrorTest(OverlayNew):
     """
     Overlay made for testing MQTT error publishing by using OverlayNew's MQTT client
     
@@ -28,7 +28,7 @@ class TestOverlay(OverlayNew):
             raise Exception("Test error")
 
 if __name__ == '__main__':
-    args = Overlay.get_overlay_args("Test Overlay")
-    my_overlay = TestOverlay(args.bike, args.bg)
+    args = OverlayErrorTest.get_overlay_args("Test Overlay")
+    my_overlay = OverlayErrorTest(args.bike, args.bg)
     my_overlay.connect(ip=args.host)
     
