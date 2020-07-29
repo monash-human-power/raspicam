@@ -3,8 +3,8 @@ from json import dumps
 from config import read_configs
 from topics import Camera
 
-class CameraErrorHandler:
-    def __init__(self, client, camera, backend, bg_path):
+class CameraException:
+    def __init__(self, client:paho.mqtt.client.Client, camera:str, backend:str, bg_path:str):
         self.client = client
         self.camera = camera
         self.backend = backend

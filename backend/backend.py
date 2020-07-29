@@ -7,6 +7,7 @@ from traceback import format_exc
 from typing import Callable
 
 from canvas import Canvas
+from camera_error_handler import CameraException
 
 # A function which accepts a string and returns None
 PublishFunc = Callable[[str], None]
@@ -17,11 +18,11 @@ class Backend(ABC):
         Handles combining the video feed with overlays and displaying, and
         recording the video feed to a file. """
 
-    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_errors_func: PublishFunc):
+    def __init__(self, client:paho.mqtt.client.Client, width: int, height: int, publish_recording_status_func: PublishFunc):
+        self.client = client
         self.width = width
         self.height = height
         self.publish_recording_status_func = publish_recording_status_func
-        self.publish_camera_error = publish_errors_func
 
         self.recording = False
         self.recording_output_file = None
@@ -40,10 +41,8 @@ class Backend(ABC):
     def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         """ Catches any errors that occurs while the base canvas is being
             updated. """
-        try:
+        with CameraException(self.client, self.device, self.backend_name, self.bg_path):
             self._on_base_canvas_updated(base_canvas)
-        except Exception as error_message:
-            self.publish_camera_error(error_message)
 
     @abstractmethod
     def _on_base_canvas_updated(self, base_canvas: Canvas) -> None:
@@ -54,10 +53,8 @@ class Backend(ABC):
     def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         """ Catches any errors that occurs while either the data or message 
             canvas is being updated. """
-        try:
+        with CameraException(self.client, self.device, self.backend_name, self.bg_path):
             self._on_canvases_updated(data_canvas, message_canvas)
-        except Exception as error_message:
-            self.publish_camera_error(error_message)
 
     @abstractmethod
     def _on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
@@ -73,10 +70,8 @@ class Backend(ABC):
             depending on the backend, the display may be updated during this
             call. This operation may be blocking to ensure the display is
             updated at the correct framerate. """
-        try:
+        with CameraException(self.client, self.device, self.backend_name, self.bg_path):
             self._on_loop()
-        except Exception as error_message:
-            self.publish_camera_error(error_message)
 
         if time() > self.prev_recording_status_time + self.recording_status_interval:
             self.send_recording_status()

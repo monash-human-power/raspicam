@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 import argparse
 import time
-from json import dumps
-from traceback import format_exc
 from typing import Callable
 
 import paho.mqtt.client as mqtt
@@ -12,7 +10,8 @@ from config import read_configs
 from canvas import Canvas
 from data import DataFactory, Data
 from platform import machine
-from topics import DAShboard, Camera
+from topics import DAShboard
+from camera_error_handler import CameraException
 
 DEFAULT_BIKE = "V2"
 
@@ -64,7 +63,7 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status, self.publish_errors) as self.backend:
+		with BackendFactory.create(self.backend_name, self.client, self.width, self.height, self.publish_recording_status) as self.backend:
 
 			if self.backend_name == "opencv_static_image":
 				self.backend.set_background(self.bg_path)
@@ -127,11 +126,9 @@ class Overlay(ABC):
 		self.backend.on_base_canvas_updated(self.base_canvas)
 
 	def on_data_message(self, client, userdata, msg):
-		try:
+		with CameraException(self.client, self.device, self.backend_name, self.bg_path):
 			payload = msg.payload.decode("utf-8")
 			self.data.load_data(msg.topic, payload)
-		except Exception as error_message:
-			self.publish_errors(error_message)
 
 	def on_recording_message(self, client, userdata, msg):
 		if DAShboard.recording_start.matches(msg.topic):
@@ -151,10 +148,8 @@ class Overlay(ABC):
 	def update_data_layer(self):
 		""" Catches any errors that occurs while the data layer is being
 			updated. """
-		try:
+		with CameraException(self.client, self.device, self.backend_name, self.bg_path):
 			self._update_data_layer()
-		except Exception as error_message:
-			self.publish_errors(error_message)
 
 	@abstractmethod
 	def _update_data_layer(self):
