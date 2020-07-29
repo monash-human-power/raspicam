@@ -4,6 +4,7 @@ import json
 import random
 import fnmatch
 from dotenv import load_dotenv
+from warnings import warn
 
 load_dotenv()
 CONFIG_FILE = 'configs.json'
@@ -50,11 +51,11 @@ def read_configs(directory=CURRENT_DIRECTORY):
 
     configs['device'] = os.getenv('MHP_CAMERA')
     if not configs['device']:
-        print('WARNING: MHP_CAMERA has not been set in .env')
+        warn('MHP_CAMERA has not been set in .env')
 
     configs['bike'] = os.getenv('MHP_BIKE')
     if not configs['bike']:
-        print('WARNING: MHP_BIKE has not been set in .env')
+        warn('MHP_BIKE has not been set in .env')
 
     configs['overlays'] = get_overlays()
     return configs
