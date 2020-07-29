@@ -126,7 +126,7 @@ class Overlay(ABC):
 		self.backend.on_base_canvas_updated(self.base_canvas)
 
 	def on_data_message(self, client, userdata, msg):
-		with CameraException(self.client, self.device, self.backend_name, self.bg_path):
+		with CameraException(self.client, self.backend_name):
 			payload = msg.payload.decode("utf-8")
 			self.data.load_data(msg.topic, payload)
 
@@ -148,7 +148,7 @@ class Overlay(ABC):
 	def update_data_layer(self):
 		""" Catches any errors that occurs while the data layer is being
 			updated. """
-		with CameraException(self.client, self.device, self.backend_name, self.bg_path):
+		with CameraException(self.client, self.backend_name):
 			self._update_data_layer()
 
 	@abstractmethod

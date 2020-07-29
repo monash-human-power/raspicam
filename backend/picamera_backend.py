@@ -35,7 +35,7 @@ class PiCameraBackend(Backend):
 
         if not ON_PI:
             raise RuntimeError("`picamera` library unavailable - please run on Pi or install library")
-
+        self.backend_name = "picamera"
         self.pi_camera = PiCamera(resolution=(self.width, self.height))
 
         self.prev_overlays: Dict[PiCameraOverlayLayer, self.pi_camera.PiOverlayRenderer] = {}

@@ -41,7 +41,7 @@ class Backend(ABC):
     def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         """ Catches any errors that occurs while the base canvas is being
             updated. """
-        with CameraException(self.client, self.device, self.backend_name, self.bg_path):
+        with CameraException(self.client, self.backend_name):
             self._on_base_canvas_updated(base_canvas)
 
     @abstractmethod
@@ -53,7 +53,7 @@ class Backend(ABC):
     def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         """ Catches any errors that occurs while either the data or message 
             canvas is being updated. """
-        with CameraException(self.client, self.device, self.backend_name, self.bg_path):
+        with CameraException(self.client, self.backend_name):
             self._on_canvases_updated(data_canvas, message_canvas)
 
     @abstractmethod
@@ -70,7 +70,7 @@ class Backend(ABC):
             depending on the backend, the display may be updated during this
             call. This operation may be blocking to ensure the display is
             updated at the correct framerate. """
-        with CameraException(self.client, self.device, self.backend_name, self.bg_path):
+        with CameraException(self.client, self.backend_name):
             self._on_loop()
 
         if time() > self.prev_recording_status_time + self.recording_status_interval:

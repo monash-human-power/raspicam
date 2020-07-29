@@ -11,7 +11,7 @@ class OpenCVBackend(Backend):
 
     def __init__(self, client, width: int, height: int, publish_recording_status_func: PublishFunc):
         super().__init__(client, width, height, publish_recording_status_func)
-
+        self.backend_name = "opencv"
         self.webcam = None
 
         framerate = 60

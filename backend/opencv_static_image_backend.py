@@ -10,7 +10,7 @@ class OpenCVStaticImageBackend(Backend):
 
     def __init__(self, client, width: int, height: int, publish_recording_status_func: PublishFunc):
         super().__init__(client, width, height, publish_recording_status_func)
-
+        self.backend_name = "opencv_static_image"
         self.background = np.zeros((self.height, self.width, 4), np.uint8)
 
         framerate = 60
