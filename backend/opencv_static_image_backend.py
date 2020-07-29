@@ -8,8 +8,8 @@ class OpenCVStaticImageBackend(Backend):
     """ Displays a static, local image in place of a video feed.
         Uses the OpenCV (`cv2`) library. """
 
-    def __init__(self, client:paho.mqtt.client.Client, width: int, height: int, publish_recording_status_func: PublishFunc):
-        super().__init__(client, width, height, publish_recording_status_func, publish_errors_func)
+    def __init__(self, client, width: int, height: int, publish_recording_status_func: PublishFunc):
+        super().__init__(client, width, height, publish_recording_status_func)
 
         self.background = np.zeros((self.height, self.width, 4), np.uint8)
 

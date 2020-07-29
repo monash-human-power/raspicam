@@ -18,7 +18,7 @@ class Backend(ABC):
         Handles combining the video feed with overlays and displaying, and
         recording the video feed to a file. """
 
-    def __init__(self, client:paho.mqtt.client.Client, width: int, height: int, publish_recording_status_func: PublishFunc):
+    def __init__(self, client, width: int, height: int, publish_recording_status_func: PublishFunc):
         self.client = client
         self.width = width
         self.height = height
