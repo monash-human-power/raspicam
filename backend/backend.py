@@ -39,7 +39,10 @@ class Backend(ABC):
             video. """
 
     def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
-        """ Catches any errors that occurs while the base canvas is being
+        """ Updates the base layer of the overlay whenever the canvas is updated,
+            which is shown on the camera.
+
+            Catches any errors that occurs while the base canvas is being
             updated. """
         with CameraException(self.client, self.backend_name):
             self._on_base_canvas_updated(base_canvas)
@@ -51,7 +54,10 @@ class Backend(ABC):
         raise NotImplementedError("No instructions for base layer found. ")
 
     def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
-        """ Catches any errors that occurs while either the data or message 
+        """ Updates the data and message layers of the overlay whenever the canvas
+            is updated, which is shown on the camera. 
+            
+            Catches any errors that occurs while either the data or message 
             canvas is being updated. """
         with CameraException(self.client, self.backend_name):
             self._on_canvases_updated(data_canvas, message_canvas)

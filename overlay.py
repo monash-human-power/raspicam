@@ -146,7 +146,9 @@ class Overlay(ABC):
 		pass
 
 	def update_data_layer(self):
-		""" Catches any errors that occurs while the data layer is being
+		""" Updates the data layer of the overlay at a regular interval.
+
+			Catches any errors that occurs while the data layer is being
 			updated. """
 		with CameraException(self.client, self.backend_name):
 			self._update_data_layer()
