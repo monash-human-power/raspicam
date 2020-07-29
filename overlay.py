@@ -56,27 +56,6 @@ class Overlay(ABC):
 
 		self.start_time = time.time()
 
-	def publish_errors(self, error_message: Exception, wait_for_publish: bool = False) -> None:
-		""" Sends camera error messages to the MQTT errors topic. Setting the 
-			wait_for_publish argument to True will block the broker until the 
-			message is published. """
-		message = {
-			"camera": self.device,
-			"backend": self.backend_name,
-			"bg_path": self.bg_path, 
-			"configs": read_configs(),
-			"traceback": format_exc(),
-			"message": str(error_message)
-		}
-
-		# Publishing the message to the topic
-		status_topic = f"{str(Camera.errors)}"
-		publish_result = self.client.publish(status_topic, dumps(message))
-		if wait_for_publish:
-			publish_result.wait_for_publish()
-		print(format_exc())
-		# TODO: Write logger to replace format_exc()
-
 	def publish_recording_status(self, message: str) -> None:
 		""" Sends a message on the current device's recording status topic. """
 		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
