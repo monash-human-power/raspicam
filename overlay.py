@@ -63,26 +63,27 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		with BackendFactory.create(self.backend_name, self.client, self.width, self.height, self.publish_recording_status) as self.backend:
+		with CameraException(self.client, self.backend_name):
+			with BackendFactory.create(self.backend_name, self.client, self.width, self.height, self.publish_recording_status) as self.backend:
 
-			if self.backend_name == "opencv_static_image":
-				self.backend.set_background(self.bg_path)
+				if self.backend_name == "opencv_static_image":
+					self.backend.set_background(self.bg_path)
 
-			# mqtt loop (does not block)
-			self.client.loop_start()
+				# mqtt loop (does not block)
+				self.client.loop_start()
 
-			prev_data_update = 0 # time that we last updated the data layer
-			while True:
+				prev_data_update = 0 # time that we last updated the data layer
+				while True:
 
-				# Update the data overlay only if we have waited enough time
-				if time.time() > prev_data_update + self.data_update_interval:
-					prev_data_update = time.time()
+					# Update the data overlay only if we have waited enough time
+					if time.time() > prev_data_update + self.data_update_interval:
+						prev_data_update = time.time()
 
-					# Update the data overlay with latest information
-					self.update_data_layer()
-					self.backend.on_canvases_updated(self.data_canvas, self.message_canvas)
+						# Update the data overlay with latest information
+						self.update_data_layer()
+						self.backend.on_canvases_updated(self.data_canvas, self.message_canvas)
 
-				self.backend.on_loop()
+					self.backend.on_loop()
 
 	def set_callback_for_topic_list(self, topics, callback):
 		""" Sets the on_message callback for every topic in topics to the
