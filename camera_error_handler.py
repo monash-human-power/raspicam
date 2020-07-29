@@ -2,6 +2,7 @@
 Exception handler for the Raspicam 
 
 Used alongside the 'with' magic Python word.
+eg. with CameraException(self.client, self.backend_name)
 """
 from json import dumps
 from traceback import format_exc
