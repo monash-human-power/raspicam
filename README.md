@@ -47,7 +47,7 @@ Any overlay (e.g. `overlay_top_strip.py`) may be run from the terminal with Pyth
 
 ### Running on Raspberry Pi displays
 
-If you are trying run an overlay over VNC, you will need to enable direct capture mode on the Pi's VNC server. Right click on the VNC logo in the Pi's system tray, click Options -> Troubleshooting -> Enable direct capture mode -> OK.
+If you are trying run an overlay over VNC, you will need to enable direct capture mode on the Pi's VNC server. Right click on the VNC logo in the Pi's system tray, click `Options -> Troubleshooting -> Enable direct capture mode -> OK`.
 
 Overlays may be run from the terminal, as before. However, for use on the bike, you should have `switch.py` and `orchestrator.py` running on startup. Currently, this is run automatically by `/etc/rc.local` on the display Pis, but they may also be run manually.
 
