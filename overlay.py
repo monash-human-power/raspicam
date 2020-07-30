@@ -52,7 +52,7 @@ class Overlay(ABC):
 
 		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
 		self.set_callback_for_topic_list([str(DAShboard.recording)], self.on_recording_message)
-		self.exception_handler = CameraErrorHandler(self.client, self.backend_name)
+		self.exception_handler = CameraErrorHandler(self.client, self.device, self.backend_name, self.bg_path, configs)
 
 		self.start_time = time.time()
 

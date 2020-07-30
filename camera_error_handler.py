@@ -12,11 +12,12 @@ from topics import Camera
 
 class CameraErrorHandler:
 
-    def __init__(self, client, backend:str):
-        self.configs = read_configs()
+    def __init__(self, client, camera:str, backend:str, bg_path:str, configs:dict):
         self.client = client
-        self.camera = self.configs["device"]
+        self.camera = camera
         self.backend = backend
+        self.bg_path = bg_path
+        self.configs = configs
 
     def __enter__(self):
         return self
@@ -26,6 +27,7 @@ class CameraErrorHandler:
             message = {
                 "camera": self.camera,
                 "backend": self.backend,
+                "bg_path": self.bg_path,
                 "configs": self.configs,
                 "traceback": format_exc(),
                 "message": str(exc_value)
