@@ -1,9 +1,3 @@
-"""
-Exception handler for the Raspicam
-
-Used alongside the 'with' magic Python word.
-eg. with CameraException(self.client, self.backend_name)
-"""
 from json import dumps
 from traceback import format_exc
 
@@ -11,6 +5,12 @@ from config import read_configs
 from topics import Camera
 
 class CameraErrorHandler:
+    """
+    Exception handler for the Raspicam
+
+    Used alongside the 'with' magic Python word.
+    eg. with CameraException(client, camera, backend_name, bg_path, configs)
+    """
 
     def __init__(self, client, camera:str, backend:str, bg_path:str, configs:dict):
         self.client = client
