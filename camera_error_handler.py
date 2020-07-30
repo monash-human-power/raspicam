@@ -1,5 +1,5 @@
 """
-Exception handler for the Raspicam 
+Exception handler for the Raspicam
 
 Used alongside the 'with' magic Python word.
 eg. with CameraException(self.client, self.backend_name)
@@ -11,6 +11,7 @@ from config import read_configs
 from topics import Camera
 
 class CameraException:
+
     def __init__(self, client, backend:str):
         self.configs = read_configs()
         self.client = client
@@ -21,7 +22,7 @@ class CameraException:
         return self
 
     def __exit__(self, type, value, traceback):
-        if type is Exception: 
+        if type is Exception:
             message = {
                 "camera": self.camera,
                 "backend": self.backend,
