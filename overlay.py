@@ -124,7 +124,8 @@ class Overlay(ABC):
 	def _on_connect(self, client, userdata, flags, rc):
 		self.subscribe_to_topic_list(self.data.get_topics())
 		self.client.subscribe(str(DAShboard.recording))
-		self.on_connect(client, userdata, flags, rc)
+		with self.exception_handler:
+			self.on_connect(client, userdata, flags, rc)
 		self.backend.on_base_canvas_updated(self.base_canvas)
 
 	def on_data_message(self, client, userdata, msg):
