@@ -1,21 +1,18 @@
-"""
-Tests whether an error will be published onto the MQTT Camera Errors topic
-'/v3/camera/errors'
-
-This overlay should not be used for any purpose other than testing. This script should
-not be triggered by Pytest.
-"""
 from overlay_new import OverlayNew
 from camera_error_handler import CameraErrorHandler
 
 DEFAULT_TEST_BIKE = "v3"
 
 class OverlayErrorTest(OverlayNew):
-    """
-    Overlay made for testing MQTT error publishing by using OverlayNew's MQTT client
+    '''
+    Overlay made for testing MQTT error publishing by inheriting OverlayNew
     
+    Tests whether an error will be published onto the MQTT Camera Errors topic 
+    "/v3/camera/errors". This overlay should not be used for any purpose other than 
+    error testing. This script should not be triggered by Pytest.
+
     To exit the script, press CTRL+C.
-    """
+    '''
 
     def __init__(self, bike=DEFAULT_TEST_BIKE, bg=None):
         super().__init__(bike, bg)
