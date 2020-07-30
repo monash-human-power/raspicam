@@ -24,7 +24,7 @@ class OverlayErrorTest(OverlayNew):
         super().on_connect(client, userdata, flags, rc)
 
         # Forcing an exception to occur
-        with CameraException(self.client, self.backend_name):
+        with self.exception_handler:
             raise Exception("Test error")
 
 if __name__ == '__main__':
