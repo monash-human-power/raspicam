@@ -10,7 +10,7 @@ from traceback import format_exc
 from config import read_configs
 from topics import Camera
 
-class CameraException:
+class CameraErrorHandler:
 
     def __init__(self, client, backend:str):
         self.configs = read_configs()

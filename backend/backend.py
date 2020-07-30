@@ -7,7 +7,7 @@ from traceback import format_exc
 from typing import Callable
 
 from canvas import Canvas
-from camera_error_handler import CameraException
+from camera_error_handler import CameraErrorHandler
 
 # A function which accepts a string and returns None
 PublishFunc = Callable[[str], None]

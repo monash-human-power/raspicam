@@ -6,7 +6,7 @@ This overlay should not be used for any purpose other than testing. This script 
 not be triggered by Pytest.
 """
 from overlay_new import OverlayNew
-from camera_error_handler import CameraException
+from camera_error_handler import CameraErrorHandler
 
 DEFAULT_TEST_BIKE = "v3"
 

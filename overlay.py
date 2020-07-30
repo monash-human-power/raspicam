@@ -11,7 +11,7 @@ from canvas import Canvas
 from data import DataFactory, Data
 from platform import machine
 from topics import DAShboard
-from camera_error_handler import CameraException
+from camera_error_handler import CameraErrorHandler
 
 DEFAULT_BIKE = "V2"
 
