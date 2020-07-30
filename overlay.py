@@ -52,6 +52,7 @@ class Overlay(ABC):
 
 		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
 		self.set_callback_for_topic_list([str(DAShboard.recording)], self.on_recording_message)
+		self.exception_handler = CameraErrorHandler(self.client, self.backend_name)
 
 		self.start_time = time.time()
 
@@ -63,8 +64,8 @@ class Overlay(ABC):
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
-		with CameraException(self.client, self.backend_name):
-			with BackendFactory.create(self.backend_name, self.client, self.width, self.height, self.publish_recording_status) as self.backend:
+		with self.exception_handler:
+			with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status, self.exception_handler) as self.backend:
 
 				if self.backend_name == "opencv_static_image":
 					self.backend.set_background(self.bg_path)
@@ -127,7 +128,7 @@ class Overlay(ABC):
 		self.backend.on_base_canvas_updated(self.base_canvas)
 
 	def on_data_message(self, client, userdata, msg):
-		with CameraException(self.client, self.backend_name):
+		with self.exception_handler:
 			payload = msg.payload.decode("utf-8")
 			self.data.load_data(msg.topic, payload)
 
@@ -151,7 +152,7 @@ class Overlay(ABC):
 
 			Catches any errors that occurs while the data layer is being
 			updated. """
-		with CameraException(self.client, self.backend_name):
+		with self.exception_handler:
 			self._update_data_layer()
 
 	@abstractmethod

@@ -8,9 +8,8 @@ class OpenCVStaticImageBackend(Backend):
     """ Displays a static, local image in place of a video feed.
         Uses the OpenCV (`cv2`) library. """
 
-    def __init__(self, client, width: int, height: int, publish_recording_status_func: PublishFunc):
-        super().__init__(client, width, height, publish_recording_status_func)
-        self.backend_name = "opencv_static_image"
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, exception_handler: PublishFunc):
+        super().__init__(width, height, publish_recording_status_func, exception_handler)
         self.background = np.zeros((self.height, self.width, 4), np.uint8)
 
         framerate = 60

@@ -9,9 +9,8 @@ class OpenCVBackend(Backend):
         This is intended for use with laptops with webcams, not on the
         Raspberry Pi. """
 
-    def __init__(self, client, width: int, height: int, publish_recording_status_func: PublishFunc):
-        super().__init__(client, width, height, publish_recording_status_func)
-        self.backend_name = "opencv"
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, exception_handler: PublishFunc):
+        super().__init__(width, height, publish_recording_status_func, exception_handler)
         self.webcam = None
 
         framerate = 60

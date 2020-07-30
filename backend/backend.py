@@ -7,7 +7,6 @@ from traceback import format_exc
 from typing import Callable
 
 from canvas import Canvas
-from camera_error_handler import CameraErrorHandler
 
 # A function which accepts a string and returns None
 PublishFunc = Callable[[str], None]
@@ -18,11 +17,11 @@ class Backend(ABC):
         Handles combining the video feed with overlays and displaying, and
         recording the video feed to a file. """
 
-    def __init__(self, client, width: int, height: int, publish_recording_status_func: PublishFunc):
-        self.client = client
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, exception_handler: PublishFunc):
         self.width = width
         self.height = height
         self.publish_recording_status_func = publish_recording_status_func
+        self.exception_handler = exception_handler
 
         self.recording = False
         self.recording_output_file = None
@@ -44,7 +43,7 @@ class Backend(ABC):
 
             Catches any errors that occurs while the base canvas is being
             updated. """
-        with CameraException(self.client, self.backend_name):
+        with self.exception_handler:
             self._on_base_canvas_updated(base_canvas)
 
     @abstractmethod
@@ -58,7 +57,7 @@ class Backend(ABC):
             
             Catches any errors that occurs while either the data or message 
             canvas is being updated. """
-        with CameraException(self.client, self.backend_name):
+        with self.exception_handler:
             self._on_canvases_updated(data_canvas, message_canvas)
 
     @abstractmethod
@@ -74,7 +73,7 @@ class Backend(ABC):
             depending on the backend, the display may be updated during this
             call. This operation may be blocking to ensure the display is
             updated at the correct framerate. """
-        with CameraException(self.client, self.backend_name):
+        with self.exception_handler:
             self._on_loop()
 
         if time() > self.prev_recording_status_time + self.recording_status_interval:
