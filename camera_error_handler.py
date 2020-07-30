@@ -1,7 +1,6 @@
 from json import dumps
 from traceback import format_exc
 
-from config import read_configs
 from topics import Camera
 
 class CameraErrorHandler:

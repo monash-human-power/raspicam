@@ -1,5 +1,4 @@
 from overlay_new import OverlayNew
-from camera_error_handler import CameraErrorHandler
 
 DEFAULT_TEST_BIKE = "v3"
 
