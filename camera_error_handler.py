@@ -21,15 +21,15 @@ class CameraErrorHandler:
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
-        if type is Exception:
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if exc_type is Exception:
             message = {
                 "camera": self.camera,
                 "backend": self.backend,
                 "configs": self.configs,
                 "traceback": format_exc(),
-                "message": str(value)
+                "message": str(exc_value)
             }
 
-            status_topic = f"{str(Camera.errors)}"
-            publish_result = self.client.publish(status_topic, dumps(message))
+            status_topic = str(Camera.errors)
+            self.client.publish(status_topic, dumps(message))
