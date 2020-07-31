@@ -17,9 +17,9 @@ class OverlayErrorTest(OverlayNew):
         super().__init__(bike, bg)
     
     def on_connect(self, client, userdata, flags, rc):
+        ''' Raises an exception which should be caught by _on_connect'''
         # Forcing an exception to occur
-        with self.exception_handler:
-            raise Exception("Test error")
+        raise Exception("Test error")
 
 if __name__ == '__main__':
     args = OverlayErrorTest.get_overlay_args("Test Overlay")
