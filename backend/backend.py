@@ -53,9 +53,9 @@ class Backend(ABC):
 
     def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         """ Updates the data and message layers of the overlay whenever the canvas
-            is updated, which is shown on the camera. 
-            
-            Catches any errors that occurs while either the data or message 
+            is updated, which is shown on the camera.
+
+            Catches any errors that occurs while either the data or message
             canvas is being updated. """
         with self.exception_handler:
             self._on_canvases_updated(data_canvas, message_canvas)

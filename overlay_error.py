@@ -5,9 +5,9 @@ DEFAULT_TEST_BIKE = "v3"
 class OverlayErrorTest(OverlayNew):
     '''
     Overlay made for testing MQTT error publishing by inheriting OverlayNew
-    
-    Tests whether an error will be published onto the MQTT Camera Errors topic 
-    "/v3/camera/errors". This overlay should not be used for any purpose other than 
+
+    Tests whether an error will be published onto the MQTT Camera Errors topic
+    "/v3/camera/errors". This overlay should not be used for any purpose other than
     error testing. This script should not be triggered by Pytest.
 
     To exit the script, press CTRL+C.
@@ -15,7 +15,7 @@ class OverlayErrorTest(OverlayNew):
 
     def __init__(self, bike=DEFAULT_TEST_BIKE, bg=None):
         super().__init__(bike, bg)
-    
+
     def on_connect(self, client, userdata, flags, rc):
         ''' Raises an exception which should be caught by _on_connect. '''
         # Forcing an exception to occur

@@ -17,7 +17,7 @@ DEFAULT_BIKE = "V2"
 
 class Overlay(ABC):
 
-	def __init__(self, bike, width=1280, height=740, bg: str=None):
+	def __init__(self, bike, width=1280, height=740, bg:str=None):
 
 		self.width = width
 		self.height = height
@@ -52,7 +52,8 @@ class Overlay(ABC):
 
 		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
 		self.set_callback_for_topic_list([str(DAShboard.recording)], self.on_recording_message)
-		self.exception_handler = CameraErrorHandler(self.client, self.device, self.backend_name, self.bg_path, configs)
+		self.exception_handler = CameraErrorHandler(self.client, self.device, self.backend_name, 
+													self.bg_path, configs)
 
 		self.start_time = time.time()
 
@@ -65,7 +66,8 @@ class Overlay(ABC):
 		self.client.connect_async(ip, port, 60)
 
 		with self.exception_handler:
-			with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status, self.exception_handler) as self.backend:
+			with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status,
+										self.exception_handler) as self.backend:
 
 				if self.backend_name == "opencv_static_image":
 					self.backend.set_background(self.bg_path)

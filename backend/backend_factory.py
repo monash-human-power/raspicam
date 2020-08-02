@@ -1,7 +1,7 @@
 import backend
 
 class BackendFactory:
-    
+
     @staticmethod
     def create(backend_name: str, width: int, height: int, publish_recording_status_func, exception_handler) -> backend.Backend:
         backend_name = backend_name.lower()
