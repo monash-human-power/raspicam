@@ -7,7 +7,7 @@ class CameraErrorHandler:
     """
     Exception handler for the Raspicam
 
-    Used alongside the 'with' magic Python word.
+    Use alongside the 'with' magic Python word.
     eg. with CameraException(client, camera, backend_name, bg_path, configs)
     """
 
@@ -22,6 +22,7 @@ class CameraErrorHandler:
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
+        """ Handle any exception thrown, if an error occured. """
         if exc_type is Exception:
             message = {
                 "camera": self.camera,

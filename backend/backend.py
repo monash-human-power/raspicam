@@ -14,7 +14,7 @@ PublishFunc = Callable[[str], None]
 class Backend(ABC):
     """ Backend for getting and processing video feed.
 
-        Handles combining the video feed with overlays and displaying, and
+        Handle combining the video feed with overlays and displaying, and
         recording the video feed to a file. """
 
     def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, exception_handler: PublishFunc):
@@ -34,11 +34,11 @@ class Backend(ABC):
 
     @abstractmethod
     def start_video(self) -> None:
-        """ Starts the necessary processes to begin displaying camera feed
+        """ Start the necessary processes to begin displaying camera feed
             video. """
 
     def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
-        """ Updates the base layer of the overlay whenever the canvas is updated,
+        """ Update the base layer of the overlay whenever the canvas is updated,
             which is shown on the camera.
 
             Catches any errors that occurs while the base canvas is being
@@ -48,11 +48,11 @@ class Backend(ABC):
 
     @abstractmethod
     def _on_base_canvas_updated(self, base_canvas: Canvas) -> None:
-        """ Updates the base canvas which is drawn on the video. Should be
+        """ Update the base canvas which is drawn on the video. Should be
             called whenever the canvas is updated. """
 
     def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
-        """ Updates the data and message layers of the overlay whenever the canvas
+        """ Update the data and message layers of the overlay whenever the canvas
             is updated, which is shown on the camera.
 
             Catches any errors that occurs while either the data or message
@@ -62,11 +62,11 @@ class Backend(ABC):
 
     @abstractmethod
     def _on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
-        """ Updates the data and message canvases which are drawn on the
+        """ Update the data and message canvases which are drawn on the
             video. Should be called whenever the canvases are updated. """
 
     def on_loop(self) -> None:
-        """ Executes all operations that should run every iteration of the
+        """ Execute all operations that should run every iteration of the
             Overlay loop.
 
             This includes sending the recording status (if it is due) and
@@ -88,11 +88,11 @@ class Backend(ABC):
 
     @abstractmethod
     def stop_video(self) -> None:
-        """ Stops displaying the video feed and releases any resources
+        """ Stop displaying the video feed and releases any resources
             captured. """
 
     def start_recording(self) -> None:
-        """ Starts an h264 recording with the first available name located in
+        """ Start an h264 recording with the first available name located in
             the recordings folder.
 
             Should be paired with a call to stop_recording. Does nothing if
@@ -124,13 +124,13 @@ class Backend(ABC):
             self.send_recording_status()
 
     def _start_recording(self) -> None:
-        """ Starts recording to the file at self.recording_output_file. Should
+        """ Start recording to the file at self.recording_output_file. Should
             not be called outside of the Backend class. """
 
         raise NotImplementedError(f"Recording is not supported with {type(self).__name__}")
 
     def stop_recording(self) -> None:
-        """ Stops and saves any current recording at the location found in
+        """ Stop and save any current recording at the location found in
             self.recording_output_file.
 
             Should be paired with a call to start_recording. No action is taken
@@ -145,7 +145,7 @@ class Backend(ABC):
             self.send_recording_status()
 
     def _stop_recording(self) -> None:
-        """ Stops recording and saves to the file at self.recording_output_file.
+        """ Stop recording and save to the file at self.recording_output_file.
             Should not be called outside of the Backend class. """
 
         raise NotImplementedError(f"Recording is not supported with {type(self).__name__}")
@@ -155,7 +155,7 @@ class Backend(ABC):
             occured, throw exceptions. """
 
     def send_recording_status(self) -> None:
-        """ Checks if any errors have occured with recording, and sends the
+        """ Check if any errors have occured with recording, and sends the
             current recording status via MQTT """
 
         message = {}
@@ -179,7 +179,7 @@ class Backend(ABC):
         self.prev_recording_status_time = time()
 
     def send_recording_error(self) -> None:
-        """ Sends the most recent exception to the recording status MQTT topic """
+        """ Send the most recent exception to the recording status MQTT topic """
 
         _, _, free_disk_space = disk_usage(__file__)
         message = {

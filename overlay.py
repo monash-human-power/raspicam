@@ -58,7 +58,7 @@ class Overlay(ABC):
 		self.start_time = time.time()
 
 	def publish_recording_status(self, message: str) -> None:
-		""" Sends a message on the current device's recording status topic. """
+		""" Send a message on the current device's recording status topic. """
 		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
 		self.client.publish(status_topic, message, retain=True)
 
@@ -89,13 +89,13 @@ class Overlay(ABC):
 					self.backend.on_loop()
 
 	def set_callback_for_topic_list(self, topics, callback):
-		""" Sets the on_message callback for every topic in topics to the
+		""" Set the on_message callback for every topic in topics to the
 			provided callback """
 		for topic in topics:
 			self.client.message_callback_add(topic, callback)
 
 	def subscribe_to_topic_list(self, topics):
-		""" Constructs a list in the format [("topic1", qos1), ("topic2", qos2), ...]
+		""" Construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
 			see https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe """
 		topic_values = list(map(str, topics))
 		at_most_once_qos = [0]*len(topics)
@@ -104,14 +104,14 @@ class Overlay(ABC):
 		self.client.subscribe(topics_qos)
 
 	def get_data_func(self, data_key: str, decimals=0, scalar=1) -> Callable[[Data], str]:
-		""" Returns a lambda function which, when called, returns the current
+		""" Return a lambda function which, when called, returns the current
 			value for the data field `data_key`, multiplied by `scalar`, and
 			formatted to `decimals` decimal places. """
 		format_str = f"{{:.{decimals}f}}"
 		return lambda data: format_str.format(data[data_key] * scalar)
 
 	def time_func(self, _: Data) -> str:
-		""" Returns the time since the overlay was initialised formatted mm:ss """
+		""" Return the time since the overlay was initialised formatted mm:ss """
 		_, rem = divmod(time.time() - self.start_time, 3600)
 		minutes, seconds = divmod(rem, 60)
 		return "{:0>2}:{:0>2}".format(int(minutes), int(seconds))
@@ -151,7 +151,7 @@ class Overlay(ABC):
 		pass
 
 	def update_data_layer(self):
-		""" Updates the data layer of the overlay at a regular interval.
+		""" Update the data layer of the overlay at a regular interval.
 
 			Catches any errors that occurs while the data layer is being
 			updated. """
