@@ -9,9 +9,8 @@ class OpenCVBackend(Backend):
         This is intended for use with laptops with webcams, not on the
         Raspberry Pi. """
 
-    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc):
-        super().__init__(width, height, publish_recording_status_func)
-
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, exception_handler: PublishFunc):
+        super().__init__(width, height, publish_recording_status_func, exception_handler)
         self.webcam = None
 
         framerate = 60
@@ -27,10 +26,10 @@ class OpenCVBackend(Backend):
         default_camera_index = 0
         self.webcam = cv2.VideoCapture(default_camera_index)
 
-    def on_base_canvas_updated(self, base_canvas: Canvas) -> None:
+    def _on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         self.base_canvas = base_canvas
 
-    def on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
+    def _on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
         self.data_canvas = data_canvas
         self.message_canvas = message_canvas
 

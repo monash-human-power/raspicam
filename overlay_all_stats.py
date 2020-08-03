@@ -25,7 +25,7 @@ class OverlayAllStats(Overlay):
 		self.base_canvas.draw_text("REC:", (speed_x, self.height - self.speed_height * 1), size=2.5)
 		self.base_canvas.draw_text("MAX:", (speed_x, self.height - self.speed_height * 2), size=2.5)
 
-	def update_data_layer(self):
+	def _update_data_layer(self):
 		self.data_canvas.clear()
 		self.message_canvas.clear()
 
