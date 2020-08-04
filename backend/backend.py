@@ -172,7 +172,7 @@ class Backend(ABC):
                 return
         else:
             message["status"] = "off"
-        _, _, free_disk_space = disk_usage(Path(__file__).parents[0])
+        _, _, free_disk_space = disk_usage(Path(__file__).parent)
         message["diskSpaceRemaining"] = free_disk_space
 
         self.publish_recording_status_func(dumps(message))
@@ -181,7 +181,7 @@ class Backend(ABC):
     def send_recording_error(self) -> None:
         """ Send the most recent exception to the recording status MQTT topic """
 
-        _, _, free_disk_space = disk_usage(Path(__file__).parents[0])
+        _, _, free_disk_space = disk_usage(Path(__file__).parent)
         message = {
             "status": "error",
             "error": format_exc(),
