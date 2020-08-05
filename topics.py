@@ -38,6 +38,7 @@ class Camera(Topic):
     set_overlay = 'camera/set_overlay'
     push_overlays = 'camera/push_overlays'
     errors = '/v3/camera/errors'
+    online_root = '/v3/camera/online'
 
 class DAShboard(Topic):
     """DAShboard MQTT Topics"""

@@ -8,8 +8,8 @@ class OpenCVStaticImageBackend(Backend):
     """ Displays a static, local image in place of a video feed.
         Uses the OpenCV (`cv2`) library. """
 
-    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, exception_handler: PublishFunc):
-        super().__init__(width, height, publish_recording_status_func, exception_handler)
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_camera_is_online_func: PublishFunc, exception_handler: PublishFunc):
+        super().__init__(width, height, publish_recording_status_func, publish_camera_is_online_func, exception_handler)
         self.background = np.zeros((self.height, self.width, 4), np.uint8)
 
         framerate = 60
@@ -19,6 +19,10 @@ class OpenCVStaticImageBackend(Backend):
         self.base_canvas = Canvas(self.width, self.height)
         self.data_canvas = Canvas(self.width, self.height)
         self.message_canvas = Canvas(self.width, self.height)
+
+    def _is_camera_on(self):
+        # Static image always has something displayed
+        return True
 
     def start_video(self) -> None:
         # Nothing to do

@@ -10,7 +10,7 @@ from config import read_configs
 from canvas import Canvas
 from data import DataFactory, Data
 from platform import machine
-from topics import DAShboard
+from topics import DAShboard, Camera
 from camera_error_handler import CameraErrorHandler
 
 DEFAULT_BIKE = "V2"
@@ -52,7 +52,7 @@ class Overlay(ABC):
 
 		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
 		self.set_callback_for_topic_list([str(DAShboard.recording)], self.on_recording_message)
-		self.exception_handler = CameraErrorHandler(self.client, self.device, self.backend_name, 
+		self.exception_handler = CameraErrorHandler(self.client, self.device, self.backend_name,
 													self.bg_path, configs)
 
 		self.start_time = time.time()
@@ -62,12 +62,24 @@ class Overlay(ABC):
 		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
 		self.client.publish(status_topic, message, retain=True)
 
+	def publish_camera_is_online(self, message: str) -> None:
+		""" Send a message on the current device's online topic
+		"""
+		status_topic = f"{str(Camera.online_root)}/{self.device}"
+		self.client.publish(status_topic, message, retain=True)
+
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
 
 		with self.exception_handler:
-			with BackendFactory.create(self.backend_name, self.width, self.height, self.publish_recording_status,
-										self.exception_handler) as self.backend:
+			with BackendFactory.create(
+				self.backend_name,
+				self.width,
+				self.height,
+				self.publish_recording_status,
+				self.publish_camera_is_online,
+				self.exception_handler
+			) as self.backend:
 
 				if self.backend_name == "opencv_static_image":
 					self.backend.set_background(self.bg_path)

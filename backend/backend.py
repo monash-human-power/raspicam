@@ -17,10 +17,11 @@ class Backend(ABC):
         Handle combining the video feed with overlays and displaying, and
         recording the video feed to a file. """
 
-    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, exception_handler: PublishFunc):
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_camera_is_online_func: PublishFunc, exception_handler: PublishFunc):
         self.width = width
         self.height = height
         self.publish_recording_status_func = publish_recording_status_func
+        self.publish_camera_is_online_func = publish_camera_is_online_func
         self.exception_handler = exception_handler
 
         self.recording = False
@@ -31,6 +32,15 @@ class Backend(ABC):
         self.prev_recording_status_time = 0
         # Time between recording statuses, in seconds
         self.recording_status_interval = 60
+
+    @abstractmethod
+    def _is_camera_on(self) -> bool:
+        """ Checks if the camera / video feed / display is on
+
+        Returns:
+            bool: True if is on, False otherwise
+        """
+        pass
 
     @abstractmethod
     def start_video(self) -> None:
