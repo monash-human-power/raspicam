@@ -10,6 +10,7 @@ from config import read_configs
 from canvas import Canvas
 from data import DataFactory, Data
 from platform import machine
+from json import dumps
 from topics import DAShboard, Camera
 from camera_error_handler import CameraErrorHandler
 
@@ -45,10 +46,17 @@ class Overlay(ABC):
 		self.data = DataFactory.create(bike_version)
 		self.device = configs["device"]
 
+		# mqtt client options
 		self.client = mqtt.Client()
 		self.client.on_connect = self._on_connect
 		self.client.on_disconnect = self.on_disconnect
 		self.client.on_log = self.on_log
+		self.client.will_set(
+			f"{str(Camera.online_root)}/{self.device}",
+			dumps({ "online": False }),
+			1,
+			True
+		) # set the camera status to offline if connection breaks
 
 		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
 		self.set_callback_for_topic_list([str(DAShboard.recording)], self.on_recording_message)

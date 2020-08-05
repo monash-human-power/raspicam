@@ -225,3 +225,4 @@ class Backend(ABC):
     def __exit__(self, exc_type, exc_value, traceback):
         """ Ran when exiting a `with` block. """
         self.stop_video()
+        self.send_camera_is_online()
