@@ -33,6 +33,11 @@ class Backend(ABC):
         # Time between recording statuses, in seconds
         self.recording_status_interval = 60
 
+        # time that we last called self.send_camera_is_online
+        self.prev_camera_is_online_time = 0
+        # Time between recording statuses, in seconds
+        self.camera_is_online_interval = 60
+
     @abstractmethod
     def _is_camera_on(self) -> bool:
         """ Checks if the camera / video feed / display is on
@@ -89,12 +94,23 @@ class Backend(ABC):
         if time() > self.prev_recording_status_time + self.recording_status_interval:
             self.send_recording_status()
 
+        if time() > self.prev_camera_is_online_time + self.camera_is_online_interval:
+            self.send_camera_is_online()
+
     @abstractmethod
     def _on_loop(self) -> None:
-        """ Implemented by overlays to perform any neccessary operations that
+        """ Implemented by overlays to perform any necessary operations that
             should be performed on a regular period. This may involve updating
             the display, which may be blocking. Should not be called outside
             of the Backend class. """
+
+    def send_camera_is_online(self) -> None:
+        """ Publish the camera's status to the camera's online topic
+        """
+        self.publish_camera_is_online_func(dumps({
+            "online": self._is_camera_on()
+        }))
+        self.prev_camera_is_online_time = time()
 
     @abstractmethod
     def stop_video(self) -> None:
