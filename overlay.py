@@ -73,8 +73,7 @@ class Overlay(ABC):
 		self.client.publish(status_topic, message, retain=True)
 
 	def publish_camera_is_online(self, message: str) -> None:
-		""" Send a message on the current device's online topic
-		"""
+		""" Send a message on the current device's online topic. """
 		status_topic = f"{str(Camera.online_root)}/{self.device}"
 		self.client.publish(status_topic, message, retain=True)
 
