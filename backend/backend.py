@@ -28,7 +28,7 @@ class Backend(ABC):
         self.recording_output_file = None
         self.recording_start_time = None
 
-        # time that we last called self.send_recording_status
+        # Time that we last called self.send_recording_status
         self.prev_recording_status_time = 0
         # Time between recording statuses, in seconds
         self.recording_status_interval = 60
@@ -40,7 +40,7 @@ class Backend(ABC):
 
     @abstractmethod
     def _is_camera_on(self) -> bool:
-        """ Checks if the camera / video feed / display is on
+        """ Check if the camera / video feed / display is on.
 
         Returns:
             bool: True if is on, False otherwise
