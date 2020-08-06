@@ -46,4 +46,4 @@ jobs:
         uses: TrueBrain/actions-flake8@master
 
       - name: Code Quality
-        run: poetry run black . --check --line-length 79
+        run: poetry run black . --check
