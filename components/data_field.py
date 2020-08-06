@@ -27,7 +27,10 @@ class DataField(Component):
         coordinate: Tuple[int, int],
         is_title_static: bool = True,
     ):
-        """ `coordinate` specifies the bottom-left coordinate of the data field. """
+        """Constructor for a DataField component.
+
+        `coordinate` specifies the bottom-left coordinate of the data field.
+        """
         self.title = title
         self.is_title_static = is_title_static
         self.value_func = value_func

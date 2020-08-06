@@ -47,7 +47,8 @@ class PiCameraBackend(Backend):
 
         if not ON_PI:
             raise RuntimeError(
-                "`picamera` library unavailable - please run on Pi or install library"
+                "`picamera` library unavailable - \
+                    please run on Pi or install library"
             )
 
         self.pi_camera = PiCamera(resolution=(self.width, self.height))
@@ -57,7 +58,10 @@ class PiCameraBackend(Backend):
         ] = {}
 
     def start_video(self) -> None:
-        # Start displaying video feed. Non blocking, but runs forever in seperate thread.
+        """Start displaying video feed.
+
+        Non blocking, but runs forever in seperate thread.
+        """
         self.pi_camera.start_preview(
             fullscreen=False,
             window=(*PI_WINDOW_TOP_LEFT, self.width, self.height),
@@ -66,8 +70,9 @@ class PiCameraBackend(Backend):
     def update_picamera_overlay(
         self, canvas: Canvas, layer: PiCameraOverlayLayer
     ) -> None:
-        """ Adds the overlay to a PiCamera preview, and if the overlay was already added,
-            removes the old instance. """
+        """Add the overlay to a PiCamera preview.
+
+        If the overlay was already added, removes the old instance."""
         overlay = self.pi_camera.add_overlay(
             canvas.img, format="rgba", size=(self.width, self.height)
         )
@@ -75,10 +80,14 @@ class PiCameraBackend(Backend):
         overlay.fullscreen = False
         overlay.window = (*PI_WINDOW_TOP_LEFT, self.width, self.height)
 
-        # Rather than creating and swapping out overlays, the proper way to do this would be with overlay.update()
-        # Unfortunately, due to a bug in PiCamera 1.13, this will spam us with errors (which don't matter, but still)
-        # https://github.com/waveform80/picamera/issues/320
-        # https://www.raspberrypi.org/forums/viewtopic.php?t=190120
+        """
+        Rather than creating and swapping out overlays, the proper way to do
+        this would be with overlay.update(). Unfortunately, due to a bug in
+        PiCamera 1.13, this will spam us with errors.
+        (which don't matter, but still)
+        https://github.com/waveform80/picamera/issues/320
+        https://www.raspberrypi.org/forums/viewtopic.php?t=190120
+        """
         if layer in self.prev_overlays:
             self.pi_camera.remove_overlay(self.prev_overlays[layer])
         self.prev_overlays[layer] = overlay

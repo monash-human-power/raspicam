@@ -31,14 +31,14 @@ class MessageTest:
         print("log: " + buf)
 
     def on_connect(self, client, userdata, flags, rc):
-        """ The callback for when the client receives a CONNACK response from the server """
+        """Callback for when the client receives a CONNACK response."""
         if rc == 0:
             print("Connected OK")
         else:
             print("Bad connection Returned code=", rc)
 
     def on_disconnect(self, client, userdata, flags, rc=0):
-        """ The callback that is called when user is disconnected from broker"""
+        """Callback that is called when user is disconnected from broker."""
         print("Disconnected result code " + str(rc))
 
     def start(self):

@@ -111,19 +111,23 @@ class Canvas:
         bottom_right: Coord,
         colour: Colourlike = Colour.black,
     ) -> None:
-        """ Draws a rectangle to the canvas.
+        """Draws a rectangle to the canvas.
 
-            top_left and bottom_right are tuples, and specify the dimensions of the rectangle
-            (the top left of the screen is the origin) """
+        top_left and bottom_right are tuples, and specify the dimensions
+        of the rectangle (the top left of the screen is the origin)
+        """
         colour = Canvas._get_colour_tuple(colour)
         cv2.rectangle(
             self.img, top_left, bottom_right, colour, thickness=cv2.FILLED
         )
 
     def copy_to(self, dest: np.ndarray) -> np.ndarray:
-        """ Writes the contents of self.img over dest, accounting for transparency.
+        """Writes the contents of self.img over dest.
 
-            Use this method to put the overlay contents over the video feed """
+        This also accounts for transparency.
+
+        Use this method to put the overlay contents over the video feed
+        """
         # Extract the alpha mask of the BGRA canvas, convert to BGR
         blue, green, red, alpha = cv2.split(self.img)
         minimum_alpha = 180  # alpha must be > this value to show a pixel

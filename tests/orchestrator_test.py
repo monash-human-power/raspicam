@@ -30,7 +30,7 @@ class TestGetArgs:
     @staticmethod
     def test_valid_arguments():
         """ get_args valid arguments
-        Test the arguments parser for the file 
+        Test the arguments parser for the file
         """
         test_input = vars(orchestrator.get_args())
         expected_result = {"host": "192.168.100.100"}

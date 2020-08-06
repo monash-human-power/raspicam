@@ -203,7 +203,7 @@ class Backend(ABC):
         self.prev_recording_status_time = time()
 
     def send_recording_error(self) -> None:
-        """ Send the most recent exception to the recording status MQTT topic. """
+        """Send the most recent exception to the recording status topic."""
 
         _, _, free_disk_space = disk_usage(Path(__file__).parent)
         message = {
