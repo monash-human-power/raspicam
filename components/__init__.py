@@ -5,7 +5,8 @@ from .message import Message
 
 __all__ = [
     "Component",
-    "DataField", "SpeedField",
+    "DataField",
+    "SpeedField",
     "CentrePower",
     "Message",
 ]

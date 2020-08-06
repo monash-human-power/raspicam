@@ -4,6 +4,7 @@ from canvas import Canvas
 from components import Component
 from data import Data
 
+
 class Message(Component):
     """ Displays any existing messages at the top of the screen.
 
