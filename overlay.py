@@ -1,18 +1,17 @@
-from abc import ABC, abstractmethod
 import argparse
 import time
+from abc import ABC, abstractmethod
+from json import dumps
+from platform import machine
 from typing import Callable
 
 import paho.mqtt.client as mqtt
-
 from backend import BackendFactory
-from config import read_configs
-from canvas import Canvas
-from data import DataFactory, Data
-from platform import machine
-from json import dumps
-from topics import DAShboard, Camera
 from camera_error_handler import CameraErrorHandler
+from canvas import Canvas
+from config import read_configs
+from data import Data, DataFactory
+from topics import Camera, DAShboard
 
 DEFAULT_BIKE = "V2"
 
@@ -46,17 +45,20 @@ class Overlay(ABC):
 		self.data = DataFactory.create(bike_version)
 		self.device = configs["device"]
 
-		# mqtt client options
+		# MQTT client options
 		self.client = mqtt.Client()
 		self.client.on_connect = self._on_connect
 		self.client.on_disconnect = self.on_disconnect
 		self.client.on_log = self.on_log
+
+		# Set the camera status to offline if connection breaks
+		is_online_topic = f"{str(Camera.online_root)}/{self.device}";
 		self.client.will_set(
-			f"{str(Camera.online_root)}/{self.device}",
+			is_online_topic,
 			dumps({ "online": False }),
 			1,
 			True
-		) # set the camera status to offline if connection breaks
+		)
 
 		self.set_callback_for_topic_list(self.data.get_topics(), self.on_data_message)
 		self.set_callback_for_topic_list([str(DAShboard.recording)], self.on_recording_message)
