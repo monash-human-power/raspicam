@@ -6,8 +6,9 @@ class OverlayNew(Overlay):
     def __init__(self, bike=None, bg=None):
         super().__init__(bike, bg=bg)
 
-        # Generate coordinates for each of the data fields in the bottom corners.
-        # Note that these coordinates are for the bottom left corner of each field.
+        # Generate coordinates for each of the data fields in the \
+        # bottom corners.
+        # Note: These coordinates are for the bottom left corner of each field.
         spacing = 20
         row_coords = [
             self.height - (2 * spacing + DataField.height),
@@ -19,7 +20,8 @@ class OverlayNew(Overlay):
             self.width - 2 * (spacing + DataField.width),
             self.width - (spacing + DataField.width),
         ]
-        # This lambda returns the coordinates of the data field in column x, row y
+        # This lambda returns the coordinates of the data field in \
+        # column x, row y
         data_field_coord = lambda x, y: (col_coords[x], row_coords[y])
 
         # Create all overlay components

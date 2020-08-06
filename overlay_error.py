@@ -8,8 +8,8 @@ class OverlayErrorTest(OverlayNew):
     Overlay made for testing MQTT error publishing by inheriting OverlayNew
 
     Tests whether an error will be published onto the MQTT Camera Errors topic
-    "/v3/camera/errors". This overlay should not be used for any purpose other than
-    error testing. This script should not be triggered by Pytest.
+    "/v3/camera/errors". This overlay should not be used for any purpose other
+    than error testing. This script should not be triggered by Pytest.
 
     To exit the script, press CTRL+C.
     """

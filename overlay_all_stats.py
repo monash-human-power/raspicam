@@ -1,4 +1,3 @@
-import time
 from overlay import Overlay
 from canvas import Colour
 
