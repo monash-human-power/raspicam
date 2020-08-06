@@ -74,8 +74,8 @@ class Overlay(ABC):
 
 	def publish_camera_is_online(self, message: str) -> None:
 		""" Send a message on the current device's online topic. """
-		status_topic = f"{str(Camera.online_root)}/{self.device}"
-		self.client.publish(status_topic, message, retain=True)
+		online_status_topic = f"{str(Camera.online_root)}/{self.device}"
+		self.client.publish(online_status_topic, message, retain=True)
 
 	def connect(self, ip="192.168.100.100", port=1883):
 		self.client.connect_async(ip, port, 60)
