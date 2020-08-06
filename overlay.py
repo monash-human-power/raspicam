@@ -90,7 +90,7 @@ class Overlay(ABC):
                 )
                 while True:
 
-                    # Update the data overlay only if we have waited enough time
+                    # Update data overlay only if we have waited enough time
                     if (
                         time.time()
                         > prev_data_update + self.data_update_interval
@@ -107,13 +107,13 @@ class Overlay(ABC):
 
     def set_callback_for_topic_list(self, topics, callback):
         """ Set the on_message callback for every topic in topics to the
-			provided callback """
+            provided callback """
         for topic in topics:
             self.client.message_callback_add(topic, callback)
 
     def subscribe_to_topic_list(self, topics):
         """ Construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
-			see https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe """
+            see https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe """
         topic_values = list(map(str, topics))
         at_most_once_qos = [0] * len(topics)
 
@@ -124,8 +124,8 @@ class Overlay(ABC):
         self, data_key: str, decimals=0, scalar=1
     ) -> Callable[[Data], str]:
         """ Return a lambda function which, when called, returns the current
-			value for the data field `data_key`, multiplied by `scalar`, and
-			formatted to `decimals` decimal places. """
+            value for the data field `data_key`, multiplied by `scalar`, and
+            formatted to `decimals` decimal places. """
         format_str = f"{{:.{decimals}f}}"
         return lambda data: format_str.format(data[data_key] * scalar)
 
@@ -163,27 +163,27 @@ class Overlay(ABC):
     @abstractmethod
     def on_connect(self, client, userdata, flags, rc):
         """ Called automatically when the overlay connects successfully to the
-			MQTT broker.
+            MQTT broker.
 
-			Overlay implementations may override for one-off operations
-			(e.g. drawing self.base_canvas) """
+            Overlay implementations may override for one-off operations
+            (e.g. drawing self.base_canvas) """
         pass
 
     def update_data_layer(self):
         """ Update the data layer of the overlay at a regular interval.
 
-			Catches any errors that occurs while the data layer is being
-			updated. """
+            Catches any errors that occurs while the data layer is being
+            updated. """
         with self.exception_handler:
             self._update_data_layer()
 
     @abstractmethod
     def _update_data_layer(self):
         """ Called automatically at a regular interval defined by
-			self.data_update_interval.
+            self.data_update_interval.
 
-			Overlay implementations should override this method with code which
-			updates self.data_canvas. """
+            Overlay implementations should override this method with code which
+            updates self.data_canvas. """
         pass
 
     @staticmethod
