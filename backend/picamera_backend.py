@@ -8,6 +8,7 @@ from canvas import Canvas
 # This check needs to be done here, as it's only place we use picamera.
 try:
     from picamera import PiCamera
+
     ON_PI = True
 except (ImportError, RuntimeError):
     ON_PI = False
@@ -15,14 +16,17 @@ except (ImportError, RuntimeError):
 # Top of window is outside the screen to hide title bar
 PI_WINDOW_TOP_LEFT = (0, -20)
 
+
 class PiCameraOverlayLayer(Enum):
     """ The `picamera` layers which each overlay canvas should be placed on.
 
         Higher layer numbers are placed in front of lower ones. """
+
     video_feed = 2
     base = 3
     data = 4
     message = 5
+
 
 class PiCameraBackend(Backend):
     """ Gets video and displays using the `picamera` library.
@@ -30,24 +34,43 @@ class PiCameraBackend(Backend):
         This backend will only work when the `picamera` library is available,
         i.e. when running on a Raspberry Pi. """
 
-    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, exception_handler: PublishFunc):
-        super().__init__(width, height, publish_recording_status_func, exception_handler)
+    def __init__(
+        self,
+        width: int,
+        height: int,
+        publish_recording_status_func: PublishFunc,
+        exception_handler: PublishFunc,
+    ):
+        super().__init__(
+            width, height, publish_recording_status_func, exception_handler
+        )
 
         if not ON_PI:
-            raise RuntimeError("`picamera` library unavailable - please run on Pi or install library")
-        
+            raise RuntimeError(
+                "`picamera` library unavailable - please run on Pi or install library"
+            )
+
         self.pi_camera = PiCamera(resolution=(self.width, self.height))
 
-        self.prev_overlays: Dict[PiCameraOverlayLayer, self.pi_camera.PiOverlayRenderer] = {}
+        self.prev_overlays: Dict[
+            PiCameraOverlayLayer, self.pi_camera.PiOverlayRenderer
+        ] = {}
 
     def start_video(self) -> None:
         # Start displaying video feed. Non blocking, but runs forever in seperate thread.
-        self.pi_camera.start_preview(fullscreen=False, window=(*PI_WINDOW_TOP_LEFT, self.width, self.height))
+        self.pi_camera.start_preview(
+            fullscreen=False,
+            window=(*PI_WINDOW_TOP_LEFT, self.width, self.height),
+        )
 
-    def update_picamera_overlay(self, canvas: Canvas, layer: PiCameraOverlayLayer) -> None:
+    def update_picamera_overlay(
+        self, canvas: Canvas, layer: PiCameraOverlayLayer
+    ) -> None:
         """ Adds the overlay to a PiCamera preview, and if the overlay was already added,
             removes the old instance. """
-        overlay = self.pi_camera.add_overlay(canvas.img, format="rgba", size=(self.width, self.height))
+        overlay = self.pi_camera.add_overlay(
+            canvas.img, format="rgba", size=(self.width, self.height)
+        )
         overlay.layer = layer.value
         overlay.fullscreen = False
         overlay.window = (*PI_WINDOW_TOP_LEFT, self.width, self.height)
@@ -63,11 +86,15 @@ class PiCameraBackend(Backend):
     def _on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         self.update_picamera_overlay(base_canvas, PiCameraOverlayLayer.base)
 
-    def _on_canvases_updated(self, data_canvas: Canvas, message_canvas: Canvas) -> None:
+    def _on_canvases_updated(
+        self, data_canvas: Canvas, message_canvas: Canvas
+    ) -> None:
         """ Picamera will retain the overlay images until updated, so we only need
             to do this once per overlay update. """
         self.update_picamera_overlay(data_canvas, PiCameraOverlayLayer.data)
-        self.update_picamera_overlay(message_canvas, PiCameraOverlayLayer.message)
+        self.update_picamera_overlay(
+            message_canvas, PiCameraOverlayLayer.message
+        )
 
     def _on_loop(self) -> None:
         # Nothing to do
