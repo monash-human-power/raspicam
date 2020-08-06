@@ -105,8 +105,7 @@ class Backend(ABC):
             of the Backend class. """
 
     def send_camera_is_online(self) -> None:
-        """ Publish the camera's status to the camera's online topic
-        """
+        """ Publish the camera's status to the camera's online topic. """
         self.publish_camera_is_online_func(dumps({
             "online": self._is_camera_on()
         }))
