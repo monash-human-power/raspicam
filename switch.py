@@ -6,7 +6,12 @@ import RPi.GPIO as gpio
 import config
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--host", type=str, default="192.168.100.100", help="ip address of the broker")
+parser.add_argument(
+    "--host",
+    type=str,
+    default="192.168.100.100",
+    help="ip address of the broker",
+)
 args = parser.parse_args()
 
 brokerIP = args.host
@@ -25,44 +30,46 @@ gpio.setup(red_led, gpio.OUT)
 
 
 def turn_on(led):
-	gpio.output(led, gpio.HIGH)
+    gpio.output(led, gpio.HIGH)
 
 
 def turn_off(led):
-	gpio.output(led, gpio.LOW)
+    gpio.output(led, gpio.LOW)
 
 
 try:
-	while True:
-		prev_switch_state = gpio.input(15)
-		while True:
-			turn_on(red_led)
-			switch_state = gpio.input(15)
-			if switch_state == prev_switch_state:
-				print("OFF")
-			else:
-				print("ON")
-				break
-			sleep(0.25)
-		prev_switch_state = switch_state
-		# TODO: Remove hard coding of directory of python script
-		p1 = subprocess.Popen(["python3", config.get_active_overlay(), "--host", brokerIP])
-		turn_off(red_led)
-		turn_on(green_led)
-		sleep(1)
+    while True:
+        prev_switch_state = gpio.input(15)
+        while True:
+            turn_on(red_led)
+            switch_state = gpio.input(15)
+            if switch_state == prev_switch_state:
+                print("OFF")
+            else:
+                print("ON")
+                break
+            sleep(0.25)
+        prev_switch_state = switch_state
+        # TODO: Remove hard coding of directory of python script
+        p1 = subprocess.Popen(
+            ["python3", config.get_active_overlay(), "--host", brokerIP]
+        )
+        turn_off(red_led)
+        turn_on(green_led)
+        sleep(1)
 
-		while True:
-			switch_state = gpio.input(15)
-			if switch_state != prev_switch_state:
-				print("OFF")
-				subprocess.Popen.kill(p1)
-				turn_off(green_led)
-				break
-			else:
-				print("ON")
-			sleep(1)
-			prev_switch_state = switch_state
+        while True:
+            switch_state = gpio.input(15)
+            if switch_state != prev_switch_state:
+                print("OFF")
+                subprocess.Popen.kill(p1)
+                turn_off(green_led)
+                break
+            else:
+                print("ON")
+            sleep(1)
+            prev_switch_state = switch_state
 
 except KeyboardInterrupt:
-	subprocess.Popen.kill(p1)
-	gpio.cleanup()
+    subprocess.Popen.kill(p1)
+    gpio.cleanup()

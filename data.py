@@ -22,7 +22,6 @@ class Data(ABC):
         "gps_speed": float,
         "reed_velocity": float,
         "reed_distance": float,
-
         # Power model data
         "rec_power": float,
         "rec_speed": float,
@@ -43,7 +42,6 @@ class Data(ABC):
             "gps_speed": 0,
             "reed_velocity": 0,
             "reed_distance": 0,
-
             # Power model data
             "rec_power": 0,
             "rec_speed": 0,
@@ -54,7 +52,7 @@ class Data(ABC):
 
         self.message = None
         self.message_received_time = 0
-        self.message_duration = 5 # seconds
+        self.message_duration = 5  # seconds
 
     def load_message(self, message: str) -> None:
         """ Stores a message which is made available by self.get_message. """
@@ -126,7 +124,6 @@ class DataFactory:
 
 
 class DataV2(Data):
-
     @staticmethod
     def get_topics() -> List[str]:
         return [
@@ -157,7 +154,6 @@ class DataV2(Data):
 
 
 class DataV3(Data):
-
     @staticmethod
     def get_topics() -> List[str]:
         return [
@@ -165,7 +161,7 @@ class DataV3(Data):
             str(topics.DAShboard.receive_message),
             str(topics.PowerModelV3.recommended_sp),
             str(topics.PowerModelV3.predicted_max_speed),
-            str(topics.PowerModelV3.plan_name)
+            str(topics.PowerModelV3.plan_name),
         ]
 
     def load_data(self, topic: str, data: str) -> None:

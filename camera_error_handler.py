@@ -3,6 +3,7 @@ from traceback import format_exc
 
 from topics import Camera
 
+
 class CameraErrorHandler:
     """
     Exception handler for the Raspicam
@@ -11,7 +12,9 @@ class CameraErrorHandler:
     eg. with CameraException(client, camera, backend_name, bg_path, configs)
     """
 
-    def __init__(self, client, camera:str, backend:str, bg_path:str, configs:dict):
+    def __init__(
+        self, client, camera: str, backend: str, bg_path: str, configs: dict
+    ):
         self.client = client
         self.camera = camera
         self.backend = backend
@@ -30,7 +33,7 @@ class CameraErrorHandler:
                 "bg_path": self.bg_path,
                 "configs": self.configs,
                 "traceback": format_exc(),
-                "message": str(exc_value)
+                "message": str(exc_value),
             }
 
             status_topic = str(Camera.errors)

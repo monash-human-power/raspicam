@@ -7,22 +7,25 @@ import paho.mqtt.client as mqtt
 import config
 import topics
 
+
 def get_args(argv=[]):
     """Get arguments passed into Python script"""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--host", type=str,
-                        default="192.168.100.100",
-                        help="ip address of the broker")
+    parser.add_argument(
+        "--host",
+        type=str,
+        default="192.168.100.100",
+        help="ip address of the broker",
+    )
     return parser.parse_args(argv)
 
-class Orchestrator():
 
+class Orchestrator:
     def __init__(self, broker_ip, port=1883):
 
         self.broker_ip = broker_ip
         self.port = port
         self.mqtt_client = None
-
 
     def on_connect(self, client, userdata, flags, rc):
         """The callback for when the client receives a CONNACK response from the server."""
@@ -38,7 +41,9 @@ class Orchestrator():
         print(msg.topic + " " + str(msg.payload))
         if topics.Camera.get_overlays.matches(msg.topic):
             configs = config.read_configs()
-            client.publish(str(topics.Camera.push_overlays), json.dumps(configs))
+            client.publish(
+                str(topics.Camera.push_overlays), json.dumps(configs)
+            )
         elif topics.Camera.set_overlay.matches(msg.topic):
             config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
 
@@ -46,11 +51,9 @@ class Orchestrator():
         """The callback to log all MQTT information"""
         print("\nlog: ", buf)
 
-
     def on_disconnect(self, client, userdata, msg):
         """ The callback that is called when user is disconnected from broker"""
         print("Disconnected from broker")
-
 
     def start(self):
         """start Orchestrator"""
