@@ -33,7 +33,7 @@ class Backend(ABC):
         # Time between recording statuses, in seconds
         self.recording_status_interval = 60
 
-        # time that we last called self.send_camera_is_online
+        # Time that we last called self.send_camera_is_online
         self.prev_camera_is_online_time = 0
         # Time between recording statuses, in seconds
         self.camera_is_online_interval = 60
