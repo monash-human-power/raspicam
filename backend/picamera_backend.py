@@ -41,7 +41,7 @@ class PiCameraBackend(Backend):
         self.prev_overlays: Dict[PiCameraOverlayLayer, self.pi_camera.PiOverlayRenderer] = {}
 
     def _is_camera_on(self):
-        return ON_PI
+        return self.pi_camera.previewing
 
     def start_video(self) -> None:
         # Start displaying video feed. Non blocking, but runs forever in separate thread.
