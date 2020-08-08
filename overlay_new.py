@@ -6,7 +6,7 @@ class OverlayNew(Overlay):
     def __init__(self, bike=None, bg=None):
         super().__init__(bike, bg=bg)
 
-        # Generate coordinates for each of the data fields in the \
+        # Generate coordinates for each of the data fields in the
         # bottom corners.
         # Note: These coordinates are for the bottom left corner of each field.
         spacing = 20
