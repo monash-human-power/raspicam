@@ -20,9 +20,10 @@ class OverlayNew(Overlay):
             self.width - 2 * (spacing + DataField.width),
             self.width - (spacing + DataField.width),
         ]
-        # This lambda returns the coordinates of the data field in \
-        # column x, row y
-        data_field_coord = lambda x, y: (col_coords[x], row_coords[y])
+
+        def data_field_coord(x, y):
+            """Coordinates of the data field in column x, row y."""
+            return col_coords[x], row_coords[y]
 
         # Create all overlay components
         self.components = [

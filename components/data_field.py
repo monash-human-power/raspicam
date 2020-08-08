@@ -66,9 +66,9 @@ class SpeedField(DataField):
         but falls back to reed velocity if GPS is unavailable """
 
     def __init__(self, coordinate: Tuple[int, int]):
-        value_func = lambda data: "{:.1f}".format(
-            data["gps_speed"] or data["reed_velocity"]
-        )
+        def value_func(data):
+            return "{:.1f}".format(data["gps_speed"] or data["reed_velocity"])
+
         super().__init__("", value_func, coordinate, False)
 
     def draw_base(self, canvas: Canvas):
