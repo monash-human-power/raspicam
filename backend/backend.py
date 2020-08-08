@@ -34,10 +34,10 @@ class Backend(ABC):
         self.recording_output_file = None
         self.recording_start_time = None
 
-        # time that we last called self.send_recording_status
-        self.prev_recording_status_time = 0
+        # Time that we last called self.send_recording_status
+        self.prev_record_status_time = 0
         # Time between recording statuses, in seconds
-        self.recording_status_interval = 60
+        self.record_status_interval = 60
 
     @abstractmethod
     def start_video(self) -> None:
@@ -87,10 +87,7 @@ class Backend(ABC):
         with self.exception_handler:
             self._on_loop()
 
-        if (
-            time()
-            > self.prev_recording_status_time + self.recording_status_interval
-        ):
+        if time() > self.prev_record_status_time + self.record_status_interval:
             self.send_recording_status()
 
     @abstractmethod
@@ -200,7 +197,7 @@ class Backend(ABC):
         message["diskSpaceRemaining"] = free_disk_space
 
         self.publish_recording_status_func(dumps(message))
-        self.prev_recording_status_time = time()
+        self.prev_record_status_time = time()
 
     def send_recording_error(self) -> None:
         """Send the most recent exception to the recording status topic."""
