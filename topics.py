@@ -1,6 +1,8 @@
 """MQTT Topics for Camera System"""
 from enum import Enum, unique
+
 from paho.mqtt.client import topic_matches_sub
+
 
 @unique
 class Topic(Enum):
@@ -38,7 +40,7 @@ class Camera(Topic):
     set_overlay = 'camera/set_overlay'
     push_overlays = 'camera/push_overlays'
     errors = '/v3/camera/errors'
-    online_root = '/v3/camera/online'
+    online_root = '/v3/camera/video-feed/status'
 
 class DAShboard(Topic):
     """DAShboard MQTT Topics"""
