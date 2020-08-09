@@ -40,7 +40,6 @@ class Camera(Topic):
     set_overlay = 'camera/set_overlay'
     push_overlays = 'camera/push_overlays'
     errors = '/v3/camera/errors'
-    online_root = '/v3/camera/video-feed/status'
 
 class DAShboard(Topic):
     """DAShboard MQTT Topics"""
@@ -49,6 +48,8 @@ class DAShboard(Topic):
     recording_start = '/v3/camera/recording/start'
     recording_stop = '/v3/camera/recording/stop'
     recording_status_root = '/v3/camera/recording/status'
+
+    video_feed_status_root = '/v3/camera/video-feed/status'
 
 class SensorModules(Topic):
     """V3 Wireless sensor module topics"""

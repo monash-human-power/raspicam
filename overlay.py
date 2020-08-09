@@ -11,7 +11,7 @@ from camera_error_handler import CameraErrorHandler
 from canvas import Canvas
 from config import read_configs
 from data import Data, DataFactory
-from topics import Camera, DAShboard
+from topics import DAShboard
 
 DEFAULT_BIKE = "V2"
 
@@ -52,7 +52,7 @@ class Overlay(ABC):
 		self.client.on_log = self.on_log
 
 		# Set the camera status to offline if connection breaks
-		is_online_topic = f"{str(Camera.online_root)}/{self.device}";
+		is_online_topic = f"{str(DAShboard.video_feed_status_root)}/{self.device}";
 		self.client.will_set(
 			is_online_topic,
 			dumps({ "online": False }),
@@ -74,7 +74,7 @@ class Overlay(ABC):
 
 	def publish_camera_is_online(self, message: str) -> None:
 		""" Send a message on the current device's online topic. """
-		online_status_topic = f"{str(Camera.online_root)}/{self.device}"
+		online_status_topic = f"{str(DAShboard.video_feed_status_root)}/{self.device}"
 		self.client.publish(online_status_topic, message, retain=True)
 
 	def connect(self, ip="192.168.100.100", port=1883):
