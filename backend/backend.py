@@ -17,20 +17,34 @@ class Backend(ABC):
         Handle combining the video feed with overlays and displaying, and
         recording the video feed to a file. """
 
-    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, exception_handler: PublishFunc):
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_video_status_func: PublishFunc, exception_handler: PublishFunc):
         self.width = width
         self.height = height
         self.publish_recording_status_func = publish_recording_status_func
+        self.publish_video_status_func = publish_video_status_func
         self.exception_handler = exception_handler
 
         self.recording = False
         self.recording_output_file = None
         self.recording_start_time = None
 
-        # time that we last called self.send_recording_status
+        # Time that we last called self.send_recording_status
         self.prev_recording_status_time = 0
         # Time between recording statuses, in seconds
         self.recording_status_interval = 60
+
+        # Time that we last called self.send_video_status
+        self.prev_video_status_time = 0
+        # Time between recording statuses, in seconds
+        self.video_status_interval = 60
+
+    @abstractmethod
+    def _is_video_on(self) -> bool:
+        """ Check if the video feed is running.
+
+        Returns:
+            bool: True if is on, False otherwise
+        """
 
     @abstractmethod
     def start_video(self) -> None:
@@ -79,9 +93,12 @@ class Backend(ABC):
         if time() > self.prev_recording_status_time + self.recording_status_interval:
             self.send_recording_status()
 
+        if time() > self.prev_video_status_time + self.video_status_interval:
+            self.send_video_status()
+
     @abstractmethod
     def _on_loop(self) -> None:
-        """ Implemented by overlays to perform any neccessary operations that
+        """ Implemented by overlays to perform any necessary operations that
             should be performed on a regular period. This may involve updating
             the display, which may be blocking. Should not be called outside
             of the Backend class. """
@@ -190,6 +207,13 @@ class Backend(ABC):
         self.publish_recording_status_func(dumps(message))
         print(format_exc())
 
+    def send_video_status(self) -> None:
+        """ Publish the camera's status to the camera's online topic. """
+        self.publish_video_status_func(dumps({
+            "online": self._is_video_on()
+        }))
+        self.prev_video_status_time = time()
+
     def __enter__(self):
         """ Ran when Python's `with ...` syntax is used on an instance of this
             class. """
@@ -199,3 +223,4 @@ class Backend(ABC):
     def __exit__(self, exc_type, exc_value, traceback):
         """ Ran when exiting a `with` block. """
         self.stop_video()
+        self.send_video_status()
