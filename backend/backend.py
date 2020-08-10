@@ -45,7 +45,6 @@ class Backend(ABC):
         Returns:
             bool: True if is on, False otherwise
         """
-        pass
 
     @abstractmethod
     def start_video(self) -> None:
