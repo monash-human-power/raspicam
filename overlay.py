@@ -72,7 +72,7 @@ class Overlay(ABC):
 		status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
 		self.client.publish(status_topic, message, retain=True)
 
-	def publish_camera_is_online(self, message: str) -> None:
+	def publish_video_status(self, message: str) -> None:
 		""" Send a message on the current device's online topic. """
 		online_status_topic = f"{str(DAShboard.video_feed_status_root)}/{self.device}"
 		self.client.publish(online_status_topic, message, retain=True)
@@ -86,7 +86,7 @@ class Overlay(ABC):
 				self.width,
 				self.height,
 				self.publish_recording_status,
-				self.publish_camera_is_online,
+				self.publish_video_status,
 				self.exception_handler
 			) as self.backend:
 

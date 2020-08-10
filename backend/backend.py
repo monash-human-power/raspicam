@@ -17,11 +17,11 @@ class Backend(ABC):
         Handle combining the video feed with overlays and displaying, and
         recording the video feed to a file. """
 
-    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_camera_is_online_func: PublishFunc, exception_handler: PublishFunc):
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_video_status_func: PublishFunc, exception_handler: PublishFunc):
         self.width = width
         self.height = height
         self.publish_recording_status_func = publish_recording_status_func
-        self.publish_camera_is_online_func = publish_camera_is_online_func
+        self.publish_video_status_func = publish_video_status_func
         self.exception_handler = exception_handler
 
         self.recording = False
@@ -33,14 +33,14 @@ class Backend(ABC):
         # Time between recording statuses, in seconds
         self.recording_status_interval = 60
 
-        # Time that we last called self.send_camera_is_online
-        self.prev_camera_is_online_time = 0
+        # Time that we last called self.send_video_status
+        self.prev_video_status_time = 0
         # Time between recording statuses, in seconds
-        self.camera_is_online_interval = 60
+        self.video_status_interval = 60
 
     @abstractmethod
-    def _is_camera_on(self) -> bool:
-        """ Check if the camera / video feed / display is on.
+    def _is_video_on(self) -> bool:
+        """ Check if the video feed is running.
 
         Returns:
             bool: True if is on, False otherwise
@@ -93,8 +93,8 @@ class Backend(ABC):
         if time() > self.prev_recording_status_time + self.recording_status_interval:
             self.send_recording_status()
 
-        if time() > self.prev_camera_is_online_time + self.camera_is_online_interval:
-            self.send_camera_is_online()
+        if time() > self.prev_video_status_time + self.video_status_interval:
+            self.send_video_status()
 
     @abstractmethod
     def _on_loop(self) -> None:
@@ -207,12 +207,12 @@ class Backend(ABC):
         self.publish_recording_status_func(dumps(message))
         print(format_exc())
 
-    def send_camera_is_online(self) -> None:
+    def send_video_status(self) -> None:
         """ Publish the camera's status to the camera's online topic. """
-        self.publish_camera_is_online_func(dumps({
-            "online": self._is_camera_on()
+        self.publish_video_status_func(dumps({
+            "online": self._is_video_on()
         }))
-        self.prev_camera_is_online_time = time()
+        self.prev_video_status_time = time()
 
     def __enter__(self):
         """ Ran when Python's `with ...` syntax is used on an instance of this
@@ -223,4 +223,4 @@ class Backend(ABC):
     def __exit__(self, exc_type, exc_value, traceback):
         """ Ran when exiting a `with` block. """
         self.stop_video()
-        self.send_camera_is_online()
+        self.send_video_status()

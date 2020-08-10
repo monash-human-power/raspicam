@@ -30,8 +30,8 @@ class PiCameraBackend(Backend):
         This backend will only work when the `picamera` library is available,
         i.e. when running on a Raspberry Pi. """
 
-    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_camera_is_online_func: PublishFunc, exception_handler: PublishFunc):
-        super().__init__(width, height, publish_recording_status_func, publish_camera_is_online_func, exception_handler)
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_video_status_func: PublishFunc, exception_handler: PublishFunc):
+        super().__init__(width, height, publish_recording_status_func, publish_video_status_func, exception_handler)
 
         if not ON_PI:
             raise RuntimeError("`picamera` library unavailable - please run on Pi or install library")
@@ -40,7 +40,7 @@ class PiCameraBackend(Backend):
 
         self.prev_overlays: Dict[PiCameraOverlayLayer, self.pi_camera.PiOverlayRenderer] = {}
 
-    def _is_camera_on(self):
+    def _is_video_on(self):
         return self.pi_camera.previewing
 
     def start_video(self) -> None:

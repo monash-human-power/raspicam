@@ -1,7 +1,7 @@
 import cv2
-
 from backend import Backend, PublishFunc
 from canvas import Canvas
+
 
 class OpenCVBackend(Backend):
     """ Gets and displays video using the OpenCV (`cv2`) library.
@@ -9,8 +9,8 @@ class OpenCVBackend(Backend):
         This is intended for use with laptops with webcams, not on the
         Raspberry Pi. """
 
-    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_camera_is_online_func: PublishFunc, exception_handler: PublishFunc):
-        super().__init__(width, height, publish_recording_status_func, publish_camera_is_online_func, exception_handler)
+    def __init__(self, width: int, height: int, publish_recording_status_func: PublishFunc, publish_video_status_func: PublishFunc, exception_handler: PublishFunc):
+        super().__init__(width, height, publish_recording_status_func, publish_video_status_func, exception_handler)
         self.webcam = None
 
         framerate = 60
@@ -26,7 +26,7 @@ class OpenCVBackend(Backend):
         default_camera_index = 0
         self.webcam = cv2.VideoCapture(default_camera_index)
 
-    def _is_camera_on(self):
+    def _is_video_on(self):
         if self.webcam is None:
             return False
         return self.webcam.isOpened()
