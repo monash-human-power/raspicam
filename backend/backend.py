@@ -103,13 +103,6 @@ class Backend(ABC):
             the display, which may be blocking. Should not be called outside
             of the Backend class. """
 
-    def send_camera_is_online(self) -> None:
-        """ Publish the camera's status to the camera's online topic. """
-        self.publish_camera_is_online_func(dumps({
-            "online": self._is_camera_on()
-        }))
-        self.prev_camera_is_online_time = time()
-
     @abstractmethod
     def stop_video(self) -> None:
         """ Stop displaying the video feed and releases any resources
@@ -213,6 +206,13 @@ class Backend(ABC):
         }
         self.publish_recording_status_func(dumps(message))
         print(format_exc())
+
+    def send_camera_is_online(self) -> None:
+        """ Publish the camera's status to the camera's online topic. """
+        self.publish_camera_is_online_func(dumps({
+            "online": self._is_camera_on()
+        }))
+        self.prev_camera_is_online_time = time()
 
     def __enter__(self):
         """ Ran when Python's `with ...` syntax is used on an instance of this
