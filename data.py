@@ -14,12 +14,12 @@ class DataField:
         self.name = name
         self.value = 0
         self.time_updated = time()
-        self.valid_duration = 20
+        self.data_expiry = 20
     
     def get_data(self) -> Any:
         """ Return the data value if the expiry hasn't been exceeded. Otherwise,
             it will return None. """
-        if is_valid:
+        if self.is_valid():
             return self.value
         return None
     
@@ -31,7 +31,7 @@ class DataField:
     def is_valid(self) -> bool:
         """ Assess whether data is still valid by checking if the valid duration
             has exceeded. """
-        return time() > self.time_updated + self.valid_duration
+        return time() < self.time_updated + self.data_expiry
 
 
 class Data(ABC):
