@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from json import loads
-import time
+from time import time 
 from typing import Any, List, Optional
 
 import topics
@@ -13,7 +13,7 @@ class DataField:
     def __init__(self, name: str, value: Any = 0) -> None:
         self.name = name
         self.value = 0
-        self.time_updated = time.time()
+        self.time_updated = time()
         self.valid_duration = 20
     
     def get_data(self) -> Any:
@@ -25,7 +25,7 @@ class DataField:
         self.value = value
     
     def is_valid(self) -> bool:
-        return time.time() > self.time_updated + self.valid_duration
+        return time() > self.time_updated + self.valid_duration
 
 
 class Data(ABC):
@@ -78,7 +78,7 @@ class Data(ABC):
 
     def load_message(self, message: str) -> None:
         """Store a message which is made available by self.get_message."""
-        self.message_received_time = time.time()
+        self.message_received_time = time()
         self.message = message
 
     def has_message(self) -> bool:
@@ -93,7 +93,7 @@ class Data(ABC):
             return False
         # Clear the message and return false if enough time has past since
         # the message was received
-        if time.time() > self.message_received_time + self.message_duration:
+        if time() > self.message_received_time + self.message_duration:
             self.message = None
             return False
         return True
