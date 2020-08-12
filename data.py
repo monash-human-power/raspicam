@@ -6,6 +6,28 @@ from typing import Any, List, Optional
 import topics
 
 
+class DataField:
+    """ A class to represent a datafield (eg. Power, Cadence) and return
+        a valid data value. """
+    
+    def __init__(self, name: str, value: Any = 0) -> None:
+        self.name = name
+        self.value = 0
+        self.time_updated = time.time()
+        self.valid_duration = 20
+    
+    def get_data(self) -> Any:
+        if is_valid:
+            return self.value
+        return None
+    
+    def update_data(self, value: Any) -> None:
+        self.value = value
+    
+    def is_valid(self) -> bool:
+        return time.time() > self.time_updated + self.valid_duration
+
+
 class Data(ABC):
     """ A class to keep track of the most recent bike data for the overlays.
 
