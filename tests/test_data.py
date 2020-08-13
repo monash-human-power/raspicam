@@ -5,6 +5,7 @@ from time import sleep
 from data import DataFactory, DataV2, DataV3
 import topics
 
+
 class TestDataFactory:
     @staticmethod
     def test_instance_creation():
@@ -17,6 +18,7 @@ class TestDataFactory:
             DataFactory.create(None)
         with pytest.raises(NotImplementedError):
             DataFactory.create("V9000")
+
 
 class TestDataV2:
     @staticmethod
@@ -46,23 +48,37 @@ class TestDataV2:
         recommended_sp_data = {
             "rec_power": 500.0,
             "rec_speed": 9.2772,
-            "zdist": 1219.0
+            "zdist": 1219.0,
         }
-        max_speed_data = { "predicted_max_speed": 32.911 }
-        plan_name_data = { "plan_name": "default.pkl" }
+        max_speed_data = {"predicted_max_speed": 32.911}
+        plan_name_data = {"plan_name": "default.pkl"}
 
         data = DataV2()
-        data.load_data(topics.PowerModel.recommended_sp, TestDataV2.to_query_string(recommended_sp_data))
-        data.load_data(topics.PowerModel.predicted_max_speed, TestDataV2.to_query_string(max_speed_data))
-        data.load_data(topics.PowerModel.plan_name, TestDataV2.to_query_string(plan_name_data))
+        data.load_data(
+            topics.PowerModel.recommended_sp,
+            TestDataV2.to_query_string(recommended_sp_data),
+        )
+        data.load_data(
+            topics.PowerModel.predicted_max_speed,
+            TestDataV2.to_query_string(max_speed_data),
+        )
+        data.load_data(
+            topics.PowerModel.plan_name,
+            TestDataV2.to_query_string(plan_name_data),
+        )
 
-        for key, value in { **recommended_sp_data, **max_speed_data, **plan_name_data }.items():
+        for key, value in {
+            **recommended_sp_data,
+            **max_speed_data,
+            **plan_name_data,
+        }.items():
             assert data[key] == value, f"Key {key} is not being set correctly"
+
 
 class TestDataV3:
     @staticmethod
     def test_v3_messages():
-        message_packet = { "message": "testing 123" }
+        message_packet = {"message": "testing 123"}
         data = DataV3()
         data.load_data(topics.DAShboard.receive_message, dumps(message_packet))
         assert data.has_message()
@@ -74,62 +90,30 @@ class TestDataV3:
     def test_v3_sensor_parsing():
         front_module_data = {
             "sensors": [
-                {
-                    "type": "temperature",
-                    "value": 24
-                },
-                {
-                    "type": "humidity",
-                    "value": 63
-                },
-                {
-                    "type": "steeringAngle",
-                    "value": 1
-                }
+                {"type": "temperature", "value": 24},
+                {"type": "humidity", "value": 63},
+                {"type": "steeringAngle", "value": 1},
             ]
         }
         mid_module_data = {
             "sensors": [
-                {
-                    "type": "co2",
-                    "value": 34
-                },
-                {
-                    "type": "temperature",
-                    "value": 28
-                },
-                {
-                    "type": "humidity",
-                    "value": 68
-                },
+                {"type": "co2", "value": 34},
+                {"type": "temperature", "value": 28},
+                {"type": "humidity", "value": 68},
                 {
                     "type": "accelerometer",
-                    "value": {
-                        "x": 1.0,
-                        "y": 3.0,
-                        "z": -0.5
-                    }
+                    "value": {"x": 1.0, "y": 3.0, "z": -0.5},
                 },
                 {
                     "type": "gyroscope",
-                    "value": {
-                        "x": 2.1,
-                        "y": 0.2,
-                        "z": -0.1
-                    }
-                }
+                    "value": {"x": 2.1, "y": 0.2, "z": -0.1},
+                },
             ]
         }
         back_module_data = {
             "sensors": [
-                {
-                    "type": "co2",
-                    "value": 35
-                },
-                {
-                    "type": "reedVelocity",
-                    "value": 20.1
-                },
+                {"type": "co2", "value": 35},
+                {"type": "reedVelocity", "value": 20.1},
                 {
                     "type": "gps",
                     "value": {
@@ -138,25 +122,16 @@ class TestDataV3:
                         "latitude": 37.8,
                         "longitude": 144.9,
                         "altitude": 95,
-                        "course": 23.4
-                    }
-                }
+                        "course": 23.4,
+                    },
+                },
             ]
         }
         das_module_data = {
             "sensors": [
-                {
-                    "type": "power",
-                    "value": 249
-                },
-                {
-                    "type": "cadence",
-                    "value": 105
-                },
-                {
-                    "type": "heartRate",
-                    "value": 171
-                }
+                {"type": "power", "value": 249},
+                {"type": "cadence", "value": 105},
+                {"type": "heartRate", "value": 171},
             ]
         }
 
@@ -183,14 +158,18 @@ class TestDataV3:
             "speed": 20,
             "zoneDistance": 30,
             "distanceOffset": 40,
-            "distanceLeft": 50
+            "distanceLeft": 50,
         }
-        max_speed_data = { "speed": 100 }
-        plan_name_data = { "filename": "default.pkl" }
+        max_speed_data = {"speed": 100}
+        plan_name_data = {"filename": "default.pkl"}
 
         data = DataV3()
-        data.load_data(topics.PowerModelV3.recommended_sp, dumps(recommended_sp_data))
-        data.load_data(topics.PowerModelV3.predicted_max_speed, dumps(max_speed_data))
+        data.load_data(
+            topics.PowerModelV3.recommended_sp, dumps(recommended_sp_data)
+        )
+        data.load_data(
+            topics.PowerModelV3.predicted_max_speed, dumps(max_speed_data)
+        )
         data.load_data(topics.PowerModelV3.plan_name, dumps(plan_name_data))
 
         assert data["rec_power"] == 10

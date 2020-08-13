@@ -22,7 +22,6 @@ class Data(ABC):
         "gps_speed": float,
         "reed_velocity": float,
         "reed_distance": float,
-
         # Power model data
         "rec_power": float,
         "rec_speed": float,
@@ -43,7 +42,6 @@ class Data(ABC):
             "gps_speed": 0,
             "reed_velocity": 0,
             "reed_distance": 0,
-
             # Power model data
             "rec_power": 0,
             "rec_speed": 0,
@@ -54,19 +52,21 @@ class Data(ABC):
 
         self.message = None
         self.message_received_time = 0
-        self.message_duration = 5 # seconds
+        self.message_duration = 5  # seconds
 
     def load_message(self, message: str) -> None:
-        """ Stores a message which is made available by self.get_message. """
+        """Store a message which is made available by self.get_message."""
         self.message_received_time = time.time()
         self.message = message
 
     def has_message(self) -> bool:
-        """ Returns true if a message is available for display on the overlay,
-            otherwise false.
+        """Check if a message is available for display on the overlay.
 
-            Returning false may mean messages have been sent, or the most recent
-            message has expired. """
+        Should returns true if the message is available for display.
+
+        Returning false may mean messages have been sent, or the most
+        recent message has expired.
+        """
         if not self.message:
             return False
         # Clear the message and return false if enough time has past since
@@ -77,16 +77,18 @@ class Data(ABC):
         return True
 
     def get_message(self) -> Optional[str]:
-        """ Gets the most recent message from the DAShboard.
+        """Get the most recent message from the DAShboard.
 
-            This should only be called if self.has_message returns true. """
+        This should only be called if self.has_message returns true.
+        """
         return self.message
 
     def __getitem__(self, field: str) -> Any:
-        """ Gets a the most recent value of a data field.
+        """Get the most recent value of a data field.
 
-            This overloads the [] operator e.g. call with data_intance["power"].
-            This only allows fetching the data, not assignment. """
+        This overloads the [] operator e.g. call with data_intance["power"].
+        This only allows fetching the data, not assignment.
+        """
         if field in self.data:
             return self.data[field]
         else:
@@ -95,17 +97,17 @@ class Data(ABC):
 
     @abstractmethod
     def load_data(self, topic: str, data: str) -> None:
-        """ Updates stored fields with data stored in an MQTT data packet from
-            a given topic.
+        """Update stored fields with data stored in an MQTT data packet.
 
-            Only the supplied data fields should be updated, the rest remain as
-            they were. This should be implemented by all Data subclasses """
+        Only the supplied data fields should be updated, the rest remain as
+        they were. This should be implemented by all Data subclasses
+        """
         pass
 
     @staticmethod
     @abstractmethod
     def get_topics() -> List[str]:
-        """ Returns a list of the topics the data for the bike comes from.
+        """ Return a list of the topics the data for the bike comes from.
 
             Should be implemented by Data subclasses. """
         pass
@@ -114,7 +116,7 @@ class Data(ABC):
 class DataFactory:
     @staticmethod
     def create(bike_version: str) -> Data:
-        """ Returns an instance of Data corresponding to a given bike name """
+        """Return an instance of Data corresponding to a given bike name."""
         if isinstance(bike_version, str):
             bike_version = bike_version.lower()
 
@@ -126,7 +128,6 @@ class DataFactory:
 
 
 class DataV2(Data):
-
     @staticmethod
     def get_topics() -> List[str]:
         return [
@@ -145,8 +146,12 @@ class DataV2(Data):
             self.load_query_string(data)
 
     def load_query_string(self, data: str) -> None:
-        """ Updates stored fields with data stored in a V2 query string,
-            e.g. `power=200&cadence=95`. """
+        """Update stored fields with data stored in a V2 query string.
+
+        Example:
+            `power=200&cadence=95`
+
+        """
         terms = data.split("&")
         for term in terms:
             key, value = term.split("=")
@@ -157,7 +162,6 @@ class DataV2(Data):
 
 
 class DataV3(Data):
-
     @staticmethod
     def get_topics() -> List[str]:
         return [
@@ -165,12 +169,12 @@ class DataV3(Data):
             str(topics.DAShboard.receive_message),
             str(topics.PowerModelV3.recommended_sp),
             str(topics.PowerModelV3.predicted_max_speed),
-            str(topics.PowerModelV3.plan_name)
+            str(topics.PowerModelV3.plan_name),
         ]
 
     def load_data(self, topic: str, data: str) -> None:
-        """ Updates stored fields with data from a V3 sensor module data
-            packet. """
+        """Update stored fields with data from a V3 sensor module data packet.
+        """
         if topics.DAShboard.receive_message.matches(topic):
             self.load_message_json(data)
         elif topics.SensorModules.all_sensors.matches(topic):
@@ -183,12 +187,12 @@ class DataV3(Data):
             self.load_plan_name(data)
 
     def load_message_json(self, data: str) -> None:
-        """ Loads a message in the V3 JSON format """
+        """Load a message in the V3 JSON format."""
         message_data = loads(data)
         self.load_message(message_data["message"])
 
     def load_sensor_data(self, data: str) -> None:
-        """ Loads data in the json V3 wireless sensor module format """
+        """Load data in the json V3 wireless sensor module format."""
         module_data = loads(data)
         sensor_data = module_data["sensors"]
 

@@ -2,6 +2,7 @@ from canvas import Canvas, Colour
 from components import Component
 from data import Data
 
+
 class CentrePower(Component):
     """ Displays the current and recommended power at the bottom-centre of the
         screen.
@@ -19,7 +20,10 @@ class CentrePower(Component):
     power_tolerance = 0.05
 
     def __init__(self, screen_w: int, screen_h: int):
-        self.power_coord = (screen_w // 2, screen_h - 30 - CentrePower.spacing - CentrePower.rec_power_height)
+        self.power_coord = (
+            screen_w // 2,
+            screen_h - 30 - CentrePower.spacing - CentrePower.rec_power_height,
+        )
         self.rec_power_coord = (screen_w // 2, screen_h - 30)
 
     def draw_base(self, canvas: Canvas):
@@ -38,7 +42,23 @@ class CentrePower(Component):
             power_diff = abs(power / rec_power - 1)
             # Colour.green is too light against the white fairing
             dark_green = (0, 191, 0, 255)
-            power_colour = dark_green if power_diff <= CentrePower.power_tolerance else Colour.red
+            power_colour = (
+                dark_green
+                if power_diff <= CentrePower.power_tolerance
+                else Colour.red
+            )
 
-        canvas.draw_text(power_str, self.power_coord, CentrePower.power_size, power_colour, "centre")
-        canvas.draw_text(rec_power_str, self.rec_power_coord, CentrePower.rec_power_size, Colour.black, "centre")
+        canvas.draw_text(
+            power_str,
+            self.power_coord,
+            CentrePower.power_size,
+            power_colour,
+            "centre",
+        )
+        canvas.draw_text(
+            rec_power_str,
+            self.rec_power_coord,
+            CentrePower.rec_power_size,
+            Colour.black,
+            "centre",
+        )
