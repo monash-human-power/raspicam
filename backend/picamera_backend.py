@@ -39,16 +39,20 @@ class PiCameraBackend(Backend):
         width: int,
         height: int,
         publish_recording_status_func: PublishFunc,
+        publish_video_status_func: PublishFunc,
         exception_handler: PublishFunc,
     ):
         super().__init__(
-            width, height, publish_recording_status_func, exception_handler
+            width,
+            height,
+            publish_recording_status_func,
+            publish_video_status_func,
+            exception_handler,
         )
 
         if not ON_PI:
             raise RuntimeError(
-                "`picamera` library unavailable - \
-                    please run on Pi or install library"
+                "`picamera` library unavailable - please run on Pi or install library"
             )
 
         self.pi_camera = PiCamera(resolution=(self.width, self.height))
@@ -57,11 +61,11 @@ class PiCameraBackend(Backend):
             PiCameraOverlayLayer, self.pi_camera.PiOverlayRenderer
         ] = {}
 
-    def start_video(self) -> None:
-        """Start displaying video feed.
+    def _is_video_on(self):
+        return self.pi_camera.previewing
 
-        Non blocking, but runs forever in seperate thread.
-        """
+    def start_video(self) -> None:
+        # Start displaying video feed. Non blocking, but runs forever in separate thread.
         self.pi_camera.start_preview(
             fullscreen=False,
             window=(*PI_WINDOW_TOP_LEFT, self.width, self.height),
@@ -70,9 +74,8 @@ class PiCameraBackend(Backend):
     def update_picamera_overlay(
         self, canvas: Canvas, layer: PiCameraOverlayLayer
     ) -> None:
-        """Add the overlay to a PiCamera preview.
-
-        If the overlay was already added, removes the old instance."""
+        """ Adds the overlay to a PiCamera preview, and if the overlay was already added,
+            removes the old instance. """
         overlay = self.pi_camera.add_overlay(
             canvas.img, format="rgba", size=(self.width, self.height)
         )

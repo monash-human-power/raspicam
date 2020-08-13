@@ -1,17 +1,17 @@
-from abc import ABC, abstractmethod
 import argparse
 import time
+from abc import ABC, abstractmethod
+from json import dumps
+from platform import machine
 from typing import Callable
 
 import paho.mqtt.client as mqtt
-
 from backend import BackendFactory
-from config import read_configs
-from canvas import Canvas
-from data import DataFactory, Data
-from platform import machine
-from topics import DAShboard
 from camera_error_handler import CameraErrorHandler
+from canvas import Canvas
+from config import read_configs
+from data import Data, DataFactory
+from topics import DAShboard
 
 DEFAULT_BIKE = "V2"
 
@@ -45,10 +45,19 @@ class Overlay(ABC):
         self.data = DataFactory.create(bike_version)
         self.device = configs["device"]
 
+        # MQTT client options
         self.client = mqtt.Client()
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self.on_disconnect
         self.client.on_log = self.on_log
+
+        # Set the camera status to offline if connection breaks
+        is_online_topic = (
+            f"{str(DAShboard.video_feed_status_root)}/{self.device}"
+        )
+        self.client.will_set(
+            is_online_topic, dumps({"online": False}), 1, True
+        )
 
         self.set_callback_for_topic_list(
             self.data.get_topics(), self.on_data_message
@@ -67,6 +76,13 @@ class Overlay(ABC):
         status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
         self.client.publish(status_topic, message, retain=True)
 
+    def publish_video_status(self, message: str) -> None:
+        """ Send a message on the current device's online topic. """
+        online_status_topic = (
+            f"{str(DAShboard.video_feed_status_root)}/{self.device}"
+        )
+        self.client.publish(online_status_topic, message, retain=True)
+
     def connect(self, ip="192.168.100.100", port=1883):
         self.client.connect_async(ip, port, 60)
 
@@ -76,6 +92,7 @@ class Overlay(ABC):
                 self.width,
                 self.height,
                 self.publish_recording_status,
+                self.publish_video_status,
                 self.exception_handler,
             ) as self.backend:
 
@@ -90,7 +107,7 @@ class Overlay(ABC):
                 )
                 while True:
 
-                    # Update data overlay only if we have waited enough time
+                    # Update the data overlay only if we have waited enough time
                     if (
                         time.time()
                         > prev_data_update + self.data_update_interval
@@ -130,8 +147,7 @@ class Overlay(ABC):
         return lambda data: format_str.format(data[data_key] * scalar)
 
     def time_func(self, _: Data) -> str:
-        """ Return the time since the overlay was initialised formatted mm:ss.
-        """
+        """ Return the time since the overlay was initialised formatted mm:ss """
         _, rem = divmod(time.time() - self.start_time, 3600)
         minutes, seconds = divmod(rem, 60)
         return "{:0>2}:{:0>2}".format(int(minutes), int(seconds))
@@ -211,7 +227,7 @@ class Overlay(ABC):
             "--bg",
             action="store",
             type=str,
-            help="Replaces the video feed with a static background image at a\
-                given location",
+            help="Replaces the video feed with a static background image at a given location",
         )
         return parser.parse_args()
+

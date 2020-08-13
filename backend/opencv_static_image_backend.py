@@ -14,10 +14,15 @@ class OpenCVStaticImageBackend(Backend):
         width: int,
         height: int,
         publish_recording_status_func: PublishFunc,
+        publish_video_status_func: PublishFunc,
         exception_handler: PublishFunc,
     ):
         super().__init__(
-            width, height, publish_recording_status_func, exception_handler
+            width,
+            height,
+            publish_recording_status_func,
+            publish_video_status_func,
+            exception_handler,
         )
         self.background = np.zeros((self.height, self.width, 4), np.uint8)
 
@@ -28,6 +33,10 @@ class OpenCVStaticImageBackend(Backend):
         self.base_canvas = Canvas(self.width, self.height)
         self.data_canvas = Canvas(self.width, self.height)
         self.message_canvas = Canvas(self.width, self.height)
+
+    def _is_video_on(self):
+        # Static image always has something displayed
+        return True
 
     def start_video(self) -> None:
         # Nothing to do

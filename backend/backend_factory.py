@@ -8,20 +8,33 @@ class BackendFactory:
         width: int,
         height: int,
         publish_recording_status_func,
+        publish_video_status_func,
         exception_handler,
     ) -> backend.Backend:
         backend_name = backend_name.lower()
         if backend_name == "picamera":
             return backend.PiCameraBackend(
-                width, height, publish_recording_status_func, exception_handler
+                width,
+                height,
+                publish_recording_status_func,
+                publish_video_status_func,
+                exception_handler,
             )
         elif backend_name == "opencv":
             return backend.OpenCVBackend(
-                width, height, publish_recording_status_func, exception_handler
+                width,
+                height,
+                publish_recording_status_func,
+                publish_video_status_func,
+                exception_handler,
             )
         elif backend_name == "opencv_static_image":
             return backend.OpenCVStaticImageBackend(
-                width, height, publish_recording_status_func, exception_handler
+                width,
+                height,
+                publish_recording_status_func,
+                publish_video_status_func,
+                exception_handler,
             )
         else:
             raise NotImplementedError(f"Unknown backend: {backend_name}")

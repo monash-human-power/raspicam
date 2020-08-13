@@ -1,5 +1,4 @@
 import cv2
-
 from backend import Backend, PublishFunc
 from canvas import Canvas
 
@@ -15,10 +14,15 @@ class OpenCVBackend(Backend):
         width: int,
         height: int,
         publish_recording_status_func: PublishFunc,
+        publish_video_status_func: PublishFunc,
         exception_handler: PublishFunc,
     ):
         super().__init__(
-            width, height, publish_recording_status_func, exception_handler
+            width,
+            height,
+            publish_recording_status_func,
+            publish_video_status_func,
+            exception_handler,
         )
         self.webcam = None
 
@@ -34,6 +38,11 @@ class OpenCVBackend(Backend):
         # Uses whatever OpenCV determines to be the "default camera"
         default_camera_index = 0
         self.webcam = cv2.VideoCapture(default_camera_index)
+
+    def _is_video_on(self):
+        if self.webcam is None:
+            return False
+        return self.webcam.isOpened()
 
     def _on_base_canvas_updated(self, base_canvas: Canvas) -> None:
         self.base_canvas = base_canvas
