@@ -107,7 +107,7 @@ class Overlay(ABC):
                 )
                 while True:
 
-                    # Update the data overlay only if we have waited enough time
+                    # Update data overlay only if we have waited enough time
                     if (
                         time.time()
                         > prev_data_update + self.data_update_interval
@@ -147,7 +147,10 @@ class Overlay(ABC):
         return lambda data: format_str.format(data[data_key] * scalar)
 
     def time_func(self, _: Data) -> str:
-        """ Return the time since the overlay was initialised formatted mm:ss """
+        """Return the time since the overlay was initialised.
+
+        The string is formatted by mm:ss.
+        """
         _, rem = divmod(time.time() - self.start_time, 3600)
         minutes, seconds = divmod(rem, 60)
         return "{:0>2}:{:0>2}".format(int(minutes), int(seconds))
@@ -227,7 +230,7 @@ class Overlay(ABC):
             "--bg",
             action="store",
             type=str,
-            help="Replaces the video feed with a static background image at a given location",
+            help="Replaces the video feed with a static background image at a\
+                 given location",
         )
         return parser.parse_args()
-
