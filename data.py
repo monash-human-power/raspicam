@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from json import loads
-from time import time 
+from time import time
+from datetime import datetime
 from typing import Any, List, Optional
 
 import topics
@@ -9,12 +10,14 @@ import topics
 class DataField:
     """ A class to represent a datafield (eg. Power, Cadence) and return
         a valid data value. """
+
+    DATA_EXPIRY = 5
     
-    def __init__(self, name: str, value: Any = 0) -> None:
-        self.name = name
-        self.value = 0
-        self.time_updated = time()
-        self.data_expiry = 20
+    def __init__(self, data_type: type) -> None:
+        self.value = None
+        self.data_type = data_type
+        # Time is initially set to a long time ago so data is expired by default
+        self.time_updated = datetime.min()
     
     def get_data(self) -> Any:
         """ Return the data value if the expiry hasn't been exceeded. Otherwise,
@@ -31,7 +34,7 @@ class DataField:
     def is_valid(self) -> bool:
         """ Assess whether data is still valid by checking if the valid duration
             has exceeded. """
-        return time() < self.time_updated + self.data_expiry
+        return time() < self.time_updated + DATA_EXPIRY
 
 
 class Data(ABC):
@@ -41,41 +44,24 @@ class Data(ABC):
         by using this class as a dictionary. This class is implemented by
         versions for specific bikes (DataV2, DataV3,...) """
 
-    data_types = {
-        # DAS data
-        "power": int,
-        "cadence": int,
-        "heartRate": int,
-        "gps": int,
-        "gps_speed": float,
-        "reed_velocity": float,
-        "reed_distance": float,
-        # Power model data
-        "rec_power": float,
-        "rec_speed": float,
-        "predicted_max_speed": float,
-        "zdist": float,
-        "plan_name": str,
-    }
-
     def __init__(self):
         # This is by no means a complete list of data fields we could track -
         # just the ones we currently think we might use on the overlays.
         self.data = {
             # DAS data
-            "power": 0,
-            "cadence": 0,
-            "heartRate": 0,
-            "gps": 0,
-            "gps_speed": 0,
-            "reed_velocity": 0,
-            "reed_distance": 0,
+            "power": DataField(int),
+            "cadence": DataField(int),
+            "heartRate": DataField(int),
+            "gps": DataField(int),
+            "gps_speed": DataField(float),
+            "reed_velocity": DataField(float),
+            "reed_distance": DataField(float),
             # Power model data
-            "rec_power": 0,
-            "rec_speed": 0,
-            "predicted_max_speed": 0,
-            "zdist": 0,
-            "plan_name": "",
+            "rec_power": DataField(float),
+            "rec_speed": DataField(float),
+            "predicted_max_speed": DataField(float),
+            "zdist": DataField(float),
+            "plan_name": DataField(str),
         }
 
         self.message = None
