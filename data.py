@@ -76,7 +76,7 @@ class Data(ABC):
     def has_message(self) -> bool:
         """Check if a message is available for display on the overlay.
 
-        Should returns true if the message is available for display.
+        Should return true if the message is available for display.
 
         Returning false may mean messages have been sent, or the most
         recent message has expired.
