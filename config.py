@@ -4,32 +4,36 @@ import json
 import random
 import fnmatch
 from dotenv import load_dotenv
+from warnings import warn
 
 load_dotenv()
-CONFIG_FILE = 'configs.json'
-ACTIVE_OVERLAY_KEY = 'activeOverlay'
-OVERLAY_FILE_PATTERN = 'overlay_*.py'
+CONFIG_FILE = "configs.json"
+ACTIVE_OVERLAY_KEY = "activeOverlay"
+OVERLAY_FILE_PATTERN = "overlay_*.py"
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
 def get_overlays(directory=CURRENT_DIRECTORY):
     """Get overlays stored in directory"""
-    overlays = [file for file in os.listdir(
-        directory) if fnmatch.fnmatch(file, OVERLAY_FILE_PATTERN)]
+    overlays = [
+        file
+        for file in os.listdir(directory)
+        if fnmatch.fnmatch(file, OVERLAY_FILE_PATTERN)
+    ]
     return overlays
 
 
 def set_overlay(new_overlays, directory=CURRENT_DIRECTORY):
     """Set current camera overlay"""
-    current_device = os.getenv('MHP_CAMERA')
+    current_device = os.getenv("MHP_CAMERA")
     new_overlay = new_overlays[current_device]
 
     configs = read_configs(directory)
-    if 'device' in configs:
-        configs.pop('device')
+    if "device" in configs:
+        configs.pop("device")
     configs[ACTIVE_OVERLAY_KEY] = new_overlay
 
-    with open(os.path.join(directory, CONFIG_FILE), 'w') as file:
+    with open(os.path.join(directory, CONFIG_FILE), "w") as file:
         json.dump(configs, file, indent=2, sort_keys=True)
 
 
@@ -48,18 +52,28 @@ def read_configs(directory=CURRENT_DIRECTORY):
         with open(configs_file) as file:
             configs = json.load(file)
 
-    configs['device'] = os.getenv('MHP_CAMERA')
-    configs['bike'] = os.getenv('MHP_BIKE')
-    configs['overlays'] = get_overlays()
+    configs["device"] = os.getenv("MHP_CAMERA")
+    if not configs["device"]:
+        warn("MHP_CAMERA has not been set in .env")
+
+    configs["bike"] = os.getenv("MHP_BIKE")
+    if not configs["bike"]:
+        warn("MHP_BIKE has not been set in .env")
+
+    configs["overlays"] = get_overlays()
     return configs
 
 
 def create_default_configs(directory):
     """Create a default config file"""
     random_overlay = random.choice(get_overlays(directory))
-    with open(os.path.join(directory, CONFIG_FILE), 'w') as file:
-        json.dump({ACTIVE_OVERLAY_KEY: random_overlay},
-                  file, indent=2, sort_keys=True)
+    with open(os.path.join(directory, CONFIG_FILE), "w") as file:
+        json.dump(
+            {ACTIVE_OVERLAY_KEY: random_overlay},
+            file,
+            indent=2,
+            sort_keys=True,
+        )
     return random_overlay
 
 
@@ -73,7 +87,7 @@ def get_active_overlay(directory=CURRENT_DIRECTORY):
     return os.path.join(directory, active_overlay)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # set_overlay({'primary': 'overlay_all_stats.py'})
     # print(get_active_overlay())
     print(json.dumps(read_configs()))
