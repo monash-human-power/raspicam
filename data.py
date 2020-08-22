@@ -17,7 +17,7 @@ class DataField:
         self.value = None
         self.data_type = data_type
         # Time on update is initially set to a long time ago so data is expired by default
-        self.time_updated = datetime.min()
+        self.time_updated = datetime.min
     
     def __getitem__(self) -> Any:
         """ Return the data value if the expiry hasn't been exceeded. Otherwise,
