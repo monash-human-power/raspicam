@@ -172,7 +172,7 @@ class DataV2(Data):
         terms = data.split("&")
         for term in terms:
             key, value = term.split("=")
-            if key not in self.data_types: # TODO
+            if key not in self.data:
                 continue
             cast_func = self.data_types[key]
             self.data[key] = cast_func(value)
@@ -217,25 +217,25 @@ class DataV3(Data):
             sensor_name = sensor["type"]
             sensor_value = sensor["value"]
 
-            if sensor_name == "gps": # TODO
+            if sensor_name == "gps":
                 self.data["gps"] = 1
                 self.data["gps_speed"] = float(sensor_value["speed"])
             elif sensor_name == "reedVelocity":
                 self.data["reed_velocity"] = float(sensor_value)
             elif sensor_name in self.data_types:
-                cast_func = self.data_types[sensor_name]
+                cast_func = self.data[sensor_name].data_type
                 self.data[sensor_name] = cast_func(sensor_value)
 
     def load_recommended_sp(self, data: str) -> None:
         python_data = loads(data)
-        self.data["rec_power"] = python_data["power"] # TODO
+        self.data["rec_power"] = python_data["power"]
         self.data["rec_speed"] = python_data["speed"]
         self.data["zdist"] = python_data["zoneDistance"]
 
     def load_predicted_max_speed(self, data: str) -> None:
         python_data = loads(data)
-        self.data["predicted_max_speed"] = python_data["speed"] # TODO
+        self.data["predicted_max_speed"] = python_data["speed"]
 
     def load_plan_name(self, data: str) -> None:
         python_data = loads(data)
-        self.data["plan_name"] = python_data["filename"] # TODO
+        self.data["plan_name"] = python_data["filename"]
