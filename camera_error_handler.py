@@ -1,7 +1,7 @@
 from json import dumps
 from traceback import format_exc
 
-from topics import Camera
+from mhp.topics import Camera
 
 
 class CameraErrorHandler:
