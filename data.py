@@ -16,7 +16,7 @@ class DataField:
     def __init__(self, data_type: type) -> None:
         self.value = None
         self.data_type = data_type
-        # Time is initially set to a long time ago so data is expired by default
+        # Time on update is initially set to a long time ago so data is expired by default
         self.time_updated = datetime.min()
     
     def get_data(self) -> Any:
@@ -33,7 +33,10 @@ class DataField:
     
     def is_valid(self) -> bool:
         """ Assess whether data is still valid by checking if the valid duration
-            has exceeded. """
+            has exceeded. 
+            
+            Return True if current time is less than the time when data expires.
+            """
         return time() < self.time_updated + DATA_EXPIRY
 
 
@@ -104,7 +107,7 @@ class Data(ABC):
         This only allows fetching the data, not assignment.
         """
         if field in self.data:
-            return self.data[field]
+            return self.data[field] # TODO
         else:
             print(f"WARNING: invalid data field `{field}` used")
             return None
@@ -169,7 +172,7 @@ class DataV2(Data):
         terms = data.split("&")
         for term in terms:
             key, value = term.split("=")
-            if key not in self.data_types:
+            if key not in self.data_types: # TODO
                 continue
             cast_func = self.data_types[key]
             self.data[key] = cast_func(value)
@@ -214,7 +217,7 @@ class DataV3(Data):
             sensor_name = sensor["type"]
             sensor_value = sensor["value"]
 
-            if sensor_name == "gps":
+            if sensor_name == "gps": # TODO
                 self.data["gps"] = 1
                 self.data["gps_speed"] = float(sensor_value["speed"])
             elif sensor_name == "reedVelocity":
@@ -225,14 +228,14 @@ class DataV3(Data):
 
     def load_recommended_sp(self, data: str) -> None:
         python_data = loads(data)
-        self.data["rec_power"] = python_data["power"]
+        self.data["rec_power"] = python_data["power"] # TODO
         self.data["rec_speed"] = python_data["speed"]
         self.data["zdist"] = python_data["zoneDistance"]
 
     def load_predicted_max_speed(self, data: str) -> None:
         python_data = loads(data)
-        self.data["predicted_max_speed"] = python_data["speed"]
+        self.data["predicted_max_speed"] = python_data["speed"] # TODO
 
     def load_plan_name(self, data: str) -> None:
         python_data = loads(data)
-        self.data["plan_name"] = python_data["filename"]
+        self.data["plan_name"] = python_data["filename"] # TODO
