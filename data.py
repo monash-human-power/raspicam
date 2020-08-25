@@ -8,25 +8,35 @@ import topics
 
 
 class DataField:
-    """ A class to represent a datafield (eg. Power, Cadence) and return
-        a valid data value. """
+    """ A class to represent a data field (eg. Power, Cadence).
+
+    Attributes:
+
+        value: Any type that represents the current data value of the field
+        data_type: Type that represents the attribute of the data (eg. int, str)
+        time_updated: Integer that represents the time when value was updated
+        DATA_EXPIRY: Constant integer of how long a data value is considered 
+                     valid for until expired
+    """
 
     DATA_EXPIRY = 5
     
     def __init__(self, data_type: type) -> None:
         self.value = None
         self.data_type = data_type
-        # Time on update is initially set to a long time ago so data is expired by default
+        # Time on update is initially set to expire by default
         self.time_updated = 0
 
     def get(self) -> Any:
-        """ Return the data value if the expiry hasn't been exceeded. Otherwise,
+        """ Return the data value if the expiry hasn't exceeded. Otherwise,
             it will return None. """
         if self.is_valid():
             return self.value
         return None
 
-    def get_string(self, decimals, scalar) -> str:
+    def get_string(self, decimals = 0, scalar = 1) -> str:
+        """ Return the data value in string format, if the expiry hasn't exceeded.
+            Otherwise it will return None. """
         if self.data_type is str:
             return self.get()
 
@@ -34,8 +44,6 @@ class DataField:
             format_str = f"{{:.{decimals}f}}"
             return format_str.format(self.value * scalar)
         return None
-
-    # Change a lot of functions with get or get_String
     
     def update(self, value: Any) -> None:
         """ Update the data value and time it was updated. """
