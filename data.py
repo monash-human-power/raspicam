@@ -7,7 +7,7 @@ from typing import Any, List, Optional
 import topics
 
 
-class DataField:
+class DataValue:
     """A class to represent a data field (eg. Power, Cadence).
 
     Returns:
@@ -54,7 +54,7 @@ class DataField:
             
             Return True if current time is less than the time when data expires.
             """
-        return time() < self.time_updated + DataField.DATA_EXPIRY
+        return time() < self.time_updated + DataValue.DATA_EXPIRY
 
 
 class Data(ABC):
@@ -69,19 +69,19 @@ class Data(ABC):
         # just the ones we currently think we might use on the overlays.
         self.data = {
             # DAS data
-            "power": DataField(int),
-            "cadence": DataField(int),
-            "heartRate": DataField(int),
-            "gps": DataField(int),
-            "gps_speed": DataField(float),
-            "reed_velocity": DataField(float),
-            "reed_distance": DataField(float),
+            "power": DataValue(int),
+            "cadence": DataValue(int),
+            "heartRate": DataValue(int),
+            "gps": DataValue(int),
+            "gps_speed": DataValue(float),
+            "reed_velocity": DataValue(float),
+            "reed_distance": DataValue(float),
             # Power model data
-            "rec_power": DataField(float),
-            "rec_speed": DataField(float),
-            "predicted_max_speed": DataField(float),
-            "zdist": DataField(float),
-            "plan_name": DataField(str),
+            "rec_power": DataValue(float),
+            "rec_speed": DataValue(float),
+            "predicted_max_speed": DataValue(float),
+            "zdist": DataValue(float),
+            "plan_name": DataValue(str),
         }
 
         self.message = None
