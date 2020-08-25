@@ -17,14 +17,25 @@ class DataField:
         self.value = None
         self.data_type = data_type
         # Time on update is initially set to a long time ago so data is expired by default
-        self.time_updated = datetime.min
+        self.time_updated = 0
 
-    def get_data(self) -> Any:
+    def get(self) -> Any:
         """ Return the data value if the expiry hasn't been exceeded. Otherwise,
             it will return None. """
         if self.is_valid():
             return self.value
         return None
+
+    def get_string(self, decimals, scalar) -> str:
+        if self.data_type is str:
+            return self.get()
+
+        if self.is_valid():
+            format_str = f"{{:.{decimals}f}}"
+            return format_str.format(self.value * scalar)
+        return None
+
+    # Change a lot of functions with get or get_String
     
     def update(self, value: Any) -> None:
         """ Update the data value and time it was updated. """
@@ -37,7 +48,7 @@ class DataField:
             
             Return True if current time is less than the time when data expires.
             """
-        return time() < self.time_updated + DATA_EXPIRY
+        return time() < self.time_updated + DataField.DATA_EXPIRY
 
 
 class Data(ABC):
