@@ -8,15 +8,13 @@ import topics
 
 
 class DataField:
-    """ A class to represent a data field (eg. Power, Cadence).
+    """A class to represent a data field (eg. Power, Cadence).
 
-    Attributes:
-
+    Returns:
         value: Any type that represents the current data value of the field
         data_type: Type that represents the attribute of the data (eg. int, str)
         time_updated: Integer that represents the time when value was updated
-        DATA_EXPIRY: Constant integer of how long a data value is considered 
-                     valid for until expired
+        DATA_EXPIRY: Constant integer of how long a data value is considered valid for until expired
     """
 
     DATA_EXPIRY = 5
