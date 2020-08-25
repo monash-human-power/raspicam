@@ -26,7 +26,7 @@ class DataField:
             return self.value
         return None
     
-    def update_data(self, value: Any) -> None:
+    def update(self, value: Any) -> None:
         """ Update the data value and time it was updated. """
         self.value = value
         self.time_updated = time()
@@ -174,8 +174,8 @@ class DataV2(Data):
             key, value = term.split("=")
             if key not in self.data:
                 continue
-            cast_func = self.data_types[key]
-            self.data[key] = cast_func(value)
+            cast_func = self.data[key].data_type
+            self.data[key].update(cast_func(value))
 
 
 class DataV3(Data):
@@ -218,24 +218,24 @@ class DataV3(Data):
             sensor_value = sensor["value"]
 
             if sensor_name == "gps":
-                self.data["gps"] = 1
-                self.data["gps_speed"] = float(sensor_value["speed"])
+                self.data["gps"].update(1)
+                self.data["gps_speed"].update(float(sensor_value["speed"]))
             elif sensor_name == "reedVelocity":
-                self.data["reed_velocity"] = float(sensor_value)
+                self.data["reed_velocity"].update(float(sensor_value))
             elif sensor_name in self.data_types:
                 cast_func = self.data[sensor_name].data_type
-                self.data[sensor_name] = cast_func(sensor_value)
+                self.data[sensor_name].update(cast_func(sensor_value))
 
     def load_recommended_sp(self, data: str) -> None:
         python_data = loads(data)
-        self.data["rec_power"] = python_data["power"]
-        self.data["rec_speed"] = python_data["speed"]
-        self.data["zdist"] = python_data["zoneDistance"]
+        self.data["rec_power"].update(python_data["power"])
+        self.data["rec_speed"].update(python_data["speed"])
+        self.data["zdist"].update(python_data["zoneDistance"])
 
     def load_predicted_max_speed(self, data: str) -> None:
         python_data = loads(data)
-        self.data["predicted_max_speed"] = python_data["speed"]
+        self.data["predicted_max_speed"].update(python_data["speed"])
 
     def load_plan_name(self, data: str) -> None:
         python_data = loads(data)
-        self.data["plan_name"] = python_data["filename"]
+        self.data["plan_name"].update(python_data["filename"])
