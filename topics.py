@@ -58,9 +58,9 @@ class DAShboard(Topic):
     recording = "/v3/camera/recording/+"
     recording_start = "/v3/camera/recording/start"
     recording_stop = "/v3/camera/recording/stop"
-    recording_status_root = "/v3/camera/recording/status"
 
-    video_feed_status_root = "/v3/camera/video-feed/status"
+    status_recording = "/v3/status/camera/recording"
+    status_video_feed = "/v3/status/camera/video-feed"
 
 
 class SensorModules(Topic):
