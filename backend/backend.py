@@ -229,9 +229,11 @@ class Backend(ABC):
         self.publish_recording_status_func(dumps(message))
         print(format_exc())
 
-    def send_video_status(self) -> None:
+    def send_video_status(self, status: bool = None) -> None:
         """ Publish the camera's status to the camera's online topic. """
-        self.publish_video_status_func(dumps({"online": self._is_video_on()}))
+        self.publish_video_status_func(dumps({
+            "online": status if status != None else self._is_video_on()
+        }))
         self.prev_video_status_time = time()
 
     def __enter__(self):
@@ -243,4 +245,4 @@ class Backend(ABC):
     def __exit__(self, exc_type, exc_value, traceback):
         """ Ran when exiting a `with` block. """
         self.stop_video()
-        self.send_video_status()
+        self.send_video_status(False)
