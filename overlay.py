@@ -52,9 +52,7 @@ class Overlay(ABC):
         self.client.on_log = self.on_log
 
         # Set the camera status to offline if connection breaks
-        is_online_topic = (
-            f"{str(DAShboard.video_feed_status_root)}/{self.device}"
-        )
+        is_online_topic = f"{str(DAShboard.status_video_feed)}/{self.device}"
         self.client.will_set(
             is_online_topic, dumps({"online": False}), 1, True
         )
@@ -73,13 +71,13 @@ class Overlay(ABC):
 
     def publish_recording_status(self, message: str) -> None:
         """ Send a message on the current device's recording status topic. """
-        status_topic = f"{str(DAShboard.recording_status_root)}/{self.device}"
+        status_topic = f"{str(DAShboard.status_recording)}/{self.device}"
         self.client.publish(status_topic, message, retain=True)
 
     def publish_video_status(self, message: str) -> None:
         """ Send a message on the current device's online topic. """
         online_status_topic = (
-            f"{str(DAShboard.video_feed_status_root)}/{self.device}"
+            f"{str(DAShboard.status_video_feed)}/{self.device}"
         )
         self.client.publish(online_status_topic, message, retain=True)
 
