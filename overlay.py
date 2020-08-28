@@ -11,7 +11,7 @@ from camera_error_handler import CameraErrorHandler
 from canvas import Canvas
 from config import read_configs
 from data import Data, DataFactory
-from topics import DAShboard
+from mhp.topics import DAShboard
 
 DEFAULT_BIKE = "V2"
 

@@ -3,6 +3,8 @@ import argparse
 import paho.mqtt.client as mqtt
 import time
 
+from mhp.topics import DAShboard
+
 
 def get_args(argv=None):
     """Get arguments passed into Python script"""
@@ -24,7 +26,7 @@ class MessageTest:
         self.host_ip = host_ip
         self.wait_time = wait_time
         self.mqtt_client = None
-        self.message_topic = "/v3/camera/primary/message"
+        self.message_topic = DAShboard.overlay_message
 
     def on_log(self, client, userdata, level, buf):
         """ The callback to log all MQTT information """
