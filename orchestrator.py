@@ -5,7 +5,8 @@ import sys
 import time
 import paho.mqtt.client as mqtt
 import config
-import topics
+
+from mhp import topics
 
 
 def get_args(argv=[]):

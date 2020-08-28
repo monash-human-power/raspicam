@@ -3,7 +3,7 @@ import pytest
 from time import sleep
 
 from data import DataFactory, DataV2, DataV3
-import topics
+from mhp import topics
 
 
 class TestDataFactory:
@@ -80,7 +80,7 @@ class TestDataV3:
     def test_v3_messages():
         message_packet = {"message": "testing 123"}
         data = DataV3()
-        data.load_data(topics.DAShboard.receive_message, dumps(message_packet))
+        data.load_data(topics.DAShboard.overlay_message, dumps(message_packet))
         assert data.has_message()
         assert data.get_message() == message_packet["message"]
         sleep(data.message_duration)
