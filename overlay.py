@@ -51,10 +51,14 @@ class Overlay(ABC):
         self.client.on_disconnect = self.on_disconnect
         self.client.on_log = self.on_log
 
+        # Set the video feed status to offline if connection breaks
+        video_topic = f"{str(DAShboard.status_video_feed)}/{self.device}"
+        self.client.will_set(video_topic, dumps({"online": False}), 1, True)
+
         # Set the camera status to offline if connection breaks
-        is_online_topic = f"{str(DAShboard.status_video_feed)}/{self.device}"
+        camera_topic = f"/v3/status/camera/{self.device}"
         self.client.will_set(
-            is_online_topic, dumps({"online": False}), 1, True
+            camera_topic, dumps({"connected": False}), 1, True
         )
 
         self.set_callback_for_topic_list(
@@ -80,6 +84,11 @@ class Overlay(ABC):
             f"{str(DAShboard.status_video_feed)}/{self.device}"
         )
         self.client.publish(online_status_topic, message, retain=True)
+
+    def publish_camera_status(self, message: str) -> None:
+        """ Send a message on the current device's camera status topic. """
+        status_topic = f"/v3/status/camera/{self.device}"
+        self.client.publish(status_topic, message, retain=True)
 
     def connect(self, ip="192.168.100.100", port=1883):
         self.client.connect_async(ip, port, 60)
@@ -158,6 +167,7 @@ class Overlay(ABC):
         print("\nlog: ", buf)
 
     def on_disconnect(self, client, userdata, msg):
+        self.publish_camera_status(dumps({"connected": False}))
         print("Disconnected from broker")
 
     def _on_connect(self, client, userdata, flags, rc):
@@ -166,6 +176,7 @@ class Overlay(ABC):
         with self.exception_handler:
             self.on_connect(client, userdata, flags, rc)
         self.backend.on_base_canvas_updated(self.base_canvas)
+        self.publish_camera_status(dumps({"connected": True}))
 
     def on_data_message(self, client, userdata, msg):
         with self.exception_handler:
