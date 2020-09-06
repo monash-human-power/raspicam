@@ -30,13 +30,19 @@ class CentrePower(Component):
         pass
 
     def draw_data(self, canvas: Canvas, data: Data):
-        power = data["power"]
-        rec_power = data["rec_power"]
+        power = data["power"].get_string()
+        rec_power = data["rec_power"].get_string()
 
-        power_str = f"{power:.0f}w"
-        rec_power_str = f"{rec_power:.0f}w rec"
+        if power is not None:
+            power_str = f"{power:.0f}w"
+        else:
+            power_str = "--"
+        if rec_power is not None:
+            rec_power_str = f"{rec_power:.0f}w rec"
+        else:
+            rec_power_str = "--"
 
-        if rec_power == 0:
+        if rec_power == 0 or rec_power is None:
             power_colour = Colour.black
         else:
             power_diff = abs(power / rec_power - 1)
