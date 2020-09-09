@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from json import loads
 from time import time
-from datetime import datetime
 from typing import Any, List, Optional
 
 import topics
@@ -10,7 +9,7 @@ import topics
 class DataValue:
     """A class to represent a data field (eg. Power, Cadence).
 
-    Returns:
+    Attributes:
         value: Any type that represents the current data value of the field
         data_type: Type that represents the attribute of the data (eg. int, str)
         time_updated: Integer that represents the time when value was updated
@@ -18,7 +17,7 @@ class DataValue:
     """
 
     DATA_EXPIRY = 5
-    
+
     def __init__(self, data_type: type) -> None:
         self.value = None
         self.data_type = data_type
@@ -32,9 +31,14 @@ class DataValue:
             return self.value
         return None
 
-    def get_string(self, decimals = 0, scalar = 1) -> str:
+    def get_string(self, decimals: int = 0, scalar: int = 1) -> str:
         """ Return the data value in string format, if the expiry hasn't exceeded.
-            Otherwise it will return None. """
+            Otherwise it will return None. 
+            
+            Args:
+                decimals: Integer representing number of decimal places of the data point
+                scalar: Integer used to multiply the data value
+        """
         if self.data_type is str:
             return self.get()
 
@@ -42,18 +46,20 @@ class DataValue:
             format_str = f"{{:.{decimals}f}}"
             return format_str.format(self.value * scalar)
         return None
-    
+
     def update(self, value: Any) -> None:
-        """ Update the data value and time it was updated. """
+        """ Update the data value and time it was updated. 
+            
+            Args:
+                value: Any type representing the data point of the field
+        """
         self.value = value
         self.time_updated = time()
-    
+
     def is_valid(self) -> bool:
-        """ Assess whether data is still valid by checking if the valid duration
-            has exceeded. 
-            
-            Return True if current time is less than the time when data expires.
-            """
+        """ Assess whether data is valid by checking if the valid duration
+            has exceeded. Return True if current time is less than the time when
+            data expires."""
         return time() < self.time_updated + DataValue.DATA_EXPIRY
 
 
@@ -120,11 +126,11 @@ class Data(ABC):
     def __getitem__(self, field: str) -> Any:
         """Get the most recent value of a data field.
 
-        This overloads the [] operator e.g. call with data_intance["power"].
+        This overloads the [] operator e.g. call with data_instance["power"].
         This only allows fetching the data, not assignment.
         """
         if field in self.data:
-            return self.data[field] # TODO
+            return self.data[field]
         else:
             print(f"WARNING: invalid data field `{field}` used")
             return None
