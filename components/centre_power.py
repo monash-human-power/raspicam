@@ -34,11 +34,11 @@ class CentrePower(Component):
         rec_power = data["rec_power"].get_string()
 
         if power is not None:
-            power_str = f"{power:.0f}w"
+            power_str = power + "w"
         else:
             power_str = "--"
         if rec_power is not None:
-            rec_power_str = f"{rec_power:.0f}w rec"
+            rec_power_str = rec_power + "w rec"
         else:
             rec_power_str = "--"
 

@@ -239,7 +239,7 @@ class DataV3(Data):
                 self.data["gps_speed"].update(float(sensor_value["speed"]))
             elif sensor_name == "reedVelocity":
                 self.data["reed_velocity"].update(float(sensor_value))
-            elif sensor_name in self.data_types:
+            elif sensor_name in self.data.keys():
                 cast_func = self.data[sensor_name].data_type
                 self.data[sensor_name].update(cast_func(sensor_value))
 

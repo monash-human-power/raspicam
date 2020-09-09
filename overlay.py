@@ -143,7 +143,13 @@ class Overlay(ABC):
         """ Return a lambda function which, when called, returns the current
             value for the data field `data_key`, multiplied by `scalar`, and
             formatted to `decimals` decimal places. """
-        return lambda data: data[data_key].get_string()
+        def data_func(data: Data) -> str:
+            if data[data_key].is_valid():
+                return data[data_key].get_string(decimals, scalar)
+            else:
+                return "--"
+
+        return data_func
 
     def time_func(self, _: Data) -> str:
         """Return the time since the overlay was initialised.
