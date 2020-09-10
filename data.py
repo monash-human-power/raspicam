@@ -3,7 +3,7 @@ from json import loads
 from time import time
 from typing import Any, List, Optional
 
-import topics
+from mhp import topics
 
 
 class DataValue:
@@ -175,12 +175,12 @@ class DataV2(Data):
             str(topics.PowerModel.recommended_sp),
             str(topics.PowerModel.predicted_max_speed),
             str(topics.PowerModel.plan_name),
-            str(topics.DAShboard.receive_message),
+            str(topics.DAShboard.overlay_message),
         ]
 
     def load_data(self, topic: str, data: str) -> None:
         """ Loads V2 query strings and V3 DAShboard messages """
-        if topics.DAShboard.receive_message.matches(topic):
+        if topics.DAShboard.overlay_message.matches(topic):
             self.load_message(data)
         elif str(topic) in DataV2.get_topics():
             self.load_query_string(data)
@@ -206,7 +206,7 @@ class DataV3(Data):
     def get_topics() -> List[str]:
         return [
             str(topics.SensorModules.all_sensors),
-            str(topics.DAShboard.receive_message),
+            str(topics.DAShboard.overlay_message),
             str(topics.PowerModelV3.recommended_sp),
             str(topics.PowerModelV3.predicted_max_speed),
             str(topics.PowerModelV3.plan_name),
@@ -215,7 +215,7 @@ class DataV3(Data):
     def load_data(self, topic: str, data: str) -> None:
         """Update stored fields with data from a V3 sensor module data packet.
         """
-        if topics.DAShboard.receive_message.matches(topic):
+        if topics.DAShboard.overlay_message.matches(topic):
             self.load_message_json(data)
         elif topics.SensorModules.all_sensors.matches(topic):
             self.load_sensor_data(data)
