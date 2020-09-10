@@ -41,7 +41,7 @@ class TestDataV2:
         data.load_data(topics.DAS.data, TestDataV2.to_query_string(test_data))
 
         for key, value in test_data.items():
-            assert data[key].get() == value, f"Key {key} is not being set correctly"
+            assert data[key].get() == value, f"Key {key} is not set correctly"
 
     @staticmethod
     def test_v2_power_model_parsing():
@@ -72,7 +72,7 @@ class TestDataV2:
             **max_speed_data,
             **plan_name_data,
         }.items():
-            assert data[key].get() == value, f"Key {key} is not being set correctly"
+            assert data[key].get() == value, f"Key {key} is not set correctly"
 
 
 class TestDataV3:
