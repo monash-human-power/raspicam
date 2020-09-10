@@ -41,7 +41,7 @@ class TestDataV2:
         data.load_data(topics.DAS.data, TestDataV2.to_query_string(test_data))
 
         for key, value in test_data.items():
-            assert data[key] == value, f"Key {key} is not being set correctly"
+            assert data[key].get() == value, f"Key {key} is not being set correctly"
 
     @staticmethod
     def test_v2_power_model_parsing():
@@ -72,7 +72,7 @@ class TestDataV2:
             **max_speed_data,
             **plan_name_data,
         }.items():
-            assert data[key] == value, f"Key {key} is not being set correctly"
+            assert data[key].get() == value, f"Key {key} is not being set correctly"
 
 
 class TestDataV3:
@@ -143,13 +143,13 @@ class TestDataV3:
 
         # No fields tracked from front or mid module
         # Test back module
-        assert data["gps"] == 1
-        assert data["gps_speed"] == 20.5
-        assert data["reed_velocity"] == 20.1
+        assert data["gps"].get() == 1
+        assert data["gps_speed"].get() == 20.5
+        assert data["reed_velocity"].get() == 20.1
         # Test antplus data
-        assert data["power"] == 249
-        assert data["cadence"] == 105
-        assert data["heartRate"] == 171
+        assert data["power"].get() == 249
+        assert data["cadence"].get() == 105
+        assert data["heartRate"].get() == 171
 
     @staticmethod
     def test_v3_power_model_parsing():
@@ -172,8 +172,8 @@ class TestDataV3:
         )
         data.load_data(topics.PowerModelV3.plan_name, dumps(plan_name_data))
 
-        assert data["rec_power"] == 10
-        assert data["rec_speed"] == 20
-        assert data["zdist"] == 30
-        assert data["predicted_max_speed"] == 100
-        assert data["plan_name"] == "default.pkl"
+        assert data["rec_power"].get() == 10
+        assert data["rec_speed"].get() == 20
+        assert data["zdist"].get() == 30
+        assert data["predicted_max_speed"].get() == 100
+        assert data["plan_name"].get() == "default.pkl"
