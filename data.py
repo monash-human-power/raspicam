@@ -11,9 +11,11 @@ class DataValue:
 
     Attributes:
         value: Any type that represents the current data value of the field
-        data_type: Type that represents the attribute of the data (eg. int, str)
+        data_type: Type that represents the attribute of the data 
+                   (eg. int, str)
         time_updated: Integer that represents the time when value was updated
-        DATA_EXPIRY: Constant integer of how long a data value is considered valid for until expired
+        DATA_EXPIRY: Constant integer of how long a data value is considered 
+                     valid for until expired
     """
 
     DATA_EXPIRY = 5
@@ -33,10 +35,10 @@ class DataValue:
 
     def get_string(self, decimals: int = 0, scalar: int = 1) -> str:
         """ Return the data value in string format, if the expiry hasn't exceeded.
-            Otherwise it will return None. 
-            
+            Otherwise it will return None.
+
             Args:
-                decimals: Integer representing number of decimal places of the data point
+                decimals: Integer representing decimal places for the data point
                 scalar: Integer used to multiply the data value
         """
         if self.data_type is str:
@@ -48,8 +50,8 @@ class DataValue:
         return None
 
     def update(self, value: Any) -> None:
-        """ Update the data value and time it was updated. 
-            
+        """ Update the data value and time it was updated.
+
             Args:
                 value: Any type representing the data point of the field
         """
@@ -58,8 +60,8 @@ class DataValue:
 
     def is_valid(self) -> bool:
         """ Assess whether data is valid by checking if the valid duration
-            has exceeded. Return True if current time is less than the time when
-            data expires."""
+            has exceeded. Return True if current time is less than the time 
+            when data expires."""
         return time() < self.time_updated + DataValue.DATA_EXPIRY
 
 
