@@ -26,3 +26,20 @@ line-length = 79
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[pycalver]
+current_version = "v202009.0001-alpha"
+version_pattern = "{pycalver}"
+commit = true
+tag = true
+push = true
+
+[pycalver.file_patterns]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+]
+"README.md" = [
+    "{version}",
+    "{pep440_version}",
+]
+
