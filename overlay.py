@@ -167,7 +167,6 @@ class Overlay(ABC):
         print("\nlog: ", buf)
 
     def on_disconnect(self, client, userdata, msg):
-        self.publish_camera_status(dumps({"connected": False}))
         print("Disconnected from broker")
 
     def _on_connect(self, client, userdata, flags, rc):
