@@ -232,7 +232,7 @@ class Backend(ABC):
     def send_video_status(self, status: bool = None) -> None:
         """ Publish the camera's status to the camera's online topic. """
         if status is None:
-            status = self._is_video_on
+            status = self._is_video_on()
         self.publish_video_status_func(dumps({"online": status}))
         self.prev_video_status_time = time()
 

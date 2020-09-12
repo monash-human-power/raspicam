@@ -51,11 +51,9 @@ class Overlay(ABC):
         self.client.on_disconnect = self.on_disconnect
         self.client.on_log = self.on_log
 
-        # Set the camera status to offline if connection breaks
-        is_online_topic = f"{str(DAShboard.status_video_feed)}/{self.device}"
-        self.client.will_set(
-            is_online_topic, dumps({"online": False}), 1, True
-        )
+        # Set the video feed status to offline if connection breaks
+        video_topic = f"{str(DAShboard.status_video_feed)}/{self.device}"
+        self.client.will_set(video_topic, dumps({"online": False}), 1, True)
 
         self.set_callback_for_topic_list(
             self.data.get_topics(), self.on_data_message
