@@ -30,15 +30,15 @@ class CentrePower(Component):
         pass
 
     def draw_data(self, canvas: Canvas, data: Data):
-        power = data["power"].get_string()
-        rec_power = data["rec_power"].get_string()
-
-        if power is not None:
-            power_str = power + "w"
+        power = data["power"].get()
+        rec_power = data["rec_power"].get()
+        
+        if data["power"].is_valid():
+            power_str = data["power"].get_string() + "w"
         else:
             power_str = "--"
-        if rec_power is not None:
-            rec_power_str = rec_power + "w rec"
+        if data["rec_power"].is_valid():
+            rec_power_str = data["rec_power"].get_string() + "w rec"
         else:
             rec_power_str = "--"
 
