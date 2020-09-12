@@ -5,32 +5,45 @@ from time import sleep
 from data import DataValue, DataFactory, DataV2, DataV3
 from mhp import topics
 
+
 class TestDataValue:
     @staticmethod
     def test_instance_creation():
         data_value = DataValue(str)
 
         assert data_value.data_type == str, "Type is not set properly"
-        assert data_value.time_to_expire == 5, "Default time is not set to 5 seconds"
+        assert (
+            data_value.time_to_expire == 5
+        ), "Default time is not set to 5 seconds"
         assert data_value.is_valid() == False, "Data is not invalid by default"
-    
+
     @staticmethod
     def test_data_update():
         data_value = DataValue(int)
         data_value.update(100)
 
         assert data_value.value == 100, "Data is not updated properly"
-        assert data_value.is_valid() == True, "When data is updated, it should be ruled valid"
+        assert (
+            data_value.is_valid() == True
+        ), "When data is updated, it should be ruled valid"
         sleep(data_value.time_to_expire)
-        assert data_value.is_valid() == False, "After 5 seconds passes, data should be ruled invalid"
-    
+        assert (
+            data_value.is_valid() == False
+        ), "After 5 seconds passes, data should be ruled invalid"
+
     @staticmethod
     def test_data_get():
-        data_value = DataValue(int)
+        data_value = DataValue(float)
         data_value.update(26)
 
         assert data_value.get() == 26, "Data was not returned properly."
-        assert data_value.get_string() == "26", "Data as a string was not returned properly"
+        assert (
+            data_value.get_string() == "26"
+        ), "Data as a string was not returned properly"
+        assert (
+            data_value.get_string(1) == "26.0"
+        ), "Data as a string was not returned with the correct decimal places"
+
 
 class TestDataFactory:
     @staticmethod
