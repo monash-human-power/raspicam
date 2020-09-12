@@ -181,8 +181,7 @@ class DataV2(Data):
             key, value = term.split("=")
             if key not in self.data:
                 continue
-            cast_func = self.data[key].data_type
-            self.data[key].update(value, cast_func)
+            self.data[key].update(value)
 
 
 class DataV3(Data):
