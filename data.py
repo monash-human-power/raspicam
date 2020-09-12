@@ -48,14 +48,14 @@ class DataValue:
             return format_str.format(self.value * scalar)
         return None
 
-    def update(self, value: Any, cast_func: type = None) -> None:
+    def update(self, value: Any) -> None:
         """Update the data value and time it was updated.
 
         Args:
             value: Any type representing the data point of the field
         """
-        if cast_func:
-            value = cast_func(value)
+        if type(value) != self.data_type:
+            value = self.data_type(value)
         self.value = value
         self.time_updated = time()
 
@@ -226,12 +226,9 @@ class DataV3(Data):
 
             if sensor_name == "gps":
                 self.data["gps"].update(1)
-                self.data["gps_speed"].update(sensor_value["speed"], float)
-            elif sensor_name == "reedVelocity":
-                self.data["reed_velocity"].update(sensor_value, float)
+                self.data["gps_speed"].update(sensor_value["speed"])
             elif sensor_name in self.data.keys():
-                cast_func = self.data[sensor_name].data_type
-                self.data[sensor_name].update(sensor_value, cast_func)
+                self.data[sensor_name].update(sensor_value)
 
     def load_recommended_sp(self, data: str) -> None:
         python_data = loads(data)
