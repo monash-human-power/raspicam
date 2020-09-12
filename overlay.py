@@ -141,6 +141,7 @@ class Overlay(ABC):
         """ Return a lambda function which, when called, returns the current
             value for the data field `data_key`, multiplied by `scalar`, and
             formatted to `decimals` decimal places. """
+
         def data_func(data: Data) -> str:
             if data[data_key].is_valid():
                 return data[data_key].get_string(decimals, scalar)
