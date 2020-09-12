@@ -18,13 +18,12 @@ class DataValue:
                      valid for until expired
     """
 
-    DATA_EXPIRY = 5
-
-    def __init__(self, data_type: type) -> None:
+    def __init__(self, data_type: type, time_to_expire: int = 5) -> None:
         self.value = None
         self.data_type = data_type
         # Time on update is initially set to expire by default
         self.time_updated = 0
+        self.time_to_expire = time_to_expire
 
     def get(self) -> Any:
         """Return the data value if the expiry hasn't exceeded. Otherwise,
@@ -64,7 +63,7 @@ class DataValue:
         """Assess whether data is valid by checking if the valid duration
         has exceeded. Return True if current time is less than the time
         when data expires."""
-        return time() < self.time_updated + DataValue.DATA_EXPIRY
+        return time() < self.time_updated + self.time_to_expire
 
 
 class Data(ABC):
@@ -93,39 +92,20 @@ class Data(ABC):
             "zdist": DataValue(float),
             "plan_name": DataValue(str),
         }
-
-        self.message = None
-        self.message_received_time = 0
-        self.message_duration = 5  # seconds
+        self.message = DataValue(str, 20)
 
     def load_message(self, message: str) -> None:
         """Store a message which is made available by self.get_message."""
-        self.message_received_time = time()
-        self.message = message
+        self.message.update(message)
 
     def has_message(self) -> bool:
-        """Check if a message is available for display on the overlay.
-
-        Should return true if the message is available for display.
-
-        Returning false may mean messages have been sent, or the most
-        recent message has expired.
-        """
-        if not self.message:
-            return False
-        # Clear the message and return false if enough time has past since
-        # the message was received
-        if time() > self.message_received_time + self.message_duration:
-            self.message = None
-            return False
-        return True
+        """Assess whether message has expired. Will return true if expiration
+        has not bee exceeded."""
+        return self.message.is_valid()
 
     def get_message(self) -> Optional[str]:
-        """Get the most recent message from the DAShboard.
-
-        This should only be called if self.has_message returns true.
-        """
-        return self.message
+        """Return the message set by self.message"""
+        return self.message.get()
 
     def __getitem__(self, field: str) -> Any:
         """Get the most recent value of a data field.
