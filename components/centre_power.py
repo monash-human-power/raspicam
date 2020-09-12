@@ -32,7 +32,7 @@ class CentrePower(Component):
     def draw_data(self, canvas: Canvas, data: Data):
         power = data["power"].get()
         rec_power = data["rec_power"].get()
-        
+
         if data["power"].is_valid():
             power_str = data["power"].get_string() + "w"
         else:

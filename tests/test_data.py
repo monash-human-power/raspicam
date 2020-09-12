@@ -15,7 +15,7 @@ class TestDataValue:
         assert (
             data_value.time_to_expire == 5
         ), "Default time is not set to 5 seconds"
-        assert data_value.is_valid() == False, "Data is not invalid by default"
+        assert not data_value.is_valid(), "Data is not invalid by default"
 
     @staticmethod
     def test_data_update():
@@ -24,11 +24,11 @@ class TestDataValue:
 
         assert data_value.value == 100, "Data is not updated properly"
         assert (
-            data_value.is_valid() == True
+            data_value.is_valid()
         ), "When data is updated, it should be ruled valid"
         sleep(data_value.time_to_expire)
         assert (
-            data_value.is_valid() == False
+            not data_value.is_valid()
         ), "After 5 seconds passes, data should be ruled invalid"
 
     @staticmethod
