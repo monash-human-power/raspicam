@@ -27,19 +27,19 @@ class DataValue:
         self.time_updated = 0
 
     def get(self) -> Any:
-        """ Return the data value if the expiry hasn't exceeded. Otherwise,
-            it will return None. """
+        """Return the data value if the expiry hasn't exceeded. Otherwise,
+        it will return None. """
         if self.is_valid():
             return self.value
         return None
 
     def get_string(self, decimals: int = 0, scalar: int = 1) -> str:
-        """ Return the data value in string format, if the expiry hasn't exceeded.
-            Otherwise it will return None.
+        """Return the data value in string format, if the expiry hasn't exceeded.
+        Otherwise it will return None.
 
-            Args:
-                decimals: Integer representing decimal places of the data point
-                scalar: Integer used to multiply the data value
+        Args:
+            decimals: Integer representing decimal places of the data point
+            scalar: Integer used to multiply the data value
         """
         if self.data_type is str:
             return self.get()
@@ -50,18 +50,18 @@ class DataValue:
         return None
 
     def update(self, value: Any) -> None:
-        """ Update the data value and time it was updated.
+        """Update the data value and time it was updated.
 
-            Args:
-                value: Any type representing the data point of the field
+        Args:
+            value: Any type representing the data point of the field
         """
         self.value = value
         self.time_updated = time()
 
     def is_valid(self) -> bool:
-        """ Assess whether data is valid by checking if the valid duration
-            has exceeded. Return True if current time is less than the time
-            when data expires."""
+        """Assess whether data is valid by checking if the valid duration
+        has exceeded. Return True if current time is less than the time
+        when data expires."""
         return time() < self.time_updated + DataValue.DATA_EXPIRY
 
 
