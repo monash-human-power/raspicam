@@ -2,9 +2,35 @@ from json import dumps
 import pytest
 from time import sleep
 
-from data import DataFactory, DataV2, DataV3
+from data import DataValue, DataFactory, DataV2, DataV3
 from mhp import topics
 
+class TestDataValue:
+    @staticmethod
+    def test_instance_creation():
+        data_value = DataValue(str)
+
+        assert data_value.data_type == str, "Type is not set properly"
+        assert data_value.time_to_expire == 5, "Default time is not set to 5 seconds"
+        assert data_value.is_valid() == False, "Data is not invalid by default"
+    
+    @staticmethod
+    def test_data_update():
+        data_value = DataValue(int)
+        data_value.update(100)
+
+        assert data_value.value == 100, "Data is not updated properly"
+        assert data_value.is_valid() == True, "When data is updated, it should be ruled valid"
+        sleep(data_value.time_to_expire)
+        assert data_value.is_valid() == False, "After 5 seconds passes, data should be ruled invalid"
+    
+    @staticmethod
+    def test_data_get():
+        data_value = DataValue(int)
+        data_value.update(26)
+
+        assert data_value.get() == 26, "Data was not returned properly."
+        assert data_value.get_string() == "26", "Data as a string was not returned properly"
 
 class TestDataFactory:
     @staticmethod
@@ -83,7 +109,7 @@ class TestDataV3:
         data.load_data(topics.DAShboard.overlay_message, dumps(message_packet))
         assert data.has_message()
         assert data.get_message() == message_packet["message"]
-        sleep(data.message_duration)
+        sleep(data.message.time_to_expire)
         assert not data.has_message()
 
     @staticmethod
@@ -113,7 +139,7 @@ class TestDataV3:
         back_module_data = {
             "sensors": [
                 {"type": "co2", "value": 35},
-                {"type": "reedVelocity", "value": 20.1},
+                {"type": "reed_velocity", "value": 20.1},
                 {
                     "type": "gps",
                     "value": {
