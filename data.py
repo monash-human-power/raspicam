@@ -55,6 +55,7 @@ class DataValue:
             value: Any type representing the data point of the field
         """
         if type(value) != self.data_type:
+            # Casts value when the type is different to the assigned data_type
             value = self.data_type(value)
         self.value = value
         self.time_updated = time()
@@ -99,12 +100,19 @@ class Data(ABC):
         self.message.update(message)
 
     def has_message(self) -> bool:
-        """Assess whether message has expired. Will return true if expiration
-        has not bee exceeded."""
+        """Check if a message is available for display on the overlay.
+        
+        Return True if a message is available for display. Otherwise, return
+        false if the message has already been sent of the most recent message
+        has expired.
+        """
         return self.message.is_valid()
 
     def get_message(self) -> Optional[str]:
-        """Return the message set by self.message"""
+        """Return the most recent message from the DAShboard.
+        
+        This should only be called if self.has_message returns true.
+        """
         return self.message.get()
 
     def __getitem__(self, field: str) -> Any:
