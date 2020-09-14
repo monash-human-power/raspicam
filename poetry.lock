@@ -203,7 +203,7 @@ description = ""
 name = "mhp"
 optional = false
 python-versions = "^3.6"
-version = "202008.4"
+version = "202009.7"
 
 [package.dependencies]
 argparse = "^1.4.0"
@@ -212,7 +212,7 @@ paho-mqtt = "^1.5.0"
 scipy = "^1.5.2"
 
 [package.source]
-reference = "6a2835ab0b34fb60ff5eff7b77d812d213776cb7"
+reference = "67b992b48abe2e34dfc0a25a0de8059fe3a2a314"
 type = "git"
 url = "https://github.com/monash-human-power/common.git"
 [[package]]
@@ -488,7 +488,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "c28b7c8cbd87eecd0e487f0d26ffe7e7fffd32231ddee3f40bdfa87d79838446"
+content-hash = "0b0123132f02b75fa0d54c2f2ade03310db926355ce252028f51ad0045ac26c7"
 lock-version = "1.0"
 python-versions = "~3.7"
 
