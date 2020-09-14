@@ -42,7 +42,7 @@ class CentrePower(Component):
         else:
             rec_power_str = "--"
 
-        if rec_power == 0 or rec_power is None or power == None:
+        if rec_power == 0 or rec_power is None or power is None:
             power_colour = Colour.black
         else:
             power_diff = abs(power / rec_power - 1)
