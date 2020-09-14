@@ -152,7 +152,8 @@ class TestDataV3:
         back_module_data = {
             "sensors": [
                 {"type": "co2", "value": 35},
-                {"type": "reed_velocity", "value": 20.1},
+                {"type": "reedVelocity", "value": 20.1},
+                {"type": "reedDistance", "value": 1040.3},
                 {
                     "type": "gps",
                     "value": {
@@ -185,6 +186,7 @@ class TestDataV3:
         assert data["gps"].get() == 1
         assert data["gps_speed"].get() == 20.5
         assert data["reed_velocity"].get() == 20.1
+        assert data["reed_distance"].get() == 1040.3
         # Test antplus data
         assert data["power"].get() == 249
         assert data["cadence"].get() == 105
