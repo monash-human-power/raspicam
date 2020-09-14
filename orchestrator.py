@@ -1,11 +1,12 @@
 """Orchestrator Script That Controls The Camera System"""
-import json
 import argparse
+import json
 import sys
 import time
-import paho.mqtt.client as mqtt
-import config
+from json import dumps
 
+import config
+import paho.mqtt.client as mqtt
 from mhp import topics
 
 
@@ -27,6 +28,13 @@ class Orchestrator:
         self.broker_ip = broker_ip
         self.port = port
         self.mqtt_client = None
+        configs = config.read_configs()
+        self.device = configs["device"]
+
+    def publish_camera_status(self, message: str) -> None:
+        """ Send a message on the current device's camera status topic. """
+        status_topic = f"{topics.DAShboard.status_camera}/{self.device}"
+        self.mqtt_client.publish(status_topic, message, retain=True)
 
     def on_connect(self, client, userdata, flags, rc):
         """The callback for when the client receives a CONNACK response."""
@@ -36,6 +44,7 @@ class Orchestrator:
         # reconnect then subscriptions will be renewed.
         client.subscribe(str(topics.Camera.set_overlay))
         client.subscribe(str(topics.Camera.get_overlays))
+        self.publish_camera_status(dumps({"connected": True}))
 
     def on_message(self, client, userdata, msg):
         """The callback for when a PUBLISH message is received."""
@@ -64,6 +73,12 @@ class Orchestrator:
         self.mqtt_client.on_log = self.on_log
         self.mqtt_client.on_disconnect = self.on_disconnect
         self.mqtt_client.connect_async(self.broker_ip, self.port, 60)
+
+        # Set the camera status to offline if connection breaks
+        camera_topic = f"/v3/status/camera/{self.device}"
+        self.mqtt_client.will_set(
+            camera_topic, dumps({"connected": False}), 1, True
+        )
 
         # Blocking call that processes network traffic, dispatches callbacks
         # and handles reconnecting.
