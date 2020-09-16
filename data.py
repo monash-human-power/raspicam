@@ -1,9 +1,70 @@
 from abc import ABC, abstractmethod
 from json import loads
-import time
+from time import time
 from typing import Any, List, Optional
 
 from mhp import topics
+
+
+class DataValue:
+    """A class to represent a data field (eg. Power, Cadence).
+
+    Attributes:
+        value: Any type that represents the current data value of the field
+        data_type: Type that represents the attribute of the data
+                   (eg. int, str)
+        time_updated: Integer that represents the time when value was updated
+        DATA_EXPIRY: Constant integer of how long a data value is considered
+                     valid for until expired
+    """
+
+    def __init__(self, data_type: type, time_to_expire: int = 5) -> None:
+        self.value = None
+        self.data_type = data_type
+        # Time on update is initially set to expire by default
+        self.time_updated = 0
+        self.time_to_expire = time_to_expire
+
+    def get(self) -> Any:
+        """Return the data value if the expiry hasn't exceeded. Otherwise,
+        it will return None. """
+        if self.is_valid():
+            return self.value
+        return None
+
+    def get_string(self, decimals: int = 0, scalar: int = 1) -> str:
+        """Return the data value in string format, if the expiry hasn't exceeded.
+        Otherwise it will return None.
+
+        Args:
+            decimals: Integer representing decimal places of the data point
+            scalar: Integer used to multiply the data value
+        """
+        if self.data_type is str:
+            return self.get()
+
+        if self.is_valid():
+            format_str = f"{{:.{decimals}f}}"
+            return format_str.format(self.value * scalar)
+        return None
+
+    def update(self, value: Any) -> None:
+        """Update the data value and time it was updated.
+
+        Args:
+            value: Any type representing the data point of the field
+        """
+        if type(value) != self.data_type:
+            # Casts value when the type is different to the assigned data_type
+            value = self.data_type(value)
+        self.value = value
+        self.time_updated = time()
+
+    def is_valid(self) -> bool:
+        """Assess whether data is valid by checking if the valid duration
+        has exceeded. Return True if current time is less than the time
+        when data expires."""
+        return time() < self.time_updated + self.time_to_expire
 
 
 class Data(ABC):
@@ -13,80 +74,51 @@ class Data(ABC):
         by using this class as a dictionary. This class is implemented by
         versions for specific bikes (DataV2, DataV3,...) """
 
-    data_types = {
-        # DAS data
-        "power": int,
-        "cadence": int,
-        "heartRate": int,
-        "gps": int,
-        "gps_speed": float,
-        "reed_velocity": float,
-        "reed_distance": float,
-        # Power model data
-        "rec_power": float,
-        "rec_speed": float,
-        "predicted_max_speed": float,
-        "zdist": float,
-        "plan_name": str,
-    }
-
     def __init__(self):
         # This is by no means a complete list of data fields we could track -
         # just the ones we currently think we might use on the overlays.
         self.data = {
             # DAS data
-            "power": 0,
-            "cadence": 0,
-            "heartRate": 0,
-            "gps": 0,
-            "gps_speed": 0,
-            "reed_velocity": 0,
-            "reed_distance": 0,
+            "power": DataValue(int),
+            "cadence": DataValue(int),
+            "heartRate": DataValue(int),
+            "gps": DataValue(int),
+            "gps_speed": DataValue(float),
+            "reed_velocity": DataValue(float),
+            "reed_distance": DataValue(float),
             # Power model data
-            "rec_power": 0,
-            "rec_speed": 0,
-            "predicted_max_speed": 0,
-            "zdist": 0,
-            "plan_name": "",
+            "rec_power": DataValue(float),
+            "rec_speed": DataValue(float),
+            "predicted_max_speed": DataValue(float),
+            "zdist": DataValue(float),
+            "plan_name": DataValue(str),
         }
-
-        self.message = None
-        self.message_received_time = 0
-        self.message_duration = 5  # seconds
+        self.message = DataValue(str, 20)
 
     def load_message(self, message: str) -> None:
         """Store a message which is made available by self.get_message."""
-        self.message_received_time = time.time()
-        self.message = message
+        self.message.update(message)
 
     def has_message(self) -> bool:
         """Check if a message is available for display on the overlay.
 
-        Should returns true if the message is available for display.
-
-        Returning false may mean messages have been sent, or the most
-        recent message has expired.
+        Return True if a message is available for display. Otherwise, return
+        false if the message has already been sent of the most recent message
+        has expired.
         """
-        if not self.message:
-            return False
-        # Clear the message and return false if enough time has past since
-        # the message was received
-        if time.time() > self.message_received_time + self.message_duration:
-            self.message = None
-            return False
-        return True
+        return self.message.is_valid()
 
     def get_message(self) -> Optional[str]:
-        """Get the most recent message from the DAShboard.
+        """Return the most recent message from the DAShboard.
 
         This should only be called if self.has_message returns true.
         """
-        return self.message
+        return self.message.get()
 
     def __getitem__(self, field: str) -> Any:
         """Get the most recent value of a data field.
 
-        This overloads the [] operator e.g. call with data_intance["power"].
+        This overloads the [] operator e.g. call with data_instance["power"].
         This only allows fetching the data, not assignment.
         """
         if field in self.data:
@@ -155,10 +187,9 @@ class DataV2(Data):
         terms = data.split("&")
         for term in terms:
             key, value = term.split("=")
-            if key not in self.data_types:
+            if key not in self.data:
                 continue
-            cast_func = self.data_types[key]
-            self.data[key] = cast_func(value)
+            self.data[key].update(value)
 
 
 class DataV3(Data):
@@ -201,24 +232,25 @@ class DataV3(Data):
             sensor_value = sensor["value"]
 
             if sensor_name == "gps":
-                self.data["gps"] = 1
-                self.data["gps_speed"] = float(sensor_value["speed"])
+                self.data["gps"].update(1)
+                self.data["gps_speed"].update(sensor_value["speed"])
             elif sensor_name == "reedVelocity":
-                self.data["reed_velocity"] = float(sensor_value)
-            elif sensor_name in self.data_types:
-                cast_func = self.data_types[sensor_name]
-                self.data[sensor_name] = cast_func(sensor_value)
+                self.data["reed_velocity"].update(sensor_value)
+            elif sensor_name == "reedDistance":
+                self.data["reed_distance"].update(sensor_value)
+            elif sensor_name in self.data.keys():
+                self.data[sensor_name].update(sensor_value)
 
     def load_recommended_sp(self, data: str) -> None:
         python_data = loads(data)
-        self.data["rec_power"] = python_data["power"]
-        self.data["rec_speed"] = python_data["speed"]
-        self.data["zdist"] = python_data["zoneDistance"]
+        self.data["rec_power"].update(python_data["power"])
+        self.data["rec_speed"].update(python_data["speed"])
+        self.data["zdist"].update(python_data["zoneDistance"])
 
     def load_predicted_max_speed(self, data: str) -> None:
         python_data = loads(data)
-        self.data["predicted_max_speed"] = python_data["speed"]
+        self.data["predicted_max_speed"].update(python_data["speed"])
 
     def load_plan_name(self, data: str) -> None:
         python_data = loads(data)
-        self.data["plan_name"] = python_data["filename"]
+        self.data["plan_name"].update(python_data["filename"])

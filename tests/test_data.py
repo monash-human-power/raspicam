@@ -2,8 +2,47 @@ from json import dumps
 import pytest
 from time import sleep
 
-from data import DataFactory, DataV2, DataV3
+from data import DataValue, DataFactory, DataV2, DataV3
 from mhp import topics
+
+
+class TestDataValue:
+    @staticmethod
+    def test_instance_creation():
+        data_value = DataValue(str)
+
+        assert data_value.data_type == str, "Type is not set properly"
+        assert (
+            data_value.time_to_expire == 5
+        ), "Default time is not set to 5 seconds"
+        assert not data_value.is_valid(), "Data is not invalid by default"
+
+    @staticmethod
+    def test_data_update():
+        data_value = DataValue(int)
+        data_value.update(100)
+
+        assert data_value.value == 100, "Data is not updated properly"
+        assert (
+            data_value.is_valid()
+        ), "When data is updated, it should be ruled valid"
+        sleep(data_value.time_to_expire)
+        assert (
+            not data_value.is_valid()
+        ), "After 5 seconds passes, data should be ruled invalid"
+
+    @staticmethod
+    def test_data_get():
+        data_value = DataValue(float)
+        data_value.update(26)
+
+        assert data_value.get() == 26, "Data was not returned properly."
+        assert (
+            data_value.get_string() == "26"
+        ), "Data as a string was not returned properly"
+        assert (
+            data_value.get_string(1) == "26.0"
+        ), "Data as a string was not returned with the correct decimal places"
 
 
 class TestDataFactory:
@@ -41,7 +80,7 @@ class TestDataV2:
         data.load_data(topics.DAS.data, TestDataV2.to_query_string(test_data))
 
         for key, value in test_data.items():
-            assert data[key] == value, f"Key {key} is not being set correctly"
+            assert data[key].get() == value, f"Key {key} is not set correctly"
 
     @staticmethod
     def test_v2_power_model_parsing():
@@ -72,7 +111,7 @@ class TestDataV2:
             **max_speed_data,
             **plan_name_data,
         }.items():
-            assert data[key] == value, f"Key {key} is not being set correctly"
+            assert data[key].get() == value, f"Key {key} is not set correctly"
 
 
 class TestDataV3:
@@ -83,7 +122,7 @@ class TestDataV3:
         data.load_data(topics.DAShboard.overlay_message, dumps(message_packet))
         assert data.has_message()
         assert data.get_message() == message_packet["message"]
-        sleep(data.message_duration)
+        sleep(data.message.time_to_expire)
         assert not data.has_message()
 
     @staticmethod
@@ -114,6 +153,7 @@ class TestDataV3:
             "sensors": [
                 {"type": "co2", "value": 35},
                 {"type": "reedVelocity", "value": 20.1},
+                {"type": "reedDistance", "value": 1040.3},
                 {
                     "type": "gps",
                     "value": {
@@ -143,13 +183,14 @@ class TestDataV3:
 
         # No fields tracked from front or mid module
         # Test back module
-        assert data["gps"] == 1
-        assert data["gps_speed"] == 20.5
-        assert data["reed_velocity"] == 20.1
+        assert data["gps"].get() == 1
+        assert data["gps_speed"].get() == 20.5
+        assert data["reed_velocity"].get() == 20.1
+        assert data["reed_distance"].get() == 1040.3
         # Test antplus data
-        assert data["power"] == 249
-        assert data["cadence"] == 105
-        assert data["heartRate"] == 171
+        assert data["power"].get() == 249
+        assert data["cadence"].get() == 105
+        assert data["heartRate"].get() == 171
 
     @staticmethod
     def test_v3_power_model_parsing():
@@ -172,8 +213,8 @@ class TestDataV3:
         )
         data.load_data(topics.PowerModelV3.plan_name, dumps(plan_name_data))
 
-        assert data["rec_power"] == 10
-        assert data["rec_speed"] == 20
-        assert data["zdist"] == 30
-        assert data["predicted_max_speed"] == 100
-        assert data["plan_name"] == "default.pkl"
+        assert data["rec_power"].get() == 10
+        assert data["rec_speed"].get() == 20
+        assert data["zdist"].get() == 30
+        assert data["predicted_max_speed"].get() == 100
+        assert data["plan_name"].get() == "default.pkl"
