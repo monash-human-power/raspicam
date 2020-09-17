@@ -95,16 +95,12 @@ class Overlay(ABC):
 
                 if self.backend_name == "opencv_static_image":
                     self.backend.set_background(self.bg_path)
-                self.backend.on_base_canvas_updated(self.base_canvas)
 
                 # mqtt loop (does not block)
                 self.client.loop_start()
 
-                prev_data_update = (
-                    0  # time that we last updated the data layer
-                )
+                prev_data_update = 0 # time when data layer was updated
                 while True:
-
                     # Update data overlay only if we have waited enough time
                     if (
                         time.time()
@@ -171,6 +167,7 @@ class Overlay(ABC):
         self.client.subscribe(str(DAShboard.recording))
         with self.exception_handler:
             self.on_connect(client, userdata, flags, rc)
+        self.backend.on_base_canvas_updated(self.base_canvas)
         self.client.is_connected = True
 
     def on_data_message(self, client, userdata, msg):
