@@ -94,7 +94,8 @@ class Overlay(ABC):
 
                 if self.backend_name == "opencv_static_image":
                     self.backend.set_background(self.bg_path)
-
+                self.backend.on_base_canvas_updated(self.base_canvas)
+                
                 # mqtt loop (does not block)
                 self.client.loop_start()
 
@@ -169,7 +170,6 @@ class Overlay(ABC):
         self.client.subscribe(str(DAShboard.recording))
         with self.exception_handler:
             self.on_connect(client, userdata, flags, rc)
-        self.backend.on_base_canvas_updated(self.base_canvas)
 
     def on_data_message(self, client, userdata, msg):
         with self.exception_handler:
