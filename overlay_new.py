@@ -1,4 +1,10 @@
-from components import DataField, SpeedField, CentrePower, Message, DASDisconnectMessage
+from components import (
+    DataField,
+    SpeedField,
+    CentrePower,
+    Message,
+    DASDisconnectMessage,
+)
 from overlay import Overlay
 
 
@@ -56,7 +62,7 @@ class OverlayNew(Overlay):
                 data_field_coord(3, 1),
             ),
             CentrePower(self.width, self.height),
-            Message()
+            Message(),
         ]
         self.das_disconnect_message = DASDisconnectMessage()
 

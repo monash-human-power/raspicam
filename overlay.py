@@ -50,7 +50,7 @@ class Overlay(ABC):
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self.on_disconnect
         self.client.on_log = self.on_log
-        self.client.is_connected = False # Default is false until connected
+        self.client.is_connected = False  # Default is false until connected
 
         # Set the video feed status to offline if connection breaks
         video_topic = f"{str(DAShboard.status_video_feed)}/{self.device}"
@@ -100,7 +100,7 @@ class Overlay(ABC):
                 # mqtt loop (does not block)
                 self.client.loop_start()
 
-                prev_data_update = 0 # time when data layer was updated
+                prev_data_update = 0  # time when data layer was updated
                 while True:
                     # Update data overlay only if we have waited enough time
                     if (
