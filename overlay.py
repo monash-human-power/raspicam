@@ -50,6 +50,7 @@ class Overlay(ABC):
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self.on_disconnect
         self.client.on_log = self.on_log
+        self.client.is_connected = False # Default is false until connected
 
         # Set the video feed status to offline if connection breaks
         video_topic = f"{str(DAShboard.status_video_feed)}/{self.device}"
@@ -170,6 +171,7 @@ class Overlay(ABC):
         self.client.subscribe(str(DAShboard.recording))
         with self.exception_handler:
             self.on_connect(client, userdata, flags, rc)
+        self.client.is_connected = True
 
     def on_data_message(self, client, userdata, msg):
         with self.exception_handler:
