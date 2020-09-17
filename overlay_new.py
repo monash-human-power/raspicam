@@ -63,6 +63,7 @@ class OverlayNew(Overlay):
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with rc: {}".format(rc))
 
+    def _display_base_layer(self):
         for component in self.components:
             component.draw_base(self.base_canvas)
 

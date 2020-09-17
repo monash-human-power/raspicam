@@ -82,6 +82,7 @@ class Overlay(ABC):
 
     def connect(self, ip="192.168.100.100", port=1883):
         self.client.connect_async(ip, port, 60)
+        self.display_base_layer()
 
         with self.exception_handler:
             with BackendFactory.create(
@@ -187,8 +188,22 @@ class Overlay(ABC):
         """ Called automatically when the overlay connects successfully to the
             MQTT broker.
 
-            Overlay implementations may override for one-off operations
-            (e.g. drawing self.base_canvas) """
+            Overlay implementations may override for one-off operations."""
+        pass
+
+    def display_base_layer(self):
+        """ Set up the base layer as soon as camera turns on.
+        
+            Method only needs to be called once. Should also catch any errors
+            that occur when base layer is displayed. """
+        with self.exception_handler:
+            self._display_base_layer()
+
+    def _display_base_layer(self):
+        """ Called immediately once camera turns on.
+        
+            Overlay implementations should override this method with code which
+            displays self.base_canvas. """
         pass
 
     def update_data_layer(self):
