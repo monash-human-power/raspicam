@@ -30,7 +30,9 @@ class Message(Component):
     def display_message(
         self, canvas: Canvas, message: str, colour: Colour = Colour.black
     ):
-        """Display message on data overlay by wrapping each line starting from the top."""
+        """ Display message on data overlay by wrapping each line starting
+            from the top."""
+
         line_y_coord = Message.spacing + Message.text_height
         for line in wrap(message, Message.chars_per_line):
             coord = (Message.spacing, line_y_coord)

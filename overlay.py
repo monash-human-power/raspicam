@@ -193,7 +193,7 @@ class Overlay(ABC):
 
     def display_base_layer(self):
         """ Set up the base layer as soon as camera turns on.
-        
+
             Method only needs to be called once. Should also catch any errors
             that occur when base layer is displayed. """
         with self.exception_handler:
@@ -201,7 +201,7 @@ class Overlay(ABC):
 
     def _display_base_layer(self):
         """ Called immediately once camera turns on.
-        
+
             Overlay implementations should override this method with code which
             displays self.base_canvas. """
         pass
