@@ -1,6 +1,6 @@
 from textwrap import wrap
 
-from canvas import Canvas
+from canvas import Canvas, Colour
 from components import Component
 from data import Data
 
