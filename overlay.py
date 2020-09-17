@@ -161,6 +161,7 @@ class Overlay(ABC):
 
     def on_disconnect(self, client, userdata, msg):
         print("Disconnected from broker")
+        self.client.is_connected = False
 
     def _on_connect(self, client, userdata, flags, rc):
         self.subscribe_to_topic_list(self.data.get_topics())
