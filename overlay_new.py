@@ -76,7 +76,7 @@ class OverlayNew(Overlay):
     def _update_data_layer(self):
         self.data_canvas.clear()
 
-        if not self.client.is_connected:
+        if not self.client.is_connected():
             self.das_disconnect_message.draw_data(self.data_canvas)
 
         for component in self.components:
