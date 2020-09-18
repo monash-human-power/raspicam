@@ -28,9 +28,6 @@ class Overlay(ABC):
         self.data_canvas = Canvas(self.width, self.height)
         self.message_canvas = Canvas(self.width, self.height)
 
-        # Time between updating the data layer in seconds
-        self.data_update_interval = 1
-
         # Raspicam Backend set up
         self.backend = None
         self.bg_path = None
@@ -69,6 +66,9 @@ class Overlay(ABC):
         self.exception_handler = CameraErrorHandler(
             self.client, self.device, self.backend_name, self.bg_path, configs
         )
+
+        # Time between updating the data layer in seconds
+        self.data_update_interval = 1
 
         self.start_time = time.time()
 
