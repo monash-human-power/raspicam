@@ -2,7 +2,7 @@ from components import (
     DataField,
     SpeedField,
     CentrePower,
-    Message,
+    DAShboardMessage,
     DASDisconnectMessage,
 )
 from overlay import Overlay
@@ -62,22 +62,19 @@ class OverlayNew(Overlay):
                 data_field_coord(3, 1),
             ),
             CentrePower(self.width, self.height),
-            Message(),
+            DAShboardMessage(),
+            DASDisconnectMessage(self.client),
         ]
-        self.das_disconnect_message = DASDisconnectMessage()
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with rc: {}".format(rc))
 
-    def _display_base_layer(self):
+    def _draw_base_layer(self):
         for component in self.components:
             component.draw_base(self.base_canvas)
 
     def _update_data_layer(self):
         self.data_canvas.clear()
-
-        if not self.client.is_connected():
-            self.das_disconnect_message.draw_data(self.data_canvas)
 
         for component in self.components:
             component.draw_data(self.data_canvas, self.data)
