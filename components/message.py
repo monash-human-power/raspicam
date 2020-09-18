@@ -11,7 +11,7 @@ class Message(Component, ABC):
 
     Lines are wrapped appropriately to ensure the entire message is
     visible.
-    
+
     Attributes:
         text_size: Integer for the text size on Canvas
         spacing: Integer for the spacing between lines of text

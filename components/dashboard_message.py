@@ -1,5 +1,5 @@
 from components.message import Message
-from canvas import Canvas, Colour
+from canvas import Canvas
 from data import Data
 
 
