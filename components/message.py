@@ -7,10 +7,17 @@ from data import Data
 
 
 class Message(Component, ABC):
-    """ AbstractDisplays any existing messages at the top of the screen.
+    """Abstract class for messages to display on the camera overlay.
 
-        Lines are wrapped appropriately to ensure the entire message is
-        visible. """
+    Lines are wrapped appropriately to ensure the entire message is
+    visible.
+    
+    Attributes:
+        text_size: Integer for the text size on Canvas
+        spacing: Integer for the spacing between lines of text
+        text_height: Integer for the height of a line of text
+        chars_per_line: Integer representing the number of characters per line
+    """
 
     text_size = 1
     spacing = 10
@@ -28,8 +35,8 @@ class Message(Component, ABC):
     def display_message(
         self, canvas: Canvas, message: str, colour: Colour = Colour.black
     ):
-        """ Display message on data overlay by wrapping each line starting
-            from the top."""
+        """Display message on data overlay by wrapping each line starting
+        from the top."""
 
         line_y_coord = Message.spacing + Message.text_height
         for line in wrap(message, Message.chars_per_line):
