@@ -19,12 +19,19 @@ DEFAULT_BIKE = "V2"
 class Overlay(ABC):
     def __init__(self, bike, width=1280, height=740, bg: str = None):
 
+        # Overlay dimension sizes
         self.width = width
         self.height = height
 
-        # Time between updating the data layer, in seconds
+        # Canvas set up
+        self.base_canvas = Canvas(self.width, self.height)
+        self.data_canvas = Canvas(self.width, self.height)
+        self.message_canvas = Canvas(self.width, self.height)
+
+        # Time between updating the data layer in seconds
         self.data_update_interval = 1
 
+        # Raspicam Backend set up
         self.backend = None
         self.bg_path = None
         if bg is not None:
@@ -36,10 +43,7 @@ class Overlay(ABC):
         else:
             self.backend_name = "opencv"
 
-        self.base_canvas = Canvas(self.width, self.height)
-        self.data_canvas = Canvas(self.width, self.height)
-        self.message_canvas = Canvas(self.width, self.height)
-
+        # Bike configuration set up
         configs = read_configs()
         bike_version = bike or configs["bike"] or DEFAULT_BIKE
         self.data = DataFactory.create(bike_version)
@@ -101,7 +105,9 @@ class Overlay(ABC):
                 # mqtt loop (does not block)
                 self.client.loop_start()
 
-                prev_data_update = 0  # time when data layer was updated
+                # Time when data layer was updated
+                prev_data_update = 0
+
                 while True:
                     # Update data overlay only if we have waited enough time
                     if (
