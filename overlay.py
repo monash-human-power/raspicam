@@ -186,7 +186,6 @@ class Overlay(ABC):
             MQTT broker.
 
             Overlay implementations may override for one-off operations."""
-        pass
 
     def draw_base_layer(self):
         """ Set up the base layer as soon as camera turns on.
@@ -196,12 +195,12 @@ class Overlay(ABC):
         with self.exception_handler:
             self._draw_base_layer()
 
+    @abstractmethod
     def _draw_base_layer(self):
         """ Called immediately once camera turns on.
 
             Overlay implementations should override this method with code which
             displays self.base_canvas. """
-        pass
 
     def update_data_layer(self):
         """ Update the data layer of the overlay at a regular interval.
@@ -218,7 +217,6 @@ class Overlay(ABC):
 
             Overlay implementations should override this method with code which
             updates self.data_canvas. """
-        pass
 
     @staticmethod
     def get_overlay_args(overlay_description: str):
