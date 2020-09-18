@@ -1,12 +1,13 @@
 from textwrap import wrap
+from abc import ABC, abstractmethod
 
 from canvas import Canvas, Colour
 from components import Component
 from data import Data
 
 
-class Message(Component):
-    """ Displays any existing messages at the top of the screen.
+class Message(Component, ABC):
+    """ AbstractDisplays any existing messages at the top of the screen.
 
         Lines are wrapped appropriately to ensure the entire message is
         visible. """
@@ -20,12 +21,9 @@ class Message(Component):
     def draw_base(self, canvas: Canvas):
         pass
 
+    @abstractmethod
     def draw_data(self, canvas: Canvas, data: Data):
-        if not data.has_message():
-            return
-        message = data.get_message()
-        display_str = f"Message: {message}"
-        self.display_message(canvas, display_str)
+        pass
 
     def display_message(
         self, canvas: Canvas, message: str, colour: Colour = Colour.black
