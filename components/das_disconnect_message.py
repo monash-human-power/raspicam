@@ -21,6 +21,8 @@ class DASDisconnectMessage(Message):
         Display message only whenever DAS is disconnected or overlay is not
         connected to broker.
         """
-        self.display_message(
-            canvas, DASDisconnectMessage.message, DASDisconnectMessage.text_colour
+        self._display_message(
+            canvas,
+            DASDisconnectMessage.message,
+            DASDisconnectMessage.text_colour,
         )

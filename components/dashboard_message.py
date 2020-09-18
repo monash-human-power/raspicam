@@ -13,4 +13,4 @@ class DAShboardMessage(Message):
             return
         message = data.get_message()
         display_str = f"Message: {message}"
-        self.display_message(canvas, display_str)
+        self._display_message(canvas, display_str)

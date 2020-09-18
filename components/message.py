@@ -32,7 +32,7 @@ class Message(Component, ABC):
     def draw_data(self, canvas: Canvas, data: Data):
         pass
 
-    def display_message(
+    def _display_message(
         self, canvas: Canvas, message: str, colour: Colour = Colour.black
     ):
         """Display message on data overlay by wrapping each line starting
