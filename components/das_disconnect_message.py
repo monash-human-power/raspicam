@@ -16,7 +16,7 @@ class DASDisconnectMessage(Message):
 
     # These class variables must be consistent for every instance
     text_colour = Colour.red
-    message = "Message: DAS is disconnected. Connect to a broker."
+    message = "Message: DAS is disconnected, ensure it is turned on."
 
     def __init__(self, client):
         """Assign client as an instance variable to check whether client used
@@ -24,8 +24,6 @@ class DASDisconnectMessage(Message):
         self.client = client
 
     def draw_data(self, canvas: Canvas, data: Data) -> None:
-        """Display message only whenever DAS is disconnected or overlay is not
-        connected to broker."""
         if not self.client.is_connected():
             self._display_message(
                 canvas,
