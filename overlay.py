@@ -50,6 +50,7 @@ class Overlay(ABC):
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self.on_disconnect
         self.client.on_log = self.on_log
+        self.client.reconnect_delay_set(max_delay=10)
 
         # Set the video feed status to offline if connection breaks
         video_topic = f"{str(DAShboard.status_video_feed)}/{self.device}"
