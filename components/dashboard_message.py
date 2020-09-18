@@ -1,5 +1,6 @@
 from components.message import Message
 from canvas import Canvas, Colour
+from data import Data
 
 
 class DAShboardMessage(Message):
