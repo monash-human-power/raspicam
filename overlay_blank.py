@@ -6,7 +6,7 @@ class OverlayBlank(Overlay):
     def __init__(self, bike=None, bg=None):
         super(OverlayBlank, self).__init__(bike, bg=bg)
 
-    def on_connect(self, client, userdata, flags, rc):
+    def _draw_base_layer(self):
         # To draw static text/whatever onto the overlay,
         # draw on the base canvas
         self.base_canvas.draw_text(
