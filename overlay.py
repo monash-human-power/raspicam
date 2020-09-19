@@ -175,6 +175,13 @@ class Overlay(ABC):
         self.client.subscribe(str(DAShboard.recording))
         with self.exception_handler:
             self.on_connect(client, userdata, flags, rc)
+        print("Connected with rc: {}".format(rc))
+
+    def on_connect(self, client, userdata, flags, rc):
+        """ Called automatically when the overlay connects successfully to the
+            MQTT broker.
+
+            Overlay implementations may override for one-off operations."""
 
     def on_data_message(self, client, userdata, msg):
         with self.exception_handler:
@@ -186,13 +193,6 @@ class Overlay(ABC):
             self.backend.start_recording()
         elif DAShboard.recording_stop.matches(msg.topic):
             self.backend.stop_recording()
-
-    @abstractmethod
-    def on_connect(self, client, userdata, flags, rc):
-        """ Called automatically when the overlay connects successfully to the
-            MQTT broker.
-
-            Overlay implementations may override for one-off operations."""
 
     def draw_base_layer(self):
         """ Set up the base layer as soon as camera turns on.

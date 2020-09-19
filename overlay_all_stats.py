@@ -10,8 +10,6 @@ class OverlayAllStats(Overlay):
         self.message_received_time = 0
 
     def on_connect(self, client, userdata, flags, rc):
-        print("Connected with rc: {}".format(rc))
-
         # Add static text
         self.base_canvas.draw_text("REC Power:", (5, self.text_height * 1))
         self.base_canvas.draw_text("Power:", (5, self.text_height * 2))
