@@ -9,6 +9,7 @@ __all__ = [
     "DataField",
     "SpeedField",
     "CentrePower",
+    "Message",
     "DAShboardMessage",
     "DASDisconnectMessage",
 ]

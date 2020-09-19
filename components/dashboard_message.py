@@ -1,4 +1,4 @@
-from components.message import Message
+from components import Message
 from canvas import Canvas
 from data import Data
 

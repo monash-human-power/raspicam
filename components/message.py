@@ -1,12 +1,12 @@
 from textwrap import wrap
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from canvas import Canvas, Colour
 from components import Component
 from data import Data
 
 
-class Message(Component, ABC):
+class Message(Component):
     """Abstract class for messages to display on the camera overlay.
 
     Lines are wrapped appropriately to ensure the entire message is
