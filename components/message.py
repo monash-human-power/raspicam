@@ -28,10 +28,6 @@ class Message(Component):
     def draw_base(self, canvas: Canvas):
         pass
 
-    @abstractmethod
-    def draw_data(self, canvas: Canvas, data: Data):
-        pass
-
     def _display_message(
         self, canvas: Canvas, message: str, colour: Colour = Colour.black
     ):
