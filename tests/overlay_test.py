@@ -22,4 +22,3 @@ def test_overlay_new_instantiation():
 def test_overlay_top_strip_instantiation():
     """ Check that OverlayTopStrip can be instantiated """
     OverlayTopStrip("V3")
-
