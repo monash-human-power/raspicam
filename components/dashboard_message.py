@@ -6,7 +6,7 @@ from data import Data
 class DAShboardMessage(Message):
     """Displays messages sent from the DAShboard onto the camera overlay.
 
-    Messages are only sent when the overlay is connected to the DAS.
+    Messages can only be received when the overlay is connected to the DAS.
     """
 
     def draw_data(self, canvas: Canvas, data: Data) -> None:

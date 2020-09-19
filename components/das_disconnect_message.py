@@ -4,8 +4,10 @@ from data import Data
 
 
 class DASDisconnectMessage(Message):
-    """Class displays error message on overlay when DAS is not connected, or
-    overlay is not connected to an MQTT broker.
+    """Class displays error message on overlay when DAS is not connected.
+
+    Message can only be received when the DAS is not connected. Will
+    disappear instantly once connected.
 
     Attributes:
         text_colour: Colour type representing the colour of the message
@@ -14,7 +16,6 @@ class DASDisconnectMessage(Message):
         client: MQTT Client which is used to check if client is connected
     """
 
-    # These class variables must be consistent for every instance
     text_colour = Colour.red
     message = "Message: DAS is disconnected, ensure it is turned on."
 
