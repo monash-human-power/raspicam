@@ -1,9 +1,7 @@
 from textwrap import wrap
-from abc import abstractmethod
 
 from canvas import Canvas, Colour
 from components import Component
-from data import Data
 
 
 class Message(Component):
