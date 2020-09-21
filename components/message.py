@@ -7,7 +7,8 @@ from components import Component
 class Message(Component):
     """Abstract class for messages to display on the camera overlay.
 
-    Lines are wrapped appropriately to ensure the entire message is
+    Messages are shown on the top left corner of the overlay. Lines
+    are wrapped appropriately to ensure the entire message is
     visible.
 
     Attributes:

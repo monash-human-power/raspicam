@@ -4,10 +4,11 @@ from data import Data
 
 
 class DASDisconnectMessage(Message):
-    """Class displays error message on overlay when DAS is not connected.
+    """Class will display an error message on the overlay that the DAS is not
+    connected.
 
-    Message can only be received when the DAS is not connected. Will
-    disappear instantly once connected.
+    Only displays when DAS is disconnected. Disappears immediately as soon
+    as it is connected.
 
     Attributes:
         text_colour: Colour type representing the colour of the message
