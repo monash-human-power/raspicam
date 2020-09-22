@@ -17,9 +17,7 @@ class OverlayTopStrip(Overlay):
         self.top_box_width = self.width
         self.top_text_pos = self.top_box_height - 15
 
-    def on_connect(self, client, userdata, flags, rc):
-        print("Connected with rc: " + str(rc))
-
+    def _draw_base_layer(self):
         self.base_canvas.draw_rect(
             (0, 0), (self.top_box_width, self.top_box_height)
         )

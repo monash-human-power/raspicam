@@ -1,4 +1,10 @@
-from components import DataField, SpeedField, CentrePower, Message
+from components import (
+    DataField,
+    SpeedField,
+    CentrePower,
+    DAShboardMessage,
+    DASDisconnectMessage,
+)
 from overlay import Overlay
 
 
@@ -56,12 +62,11 @@ class OverlayNew(Overlay):
                 data_field_coord(3, 1),
             ),
             CentrePower(self.width, self.height),
-            Message(),
+            DAShboardMessage(),
+            DASDisconnectMessage(self.client),
         ]
 
-    def on_connect(self, client, userdata, flags, rc):
-        print("Connected with rc: {}".format(rc))
-
+    def _draw_base_layer(self):
         for component in self.components:
             component.draw_base(self.base_canvas)
 

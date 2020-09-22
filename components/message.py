@@ -1,15 +1,22 @@
 from textwrap import wrap
 
-from canvas import Canvas
+from canvas import Canvas, Colour
 from components import Component
-from data import Data
 
 
 class Message(Component):
-    """ Displays any existing messages at the top of the screen.
+    """Abstract class for messages to display on the camera overlay.
 
-        Lines are wrapped appropriately to ensure the entire message is
-        visible. """
+    Messages are shown on the top left corner of the overlay. Lines
+    are wrapped appropriately to ensure the entire message is
+    visible.
+
+    Attributes:
+        text_size: Integer for the text size on Canvas
+        spacing: Integer for the spacing between lines of text
+        text_height: Integer for the height of a line of text
+        chars_per_line: Integer representing the number of characters per line
+    """
 
     text_size = 1
     spacing = 10
@@ -20,15 +27,14 @@ class Message(Component):
     def draw_base(self, canvas: Canvas):
         pass
 
-    def draw_data(self, canvas: Canvas, data: Data):
-        if not data.has_message():
-            return
-        message = data.get_message()
-        display_str = f"Message: {message}"
+    def _display_message(
+        self, canvas: Canvas, message: str, colour: Colour = Colour.black
+    ):
+        """Display message on data overlay by wrapping each line starting
+        from the top."""
 
-        # Display each line of the message
         line_y_coord = Message.spacing + Message.text_height
-        for line in wrap(display_str, Message.chars_per_line):
+        for line in wrap(message, Message.chars_per_line):
             coord = (Message.spacing, line_y_coord)
-            canvas.draw_text(line, coord, Message.text_size)
+            canvas.draw_text(line, coord, Message.text_size, colour)
             line_y_coord += Message.text_height + Message.spacing

@@ -19,12 +19,16 @@ DEFAULT_BIKE = "V2"
 class Overlay(ABC):
     def __init__(self, bike, width=1280, height=740, bg: str = None):
 
+        # Overlay dimension sizes
         self.width = width
         self.height = height
 
-        # Time between updating the data layer, in seconds
-        self.data_update_interval = 1
+        # Canvas set up
+        self.base_canvas = Canvas(self.width, self.height)
+        self.data_canvas = Canvas(self.width, self.height)
+        self.message_canvas = Canvas(self.width, self.height)
 
+        # Raspicam Backend set up
         self.backend = None
         self.bg_path = None
         if bg is not None:
@@ -36,10 +40,7 @@ class Overlay(ABC):
         else:
             self.backend_name = "opencv"
 
-        self.base_canvas = Canvas(self.width, self.height)
-        self.data_canvas = Canvas(self.width, self.height)
-        self.message_canvas = Canvas(self.width, self.height)
-
+        # Bike configuration set up
         configs = read_configs()
         bike_version = bike or configs["bike"] or DEFAULT_BIKE
         self.data = DataFactory.create(bike_version)
@@ -50,6 +51,7 @@ class Overlay(ABC):
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self.on_disconnect
         self.client.on_log = self.on_log
+        self.client.reconnect_delay_set(max_delay=10)
 
         # Set the video feed status to offline if connection breaks
         video_topic = f"{str(DAShboard.status_video_feed)}/{self.device}"
@@ -64,6 +66,9 @@ class Overlay(ABC):
         self.exception_handler = CameraErrorHandler(
             self.client, self.device, self.backend_name, self.bg_path, configs
         )
+
+        # Time between updating the data layer in seconds
+        self.data_update_interval = 1
 
         self.start_time = time.time()
 
@@ -81,6 +86,7 @@ class Overlay(ABC):
 
     def connect(self, ip="192.168.100.100", port=1883):
         self.client.connect_async(ip, port, 60)
+        self.draw_base_layer()
 
         with self.exception_handler:
             with BackendFactory.create(
@@ -94,15 +100,15 @@ class Overlay(ABC):
 
                 if self.backend_name == "opencv_static_image":
                     self.backend.set_background(self.bg_path)
+                self.backend.on_base_canvas_updated(self.base_canvas)
 
                 # mqtt loop (does not block)
                 self.client.loop_start()
 
-                prev_data_update = (
-                    0  # time that we last updated the data layer
-                )
-                while True:
+                # Time when data layer was updated
+                prev_data_update = 0
 
+                while True:
                     # Update data overlay only if we have waited enough time
                     if (
                         time.time()
@@ -169,7 +175,13 @@ class Overlay(ABC):
         self.client.subscribe(str(DAShboard.recording))
         with self.exception_handler:
             self.on_connect(client, userdata, flags, rc)
-        self.backend.on_base_canvas_updated(self.base_canvas)
+        print("Connected with rc: {}".format(rc))
+
+    def on_connect(self, client, userdata, flags, rc):
+        """ Called automatically when the overlay connects successfully to the
+            MQTT broker.
+
+            Overlay implementations may override for one-off operations."""
 
     def on_data_message(self, client, userdata, msg):
         with self.exception_handler:
@@ -182,14 +194,20 @@ class Overlay(ABC):
         elif DAShboard.recording_stop.matches(msg.topic):
             self.backend.stop_recording()
 
-    @abstractmethod
-    def on_connect(self, client, userdata, flags, rc):
-        """ Called automatically when the overlay connects successfully to the
-            MQTT broker.
+    def draw_base_layer(self):
+        """ Set up the base layer as soon as camera turns on.
 
-            Overlay implementations may override for one-off operations
-            (e.g. drawing self.base_canvas) """
-        pass
+            Method only needs to be called once. Should also catch any errors
+            that occur when base layer is displayed. """
+        with self.exception_handler:
+            self._draw_base_layer()
+
+    @abstractmethod
+    def _draw_base_layer(self):
+        """ Called immediately once camera turns on.
+
+            Overlay implementations should override this method with code which
+            displays self.base_canvas. """
 
     def update_data_layer(self):
         """ Update the data layer of the overlay at a regular interval.
@@ -206,7 +224,6 @@ class Overlay(ABC):
 
             Overlay implementations should override this method with code which
             updates self.data_canvas. """
-        pass
 
     @staticmethod
     def get_overlay_args(overlay_description: str):
