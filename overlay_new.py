@@ -1,4 +1,5 @@
 from components import (
+    Translucent,
     DataField,
     SpeedField,
     CentrePower,
@@ -33,6 +34,7 @@ class OverlayNew(Overlay):
 
         # Create all overlay components
         self.components = [
+            Translucent(),
             DataField(
                 "RPM", self.get_data_func("cadence"), data_field_coord(0, 0)
             ),
