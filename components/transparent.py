@@ -9,8 +9,6 @@ class Transparent(Component):
     Personal note: For overlay_new, there should be two rectangles on each bottom
     corner behind the data overlay.
     """
-    TOP_LEFT_COORDS = (0, 570)
-    BOTTOM_RIGHT_COORDS = (1280, 740)
     COLOUR = Colour.blue
 
     def __init__(self, top_left_coords: tuple, bottom_right_coords: tuple):
