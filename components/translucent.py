@@ -5,15 +5,22 @@ from data import Data
 class Transparent(Component):
     """A transparent rectangle behind the data overlay for data values to stand out
     from a white background (white racetrack, lines, etc).
+
+    Personal note: For overlay_new, there should be two rectangles on each bottom
+    corner behind the data overlay.
     """
     TOP_LEFT_COORDS = (0, 570)
     BOTTOM_RIGHT_COORDS = (1280, 740)
     COLOUR = Colour.blue
 
+    def __init__(self, top_left_coords: tuple, bottom_right_coords: tuple):
+        self.top_left_coords = top_left_coords
+        self.bottom_right_coords = bottom_right_coords
+
     def draw_base(self, canvas: Canvas):
         canvas.draw_rect(
-            Transparent.TOP_LEFT_COORDS,
-            Transparent.BOTTOM_RIGHT_COORDS,
+            self.top_left_coords,
+            self.bottom_right_coords,
             Transparent.COLOUR
         )
 
