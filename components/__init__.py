@@ -8,7 +8,8 @@ from .das_disconnect_message import DASDisconnectMessage
 
 __all__ = [
     "Component",
-    "Transparent" "DataField",
+    "Transparent",
+    "DataField",
     "SpeedField",
     "CentrePower",
     "Message",

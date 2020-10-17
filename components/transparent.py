@@ -7,8 +7,8 @@ class Transparent(Component):
     """A transparent rectangle behind the data overlay for data values to stand out
     from a white background (white racetrack, lines, etc).
 
-    Personal note: For overlay_new, there should be two rectangles on each bottom
-    corner behind the data overlay.
+    Personal note: For overlay_new, there should be two rectangles on each
+    bottom corner behind the data overlay.
     """
 
     COLOUR = Colour.transparentBlack
