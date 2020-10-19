@@ -11,7 +11,7 @@ class Colour(Enum):
     # Remember, OpenCV uses BGR(A) not RGB(A)
     white = (255, 255, 255, 255)
     black = (0, 0, 0, 255)
-    transparentBlack = (0, 0, 0, 181)
+    transparentBlack = (0, 0, 0, 0)
     blue = (255, 0, 0, 255)
     green = (0, 255, 0, 255)
     red = (0, 0, 255, 255)
