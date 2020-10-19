@@ -1,5 +1,5 @@
 from .component import Component
-from .transparent import Transparent
+from .transparent_rectangle import TransparentRectangle
 from .data_field import DataField, SpeedField
 from .centre_power import CentrePower
 from .message import Message
@@ -8,7 +8,7 @@ from .das_disconnect_message import DASDisconnectMessage
 
 __all__ = [
     "Component",
-    "Transparent",
+    "TransparentRectangle",
     "DataField",
     "SpeedField",
     "CentrePower",

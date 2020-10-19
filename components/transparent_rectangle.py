@@ -3,7 +3,7 @@ from canvas import Canvas, Colour, Coord
 from data import Data
 
 
-class Transparent(Component):
+class TransparentRectangle(Component):
     """A transparent rectangle behind the data overlay for data values to stand out
     from a white background (white racetrack, lines, etc).
     """
@@ -16,7 +16,7 @@ class Transparent(Component):
 
     def draw_base(self, canvas: Canvas):
         canvas.draw_rect(
-            self.top_left_coords, self.bottom_right_coords, Transparent.COLOUR
+            self.top_left_coords, self.bottom_right_coords, TransparentRectangle.COLOUR
         )
 
     def draw_data(self, canvas: Canvas, data: Data):
