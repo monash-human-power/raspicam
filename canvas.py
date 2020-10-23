@@ -12,6 +12,7 @@ class Colour(Enum):
     white = (255, 255, 255, 255)
     black = (0, 0, 0, 255)
     transparentBlack = (0, 0, 0, 0)
+    semiTransparentBlack = (0, 0, 0, 181)
     blue = (255, 0, 0, 255)
     green = (0, 255, 0, 255)
     red = (0, 0, 255, 255)

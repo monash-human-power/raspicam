@@ -8,7 +8,7 @@ class TransparentRectangle(Component):
     from a white background (white racetrack, lines, etc).
     """
 
-    COLOUR = Colour.transparentBlack
+    COLOUR = Colour.semiTransparentBlack
 
     def __init__(self, top_left_coords: Coord, bottom_right_coords: Coord):
         self.top_left_coords = top_left_coords
@@ -16,7 +16,9 @@ class TransparentRectangle(Component):
 
     def draw_base(self, canvas: Canvas):
         canvas.draw_rect(
-            self.top_left_coords, self.bottom_right_coords, TransparentRectangle.COLOUR
+            self.top_left_coords,
+            self.bottom_right_coords,
+            TransparentRectangle.COLOUR
         )
 
     def draw_data(self, canvas: Canvas, data: Data):
