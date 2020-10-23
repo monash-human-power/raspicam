@@ -32,10 +32,21 @@ class OverlayNew(Overlay):
             """Coordinates of the data field in column x, row y."""
             return col_coords[x], row_coords[y]
 
+        # TODO: simplify these expressions
+        left_rect = [
+            (0, row_coords[0] - DataField.data_height - DataField.title_height - spacing),
+            (col_coords[1] + DataField.width + spacing, self.height),
+        ]
+
+        right_rect = [
+            (col_coords[2], row_coords[0] - DataField.data_height - DataField.title_height - spacing),
+            (self.width, self.height)
+        ]
+
         # Create all overlay components
         self.components = [
-            TransparentRectangle((0, 560), (330, 740)),
-            TransparentRectangle((975, 560), (1280, 740)),
+            TransparentRectangle(left_rect[0], left_rect[1]),
+            TransparentRectangle(right_rect[0], right_rect[1]),
             DataField(
                 "RPM", self.get_data_func("cadence"), data_field_coord(0, 0)
             ),
