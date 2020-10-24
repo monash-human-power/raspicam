@@ -18,7 +18,7 @@ class TransparentRectangle(Component):
         canvas.draw_rect(
             self.top_left_coords,
             self.bottom_right_coords,
-            TransparentRectangle.COLOUR
+            TransparentRectangle.COLOUR,
         )
 
     def draw_data(self, canvas: Canvas, data: Data):

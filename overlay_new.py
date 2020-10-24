@@ -41,7 +41,7 @@ class OverlayNew(Overlay):
         # Dimensions of the right TransparentRectangle
         right_rect = [
             (col_coords[2], row_coords[0] - DataField.height),
-            (self.width, self.height)
+            (self.width, self.height),
         ]
 
         # Create all overlay components
