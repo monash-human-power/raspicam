@@ -32,14 +32,15 @@ class OverlayNew(Overlay):
             """Coordinates of the data field in column x, row y."""
             return col_coords[x], row_coords[y]
 
-        # TODO: simplify these expressions
+        # Dimensions of the left TransparentRectangle
         left_rect = [
-            (0, row_coords[0] - DataField.data_height - DataField.title_height - spacing),
+            (0, row_coords[0] - DataField.height),
             (col_coords[1] + DataField.width + spacing, self.height),
         ]
 
+        # Dimensions of the right TransparentRectangle
         right_rect = [
-            (col_coords[2], row_coords[0] - DataField.data_height - DataField.title_height - spacing),
+            (col_coords[2], row_coords[0] - DataField.height),
             (self.width, self.height)
         ]
 
