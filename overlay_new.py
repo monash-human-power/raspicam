@@ -46,8 +46,8 @@ class OverlayNew(Overlay):
 
         # Create all overlay components
         self.components = [
-            TransparentRectangle(left_rect[0], left_rect[1]),
-            TransparentRectangle(right_rect[0], right_rect[1]),
+            TransparentRectangle(*left_rect),
+            TransparentRectangle(*right_rect),
             DataField(
                 "RPM", self.get_data_func("cadence"), data_field_coord(0, 0)
             ),
