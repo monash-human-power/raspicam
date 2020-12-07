@@ -138,7 +138,7 @@ class Data(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_topics() -> List[str]:
+    def get_topics() -> List[topics.Topic]:
         """ Return a list of the topics the data for the bike comes from.
 
             Should be implemented by Data subclasses. """
@@ -161,18 +161,19 @@ class DataFactory:
 
 class DataV2(Data):
     @staticmethod
-    def get_topics() -> List[str]:
+    def get_topics() -> List[topics.Topic]:
         return [
-            str(topics.DAS.data),
-            str(topics.PowerModel.recommended_sp),
-            str(topics.PowerModel.predicted_max_speed),
-            str(topics.PowerModel.plan_name),
-            str(topics.DAShboard.overlay_message),
+            topics.DAS.data,
+            topics.BOOST.recommended_sp,
+            topics.BOOST.predicted_max_speed,
+            topics.Camera.overlay_message,
+            # TODO: Update to use topics.BOOST.generate_complete
+            topics.Topic("power_model/plan_name"),
         ]
 
     def load_data(self, topic: str, data: str) -> None:
         """ Loads V2 query strings and V3 DAShboard messages """
-        if topics.DAShboard.overlay_message.matches(topic):
+        if topics.Camera.overlay_message.matches(topic):
             self.load_message(data)
         elif str(topic) in DataV2.get_topics():
             self.load_query_string(data)
@@ -194,28 +195,28 @@ class DataV2(Data):
 
 class DataV3(Data):
     @staticmethod
-    def get_topics() -> List[str]:
+    def get_topics() -> List[topics.Topic]:
         return [
-            str(topics.SensorModules.all_sensors),
-            str(topics.DAShboard.overlay_message),
-            str(topics.PowerModelV3.recommended_sp),
-            str(topics.PowerModelV3.predicted_max_speed),
-            str(topics.PowerModelV3.plan_name),
+            topics.WirelessModule.data(),
+            topics.Camera.overlay_message,
+            # TODO: BOOST currently publishes data in the deprecated V2 format on the V3 topic.
+            # Uncomment below when updated.
+            # topics.BOOST.recommended_sp,
+            # topics.BOOST.predicted_max_speed,
+            # TODO: Implement handling topics.BOOST.generate_complete
         ]
 
     def load_data(self, topic: str, data: str) -> None:
         """Update stored fields with data from a V3 sensor module data packet.
         """
-        if topics.DAShboard.overlay_message.matches(topic):
+        if topic == topics.Camera.overlay_message:
             self.load_message_json(data)
-        elif topics.SensorModules.all_sensors.matches(topic):
+        elif topics.WirelessModule.data().matches(topic):
             self.load_sensor_data(data)
-        elif topics.PowerModelV3.recommended_sp.matches(topic):
+        elif topic == topics.BOOST.recommended_sp:
             self.load_recommended_sp(data)
-        elif topics.PowerModelV3.predicted_max_speed.matches(topic):
+        elif topic == topics.BOOST.predicted_max_speed:
             self.load_predicted_max_speed(data)
-        elif topics.PowerModelV3.plan_name.matches(topic):
-            self.load_plan_name(data)
 
     def load_message_json(self, data: str) -> None:
         """Load a message in the V3 JSON format."""
@@ -250,7 +251,3 @@ class DataV3(Data):
     def load_predicted_max_speed(self, data: str) -> None:
         python_data = loads(data)
         self.data["predicted_max_speed"].update(python_data["speed"])
-
-    def load_plan_name(self, data: str) -> None:
-        python_data = loads(data)
-        self.data["plan_name"].update(python_data["filename"])
