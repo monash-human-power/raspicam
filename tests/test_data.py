@@ -202,12 +202,10 @@ class TestDataV3:
             "distanceLeft": 50,
         }
         max_speed_data = {"speed": 100}
-        plan_name_data = {"filename": "default.pkl"}
 
         data = DataV3()
         data.load_data(topics.BOOST.recommended_sp, dumps(recommended_sp_data))
         data.load_data(topics.BOOST.predicted_max_speed, dumps(max_speed_data))
-        data.load_data("power_model/plan_name", dumps(plan_name_data))
 
         assert data["rec_power"].get() == 10
         assert data["rec_speed"].get() == 20
