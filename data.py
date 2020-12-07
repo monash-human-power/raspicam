@@ -199,8 +199,8 @@ class DataV3(Data):
         return [
             topics.WirelessModule.data(),
             topics.Camera.overlay_message,
-            # TODO: BOOST currently publishes data in the deprecated V2 format on the V3 topic.
-            # Uncomment below when updated.
+            # TODO: BOOST currently publishes data in the deprecated V2 format on the
+            # V3 topic. Uncomment below when updated.
             # topics.BOOST.recommended_sp,
             # topics.BOOST.predicted_max_speed,
             # TODO: Implement handling topics.BOOST.generate_complete
