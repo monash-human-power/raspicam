@@ -211,4 +211,3 @@ class TestDataV3:
         assert data["rec_speed"].get() == 20
         assert data["zdist"].get() == 30
         assert data["predicted_max_speed"].get() == 100
-        assert data["plan_name"].get() == "default.pkl"
