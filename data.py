@@ -197,7 +197,7 @@ class DataV3(Data):
     @staticmethod
     def get_topics() -> List[topics.Topic]:
         return [
-            topics.WirelessModule.data(),
+            topics.WirelessModule.all().data,
             topics.Camera.overlay_message,
             # TODO: BOOST currently publishes data in the deprecated V2 format
             # on the V3 topic. Uncomment below when updated.
@@ -211,7 +211,7 @@ class DataV3(Data):
         """
         if topic == topics.Camera.overlay_message:
             self.load_message_json(data)
-        elif topics.WirelessModule.data().matches(topic):
+        elif topics.WirelessModule.all().data.matches(topic):
             self.load_sensor_data(data)
         elif topic == topics.BOOST.recommended_sp:
             self.load_recommended_sp(data)
