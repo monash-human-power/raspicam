@@ -15,7 +15,10 @@ jobs:
           python-version: 3.7
 
       - name: Install Poetry
-        uses: dschep/install-poetry-action@v1.2
+        uses: snok/install-poetry@v1.1.1
+        with:
+          virtualenvs-in-project: false
+          virtualenvs-path: ~/.virtualenvs
 
       - name: Cache Poetry virtualenv
         uses: actions/cache@v1
@@ -25,11 +28,6 @@ jobs:
           key: poetry-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             poetry-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Set Poetry config
-        run: |
-          poetry config virtualenvs.in-project false
-          poetry config virtualenvs.path ~/.virtualenvs
 
       - name: Config Github URL to download Private Repo
         env:

@@ -3,15 +3,17 @@ import time
 from abc import ABC, abstractmethod
 from json import dumps
 from platform import machine
-from typing import Callable
+from typing import Callable, List
 
 import paho.mqtt.client as mqtt
+
+from mhp.topics import Camera, Topic
+
 from backend import BackendFactory
 from camera_error_handler import CameraErrorHandler
 from canvas import Canvas
 from config import read_configs
 from data import Data, DataFactory
-from mhp.topics import DAShboard
 
 DEFAULT_BIKE = "V2"
 
@@ -54,14 +56,14 @@ class Overlay(ABC):
         self.client.reconnect_delay_set(max_delay=10)
 
         # Set the video feed status to offline if connection breaks
-        video_topic = f"{str(DAShboard.status_video_feed)}/{self.device}"
+        video_topic = str(Camera.status_video_feed / self.device)
         self.client.will_set(video_topic, dumps({"online": False}), 1, True)
 
         self.set_callback_for_topic_list(
             self.data.get_topics(), self.on_data_message
         )
         self.set_callback_for_topic_list(
-            [str(DAShboard.recording)], self.on_recording_message
+            [Camera.recording], self.on_recording_message
         )
         self.exception_handler = CameraErrorHandler(
             self.client, self.device, self.backend_name, self.bg_path, configs
@@ -74,14 +76,12 @@ class Overlay(ABC):
 
     def publish_recording_status(self, message: str) -> None:
         """ Send a message on the current device's recording status topic. """
-        status_topic = f"{str(DAShboard.status_recording)}/{self.device}"
+        status_topic = str(Camera.status_recording / self.device)
         self.client.publish(status_topic, message, retain=True)
 
     def publish_video_status(self, message: str) -> None:
         """ Send a message on the current device's online topic. """
-        online_status_topic = (
-            f"{str(DAShboard.status_video_feed)}/{self.device}"
-        )
+        online_status_topic = str(Camera.status_video_feed / self.device)
         self.client.publish(online_status_topic, message, retain=True)
 
     def connect(self, ip="192.168.100.100", port=1883):
@@ -124,16 +124,16 @@ class Overlay(ABC):
 
                     self.backend.on_loop()
 
-    def set_callback_for_topic_list(self, topics, callback):
+    def set_callback_for_topic_list(self, topics: List[Topic], callback):
         """ Set the on_message callback for every topic in topics to the
             provided callback """
-        for topic in topics:
+        for topic in map(str, topics):
             self.client.message_callback_add(topic, callback)
 
-    def subscribe_to_topic_list(self, topics):
+    def subscribe_to_topic_list(self, topics: List[Topic]):
         """ Construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
             see https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe """
-        topic_values = list(map(str, topics))
+        topic_values = map(str, topics)
         at_most_once_qos = [0] * len(topics)
 
         topics_qos = list(zip(topic_values, at_most_once_qos))
@@ -172,7 +172,7 @@ class Overlay(ABC):
 
     def _on_connect(self, client, userdata, flags, rc):
         self.subscribe_to_topic_list(self.data.get_topics())
-        self.client.subscribe(str(DAShboard.recording))
+        self.client.subscribe(str(Camera.recording))
         with self.exception_handler:
             self.on_connect(client, userdata, flags, rc)
         print("Connected with rc: {}".format(rc))
@@ -189,9 +189,9 @@ class Overlay(ABC):
             self.data.load_data(msg.topic, payload)
 
     def on_recording_message(self, client, userdata, msg):
-        if DAShboard.recording_start.matches(msg.topic):
+        if msg.topic == Camera.recording_start:
             self.backend.start_recording()
-        elif DAShboard.recording_stop.matches(msg.topic):
+        elif msg.topic == Camera.recording_stop:
             self.backend.stop_recording()
 
     def draw_base_layer(self):

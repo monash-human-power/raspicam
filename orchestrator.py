@@ -5,9 +5,11 @@ import sys
 import time
 from json import dumps
 
-import config
 import paho.mqtt.client as mqtt
+
 from mhp import topics
+
+import config
 
 
 def get_args(argv=[]):
@@ -33,7 +35,7 @@ class Orchestrator:
 
     def publish_camera_status(self, message: str) -> None:
         """ Send a message on the current device's camera status topic. """
-        status_topic = f"{topics.DAShboard.status_camera}/{self.device}"
+        status_topic = str(topics.Camera.status_camera / self.device)
         self.mqtt_client.publish(status_topic, message, retain=True)
 
     def on_connect(self, client, userdata, flags, rc):
@@ -75,7 +77,7 @@ class Orchestrator:
         self.mqtt_client.connect_async(self.broker_ip, self.port, 60)
 
         # Set the camera status to offline if connection breaks
-        camera_topic = f"/v3/status/camera/{self.device}"
+        camera_topic = str(topics.Camera.status_camera / self.device)
         self.mqtt_client.will_set(
             camera_topic, dumps({"connected": False}), 1, True
         )

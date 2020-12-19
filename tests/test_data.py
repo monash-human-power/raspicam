@@ -94,15 +94,15 @@ class TestDataV2:
 
         data = DataV2()
         data.load_data(
-            topics.PowerModel.recommended_sp,
+            topics.BOOST.recommended_sp,
             TestDataV2.to_query_string(recommended_sp_data),
         )
         data.load_data(
-            topics.PowerModel.predicted_max_speed,
+            topics.BOOST.predicted_max_speed,
             TestDataV2.to_query_string(max_speed_data),
         )
         data.load_data(
-            topics.PowerModel.plan_name,
+            "power_model/plan_name",
             TestDataV2.to_query_string(plan_name_data),
         )
 
@@ -119,7 +119,7 @@ class TestDataV3:
     def test_v3_messages():
         message_packet = {"message": "testing 123"}
         data = DataV3()
-        data.load_data(topics.DAShboard.overlay_message, dumps(message_packet))
+        data.load_data(topics.Camera.overlay_message, dumps(message_packet))
         assert data.has_message()
         assert data.get_message() == message_packet["message"]
         sleep(data.message.time_to_expire)
@@ -176,10 +176,10 @@ class TestDataV3:
         }
 
         data = DataV3()
-        data.load_data(topics.SensorModules.front, dumps(front_module_data))
-        data.load_data(topics.SensorModules.mid, dumps(mid_module_data))
-        data.load_data(topics.SensorModules.back, dumps(back_module_data))
-        data.load_data(topics.SensorModules.antplus, dumps(das_module_data))
+        data.load_data(topics.WirelessModule.data(1), dumps(front_module_data))
+        data.load_data(topics.WirelessModule.data(2), dumps(mid_module_data))
+        data.load_data(topics.WirelessModule.data(3), dumps(back_module_data))
+        data.load_data(topics.WirelessModule.data(4), dumps(das_module_data))
 
         # No fields tracked from front or mid module
         # Test back module
@@ -202,19 +202,12 @@ class TestDataV3:
             "distanceLeft": 50,
         }
         max_speed_data = {"speed": 100}
-        plan_name_data = {"filename": "default.pkl"}
 
         data = DataV3()
-        data.load_data(
-            topics.PowerModelV3.recommended_sp, dumps(recommended_sp_data)
-        )
-        data.load_data(
-            topics.PowerModelV3.predicted_max_speed, dumps(max_speed_data)
-        )
-        data.load_data(topics.PowerModelV3.plan_name, dumps(plan_name_data))
+        data.load_data(topics.BOOST.recommended_sp, dumps(recommended_sp_data))
+        data.load_data(topics.BOOST.predicted_max_speed, dumps(max_speed_data))
 
         assert data["rec_power"].get() == 10
         assert data["rec_speed"].get() == 20
         assert data["zdist"].get() == 30
         assert data["predicted_max_speed"].get() == 100
-        assert data["plan_name"].get() == "default.pkl"
