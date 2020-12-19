@@ -176,10 +176,18 @@ class TestDataV3:
         }
 
         data = DataV3()
-        data.load_data(topics.WirelessModule.data(1), dumps(front_module_data))
-        data.load_data(topics.WirelessModule.data(2), dumps(mid_module_data))
-        data.load_data(topics.WirelessModule.data(3), dumps(back_module_data))
-        data.load_data(topics.WirelessModule.data(4), dumps(das_module_data))
+        data.load_data(
+            topics.WirelessModule.id(1).data, dumps(front_module_data)
+        )
+        data.load_data(
+            topics.WirelessModule.id(2).data, dumps(mid_module_data)
+        )
+        data.load_data(
+            topics.WirelessModule.id(3).data, dumps(back_module_data)
+        )
+        data.load_data(
+            topics.WirelessModule.id(4).data, dumps(das_module_data)
+        )
 
         # No fields tracked from front or mid module
         # Test back module
