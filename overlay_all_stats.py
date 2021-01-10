@@ -48,23 +48,30 @@ class OverlayAllStats(Overlay):
             self.draw_messages()
 
     def draw_power_rec_power(self):
-        power = self.data["power"].get_string()
-        rec_power = self.data["rec_power"].get_string()
+        power = self.data["power"].get()
+        rec_power = self.data["rec_power"].get()
         tolerance = 0.05
 
         # Display recommended power
-        rec_power_text = "{0}".format(round(rec_power, 2))
+        if self.data["rec_power"].is_valid():
+            rec_power_text = "{0}".format(round(rec_power, 2))
+        else:
+            rec_power_text = "--"
         self.data_canvas.draw_text(
             rec_power_text, (340, self.text_height * 1)
         )
 
         # Display power
-        power_text = "{0}".format(round(power, 2))
-        if power > (rec_power + (rec_power * tolerance)):
-            power_colour = Colour.red
-        elif power > rec_power:
-            power_colour = Colour.green
+        if self.data["power"].is_valid():
+            power_text = "{0}".format(round(power, 2))
+            if power > (rec_power + (rec_power * tolerance)):
+                power_colour = Colour.red
+            elif power > rec_power:
+                power_colour = Colour.green
+            else:
+                power_colour = Colour.black
         else:
+            power_text = "--"
             power_colour = Colour.black
 
         self.data_canvas.draw_text(
@@ -74,16 +81,22 @@ class OverlayAllStats(Overlay):
         )
 
     def draw_cadence(self):
-        cadence = self.data["cadence"].get_string()
-        cadence_text = "{0}".format(round(cadence, 2))
+        cadence = self.data["cadence"].get()
+        if self.data["cadence"].is_valid():
+            cadence_text = "{0}".format(round(cadence, 2))
+        else:
+            cadence_text = "--"
         self.data_canvas.draw_text(
             cadence_text, (340, self.text_height * 3)
         )
 
     def draw_max_rec_reed_velocity(self):
         # Max Speed
-        max_speed = self.data["predicted_max_speed"].get_string()
-        max_speed_text = "{0} km/h".format(round(max_speed, 2))
+        max_speed = self.data["predicted_max_speed"].get()
+        if self.data["predicted_max_speed"].is_valid():
+            max_speed_text = "{0} km/h".format(round(max_speed, 2))
+        else:
+            max_speed_text = "--"
         max_speed_pos = (
             self.width // 2 - 70,
             self.height - self.speed_height * 2,
@@ -91,8 +104,11 @@ class OverlayAllStats(Overlay):
         self.data_canvas.draw_text(max_speed_text, max_speed_pos, size=2.5)
 
         # Recommended speed
-        rec_speed = self.data["rec_speed"].get_string()
-        rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
+        rec_speed = self.data["rec_speed"].get()
+        if self.data["rec_speed"].is_valid():
+            rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
+        else:
+            rec_speed_text = "--"
         rec_speed_pos = (
             self.width // 2 - 70,
             self.height - self.speed_height * 1,
@@ -100,23 +116,30 @@ class OverlayAllStats(Overlay):
         self.data_canvas.draw_text(rec_speed_text, rec_speed_pos, size=2.5)
 
         # Actual speed
-        speed = self.data["reed_velocity"].get_string()
-        speed_text = "{0} km/h".format(round(speed, 2))
+        speed = self.data["reed_velocity"].get()
         speed_pos = (self.width // 2 - 70, self.height - self.speed_height * 0)
         tolerance = 0.05
-        if speed > (rec_speed + (rec_speed * tolerance)):
-            speed_colour = Colour.red
-        elif speed > rec_speed:
-            speed_colour = Colour.green
+        if self.data["reed_velocity"].is_valid():
+            speed_text = "{0} km/h".format(round(speed, 2))
+            if speed > (rec_speed + (rec_speed * tolerance)):
+                speed_colour = Colour.red
+            elif speed > rec_speed:
+                speed_colour = Colour.green
+            else:
+                speed_colour = Colour.black
         else:
+            speed_text = "--"
             speed_colour = Colour.black
         self.data_canvas.draw_text(
             speed_text, speed_pos, colour=speed_colour, size=2.5
         )
 
     def draw_distance(self):
-        reed_distance = self.data["reed_distance"].get_string()
-        reed_distance_text = "{0}".format(round(reed_distance, 2))
+        reed_distance = self.data["reed_distance"].get()
+        if self.data["reed_distance"].is_valid():
+            reed_distance_text = "{0}".format(round(reed_distance, 2))
+        else:
+            reed_distance_text = "--"
         self.data_canvas.draw_text(
             reed_distance_text, (340, self.text_height * 4)
         )
