@@ -49,36 +49,45 @@ class OverlayTopStrip(Overlay):
             time_string, (50, self.top_text_pos), colour=Colour.white
         )
 
-        if self.data["power"] != 0:
+        if self.data["power"].get() != 0:
             self.draw_power_rec_power()
 
-        if self.data["gps"] == 1:
+        if self.data["gps"].get() == 1:
             if self.data["gps_speed"] != 0:
                 self.draw_speed_max_speed()
 
         # Display zone distance left (bugged)
-        if self.data["zdist"] != 0:
+        if self.data["zdist"].get() != 0:
             self.draw_zone_dist()
 
         # Display plan name and clear after 15 secs
         if (
-            self.data["plan_name"] != ""
+            self.data["plan_name"].get() != ""
             and time.time() - self.start_time <= 15
         ):
             self.draw_plan_name()
 
     def draw_power_rec_power(self):
-        power = self.data["power"]
-        rec_power = self.data["rec_power"]
+        power = self.data["power"].get()
+        rec_power = self.data["rec_power"].get()
         # Display recommended power
+        if self.data["rec_power"].is_valid():
+            rec_power_text = "{0}".format(round(rec_power, 0))
+        else:
+            rec_power_text = "--"
         self.data_canvas.draw_text(
-            "{0}".format(round(rec_power, 0)),
+            rec_power_text,
             (600, self.top_text_pos),
             colour=Colour.white,
         )
+
         # Display power (no colour change)
+        if self.data["power"].is_valid():
+            power_text = "P: {0}".format(round(power, 2))
+        else:
+            power_text = "--"
         self.data_canvas.draw_text(
-            "P: {0}".format(round(power, 2)),
+            power_text,
             (self.bottom_text_pos_x, self.bottom_text_pos_y),
             size=self.bottom_text_size,
             colour=Colour.red,
@@ -86,15 +95,23 @@ class OverlayTopStrip(Overlay):
 
     def draw_speed_max_speed(self):
         # Predicted max speed
-        pred_max_speed = self.data["predicted_max_speed"]
+        pred_max_speed = self.data["predicted_max_speed"].get()
+        if self.data["predicted_max_speed"].is_valid():
+            max_speed_text = "{0}".format(round(pred_max_speed, 1))
+        else:
+            max_speed_text = "--"
         self.data_canvas.draw_text(
-            "{0}".format(round(pred_max_speed, 1)),
+            max_speed_text,
             (890, self.top_text_pos),
             colour=Colour.white,
         )
 
         # Actual speed (no colour change)
-        speed = self.data["gps_speed"]
+        speed = self.data["gps_speed"].get()
+        if self.data["gps_speed"].is_valid():
+            speed_text = "{0}".format(int(speed))
+        else:
+            speed_text = "--"
         self.data_canvas.draw_text(
             "S: {0}".format(round(speed, 2)),
             (
@@ -104,23 +121,26 @@ class OverlayTopStrip(Overlay):
             size=self.bottom_text_size,
             colour=Colour.red,
         )
-
         self.data_canvas.draw_text(
-            "{0}".format(int(speed)),
+            speed_text,
             (1120, self.top_text_pos),
             colour=Colour.white,
         )
 
     def draw_zone_dist(self):
-        zdist_left = self.data["zdist"]
+        zdist_left = self.data["zdist"].get()
+        if self.data["zdist"].is_valid():
+            zdist_left_text = "{0}".format(int(zdist_left))
+        else:
+            zdist_left_text = "--"
         self.data_canvas.draw_text(
-            "{0}".format(int(zdist_left)),
+            zdist_left_text,
             (360, self.top_text_pos),
             colour=Colour.white,
         )
 
     def draw_plan_name(self):
-        plan_name = self.data["plan_name"]
+        plan_name = self.data["plan_name"].get_string()
         self.data_canvas.draw_text(
             plan_name, (0, self.height - 8), colour=Colour.red
         )
