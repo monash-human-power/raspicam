@@ -57,9 +57,7 @@ class OverlayAllStats(Overlay):
             rec_power_text = "{0}".format(round(rec_power, 2))
         else:
             rec_power_text = "--"
-        self.data_canvas.draw_text(
-            rec_power_text, (340, self.text_height * 1)
-        )
+        self.data_canvas.draw_text(rec_power_text, (340, self.text_height * 1))
 
         # Display power
         if self.data["power"].is_valid():
@@ -76,9 +74,7 @@ class OverlayAllStats(Overlay):
             power_colour = Colour.black
 
         self.data_canvas.draw_text(
-            power_text,
-            (340, self.text_height * 2),
-            colour=power_colour,
+            power_text, (340, self.text_height * 2), colour=power_colour,
         )
 
     def draw_cadence(self):
@@ -87,9 +83,7 @@ class OverlayAllStats(Overlay):
             cadence_text = "{0}".format(round(cadence, 2))
         else:
             cadence_text = "--"
-        self.data_canvas.draw_text(
-            cadence_text, (340, self.text_height * 3)
-        )
+        self.data_canvas.draw_text(cadence_text, (340, self.text_height * 3))
 
     def draw_max_rec_reed_velocity(self):
         # Max Speed
