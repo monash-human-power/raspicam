@@ -64,10 +64,11 @@ class OverlayAllStats(Overlay):
         # Display power
         if self.data["power"].is_valid():
             power_text = "{0}".format(round(power, 2))
-            if power > (rec_power + (rec_power * tolerance)):
-                power_colour = Colour.red
-            elif power > rec_power:
-                power_colour = Colour.green
+            if self.data["rec_power"].is_valid():
+                if power > (rec_power + (rec_power * tolerance)):
+                    power_colour = Colour.red
+                elif power > rec_power:
+                    power_colour = Colour.green
             else:
                 power_colour = Colour.black
         else:
