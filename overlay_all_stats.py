@@ -122,10 +122,11 @@ class OverlayAllStats(Overlay):
         tolerance = 0.05
         if self.data["reed_velocity"].is_valid():
             speed_text = "{0} km/h".format(round(speed, 2))
-            if speed > (rec_speed + (rec_speed * tolerance)):
-                speed_colour = Colour.red
-            elif speed > rec_speed:
-                speed_colour = Colour.green
+            if self.data["rec_speed"].is_valid():
+                if speed > (rec_speed + (rec_speed * tolerance)):
+                    speed_colour = Colour.red
+                elif speed > rec_speed:
+                    speed_colour = Colour.green
             else:
                 speed_colour = Colour.black
         else:
