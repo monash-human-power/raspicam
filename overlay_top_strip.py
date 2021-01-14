@@ -58,10 +58,9 @@ class OverlayTopStrip(Overlay):
             self.draw_plan_name()
 
     def draw_power_rec_power(self):
-        power = self.data["power"].get()
-        rec_power = self.data["rec_power"].get()
         # Display recommended power
         if self.data["rec_power"].is_valid():
+            rec_power = self.data["rec_power"].get()
             rec_power_text = "{0}".format(round(rec_power, 0))
         else:
             rec_power_text = "--"
@@ -71,6 +70,7 @@ class OverlayTopStrip(Overlay):
 
         # Display power (no colour change)
         if self.data["power"].is_valid():
+            power = self.data["power"].get()
             power_text = "P: {0}".format(round(power, 2))
         else:
             power_text = "--"
@@ -83,8 +83,8 @@ class OverlayTopStrip(Overlay):
 
     def draw_speed_max_speed(self):
         # Predicted max speed
-        pred_max_speed = self.data["predicted_max_speed"].get()
         if self.data["predicted_max_speed"].is_valid():
+            pred_max_speed = self.data["predicted_max_speed"].get()
             max_speed_text = "{0}".format(round(pred_max_speed, 1))
         else:
             max_speed_text = "--"
@@ -93,8 +93,8 @@ class OverlayTopStrip(Overlay):
         )
 
         # Actual speed (no colour change)
-        speed = self.data["gps_speed"].get()
         if self.data["gps_speed"].is_valid():
+            speed = self.data["gps_speed"].get()
             speed_text = "{0}".format(int(speed))
         else:
             speed_text = "--"
@@ -112,8 +112,8 @@ class OverlayTopStrip(Overlay):
         )
 
     def draw_zone_dist(self):
-        zdist_left = self.data["zdist"].get()
         if self.data["zdist"].is_valid():
+            zdist_left = self.data["zdist"].get()
             zdist_left_text = "{0}".format(int(zdist_left))
         else:
             zdist_left_text = "--"

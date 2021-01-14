@@ -39,12 +39,11 @@ class OverlayAllStats(Overlay):
         self.draw_messages()
 
     def draw_power_rec_power(self):
-        power = self.data["power"].get()
-        rec_power = self.data["rec_power"].get()
         tolerance = 0.05
 
         # Display recommended power
         if self.data["rec_power"].is_valid():
+            rec_power = self.data["rec_power"].get()
             rec_power_text = "{0}".format(round(rec_power, 2))
         else:
             rec_power_text = "--"
@@ -54,6 +53,7 @@ class OverlayAllStats(Overlay):
         power_text = "--"
         power_colour = Colour.black
         if self.data["power"].is_valid():
+            power = self.data["power"].get()
             power_text = "{0}".format(round(power, 2))
             if self.data["rec_power"].is_valid():
                 if power > (rec_power + (rec_power * tolerance)):
@@ -66,8 +66,8 @@ class OverlayAllStats(Overlay):
         )
 
     def draw_cadence(self):
-        cadence = self.data["cadence"].get()
         if self.data["cadence"].is_valid():
+            cadence = self.data["cadence"].get()
             cadence_text = "{0}".format(round(cadence, 2))
         else:
             cadence_text = "--"
@@ -75,8 +75,8 @@ class OverlayAllStats(Overlay):
 
     def draw_max_rec_reed_velocity(self):
         # Max Speed
-        max_speed = self.data["predicted_max_speed"].get()
         if self.data["predicted_max_speed"].is_valid():
+            max_speed = self.data["predicted_max_speed"].get()
             max_speed_text = "{0} km/h".format(round(max_speed, 2))
         else:
             max_speed_text = "--"
@@ -87,8 +87,8 @@ class OverlayAllStats(Overlay):
         self.data_canvas.draw_text(max_speed_text, max_speed_pos, size=2.5)
 
         # Recommended speed
-        rec_speed = self.data["rec_speed"].get()
         if self.data["rec_speed"].is_valid():
+            rec_speed = self.data["rec_speed"].get()
             rec_speed_text = "{0} km/h".format(round(rec_speed, 2))
         else:
             rec_speed_text = "--"
@@ -99,13 +99,13 @@ class OverlayAllStats(Overlay):
         self.data_canvas.draw_text(rec_speed_text, rec_speed_pos, size=2.5)
 
         # Actual speed
-        speed = self.data["reed_velocity"].get()
         speed_pos = (self.width // 2 - 70, self.height - self.speed_height * 0)
         tolerance = 0.05
 
         speed_text = "--"
         speed_colour = Colour.black
         if self.data["reed_velocity"].is_valid():
+            speed = self.data["reed_velocity"].get()
             speed_text = "{0} km/h".format(round(speed, 2))
             if self.data["rec_speed"].is_valid():
                 if speed > (rec_speed + (rec_speed * tolerance)):
@@ -118,8 +118,8 @@ class OverlayAllStats(Overlay):
         )
 
     def draw_distance(self):
-        reed_distance = self.data["reed_distance"].get()
         if self.data["reed_distance"].is_valid():
+            reed_distance = self.data["reed_distance"].get()
             reed_distance_text = "{0}".format(round(reed_distance, 2))
         else:
             reed_distance_text = "--"
