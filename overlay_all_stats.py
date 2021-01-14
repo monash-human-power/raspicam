@@ -32,20 +32,11 @@ class OverlayAllStats(Overlay):
         self.data_canvas.clear()
         self.message_canvas.clear()
 
-        if self.data["power"].get() != 0:
-            self.draw_power_rec_power()
-
-        if self.data["cadence"].get() != 0:
-            self.draw_cadence()
-
-        if self.data["reed_velocity"].get() != 0:
-            self.draw_max_rec_reed_velocity()
-
-        if self.data["reed_distance"].get() != 0:
-            self.draw_distance()
-
-        if self.data.has_message():
-            self.draw_messages()
+        self.draw_power_rec_power()
+        self.draw_cadence()
+        self.draw_max_rec_reed_velocity()
+        self.draw_distance()
+        self.draw_messages()
 
     def draw_power_rec_power(self):
         power = self.data["power"].get()

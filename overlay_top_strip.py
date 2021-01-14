@@ -49,22 +49,12 @@ class OverlayTopStrip(Overlay):
             time_string, (50, self.top_text_pos), colour=Colour.white
         )
 
-        if self.data["power"].get() != 0:
-            self.draw_power_rec_power()
-
-        if self.data["gps"].get() == 1:
-            if self.data["gps_speed"] != 0:
-                self.draw_speed_max_speed()
-
-        # Display zone distance left (bugged)
-        if self.data["zdist"].get() != 0:
-            self.draw_zone_dist()
+        self.draw_power_rec_power()
+        self.draw_speed_max_speed()
+        self.draw_zone_dist()
 
         # Display plan name and clear after 15 secs
-        if (
-            self.data["plan_name"].get() != ""
-            and time.time() - self.start_time <= 15
-        ):
+        if time.time() - self.start_time <= 15:
             self.draw_plan_name()
 
     def draw_power_rec_power(self):
@@ -109,7 +99,7 @@ class OverlayTopStrip(Overlay):
         else:
             speed_text = "--"
         self.data_canvas.draw_text(
-            "S: {0}".format(round(speed, 2)),
+            speed_text,
             (
                 self.bottom_text_pos_x,
                 self.bottom_text_pos_y - self.bottom_text_height,
