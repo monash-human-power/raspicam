@@ -60,6 +60,8 @@ class OverlayAllStats(Overlay):
         self.data_canvas.draw_text(rec_power_text, (340, self.text_height * 1))
 
         # Display power
+        power_text = "--"
+        power_colour = Colour.black
         if self.data["power"].is_valid():
             power_text = "{0}".format(round(power, 2))
             if self.data["rec_power"].is_valid():
@@ -67,11 +69,6 @@ class OverlayAllStats(Overlay):
                     power_colour = Colour.red
                 elif power > rec_power:
                     power_colour = Colour.green
-            else:
-                power_colour = Colour.black
-        else:
-            power_text = "--"
-            power_colour = Colour.black
 
         self.data_canvas.draw_text(
             power_text, (340, self.text_height * 2), colour=power_colour,
@@ -114,6 +111,9 @@ class OverlayAllStats(Overlay):
         speed = self.data["reed_velocity"].get()
         speed_pos = (self.width // 2 - 70, self.height - self.speed_height * 0)
         tolerance = 0.05
+
+        speed_text = "--"
+        speed_colour = Colour.black
         if self.data["reed_velocity"].is_valid():
             speed_text = "{0} km/h".format(round(speed, 2))
             if self.data["rec_speed"].is_valid():
@@ -121,11 +121,7 @@ class OverlayAllStats(Overlay):
                     speed_colour = Colour.red
                 elif speed > rec_speed:
                     speed_colour = Colour.green
-            else:
-                speed_colour = Colour.black
-        else:
-            speed_text = "--"
-            speed_colour = Colour.black
+
         self.data_canvas.draw_text(
             speed_text, speed_pos, colour=speed_colour, size=2.5
         )
