@@ -69,11 +69,12 @@ class OverlayTopStrip(Overlay):
         )
 
         # Display power (no colour change)
+        power_text = "P: "
         if self.data["power"].is_valid():
             power = self.data["power"].get()
-            power_text = "P: {0}".format(round(power, 2))
+            power_text += "{0}".format(round(power, 2))
         else:
-            power_text = "--"
+            power_text += "--"
         self.data_canvas.draw_text(
             power_text,
             (self.bottom_text_pos_x, self.bottom_text_pos_y),
@@ -93,11 +94,12 @@ class OverlayTopStrip(Overlay):
         )
 
         # Actual speed (no colour change)
+        speed_text = "S: "
         if self.data["gps_speed"].is_valid():
             speed = self.data["gps_speed"].get()
-            speed_text = "{0}".format(int(speed))
+            speed_text += "{0}".format(round(speed, 2))
         else:
-            speed_text = "--"
+            speed_text += "--"
         self.data_canvas.draw_text(
             speed_text,
             (
