@@ -115,7 +115,6 @@ class OverlayAllStats(Overlay):
             speed_text, speed_pos, colour=speed_colour, size=2.5
         )
 
-
     def draw_distance(self):
         if self.data["reed_distance"].is_valid():
             reed_distance = self.data["reed_distance"].get()
