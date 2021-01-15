@@ -47,10 +47,11 @@ class Orchestrator:
         # reconnect then subscriptions will be renewed.
         client.subscribe(str(topics.Camera.set_overlay))
         client.subscribe(str(topics.Camera.get_overlays))
-        self.publish_camera_status(dumps({
-            "connected": True,
-            "ip_address": gethostbyname(gethostname())
-        }))
+        self.publish_camera_status(
+            dumps(
+                {"connected": True, "ip_address": gethostbyname(gethostname())}
+            )
+        )
 
     def on_message(self, client, userdata, msg):
         """The callback for when a PUBLISH message is received."""
