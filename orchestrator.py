@@ -4,6 +4,7 @@ import json
 import sys
 import time
 from json import dumps
+from socket import gethostname, gethostbyname
 
 import paho.mqtt.client as mqtt
 
@@ -46,7 +47,10 @@ class Orchestrator:
         # reconnect then subscriptions will be renewed.
         client.subscribe(str(topics.Camera.set_overlay))
         client.subscribe(str(topics.Camera.get_overlays))
-        self.publish_camera_status(dumps({"connected": True}))
+        self.publish_camera_status(dumps({
+            "connected": True,
+            "ip_address": gethostbyname(gethostname())
+        }))
 
     def on_message(self, client, userdata, msg):
         """The callback for when a PUBLISH message is received."""
