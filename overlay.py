@@ -15,8 +15,6 @@ from canvas import Canvas
 from config import read_configs
 from data import Data, DataFactory
 
-DEFAULT_BIKE = "V2"
-
 
 class Overlay(ABC):
     def __init__(self, bike, width=1280, height=740, bg: str = None):
@@ -44,7 +42,7 @@ class Overlay(ABC):
 
         # Bike configuration set up
         configs = read_configs()
-        bike_version = bike or configs["bike"] or DEFAULT_BIKE
+        bike_version = bike or configs["bike"]
         self.data = DataFactory.create(bike_version)
         self.device = configs["device"]
 

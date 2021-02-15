@@ -13,6 +13,7 @@ OVERLAY_FILE_PATTERN = "overlay_*.py"
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 DEFAULT_BROKER_IP = "192.168.100.100"
+DEFAULT_BIKE = "V2"
 
 
 def get_overlays(directory=CURRENT_DIRECTORY):
@@ -60,9 +61,15 @@ def read_configs(directory=CURRENT_DIRECTORY):
 
     configs["bike"] = os.getenv("MHP_BIKE")
     if not configs["bike"]:
-        warn("MHP_BIKE has not been set in .env")
+        warn(f"MHP_BIKE is not set in .env, defaulting to {DEFAULT_BIKE}")
+        configs["bike"] = DEFAULT_BIKE
 
-    configs["broker_ip"] = os.getenv("BROKER_IP") or DEFAULT_BROKER_IP
+    configs["broker_ip"] = os.getenv("BROKER_IP")
+    if not configs["broker_ip"]:
+        warn(
+            f"BROKER_IP is not set in .env, defaulting to {DEFAULT_BROKER_IP}"
+        )
+        configs["broker_ip"] = DEFAULT_BROKER_IP
 
     configs["overlays"] = get_overlays()
     return configs
