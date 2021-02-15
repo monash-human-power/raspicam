@@ -5,11 +5,15 @@ from time import sleep
 import RPi.GPIO as gpio
 import config
 
-parser = argparse.ArgumentParser()
+configs = config.read_configs()
+
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+)
 parser.add_argument(
     "--host",
     type=str,
-    default="192.168.100.100",
+    default=configs["broker_ip"],
     help="ip address of the broker",
 )
 args = parser.parse_args()

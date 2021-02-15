@@ -227,14 +227,17 @@ class Overlay(ABC):
 
     @staticmethod
     def get_overlay_args(overlay_description: str):
+        configs = read_configs()
         parser = argparse.ArgumentParser(
-            description=overlay_description, add_help=True
+            description=overlay_description,
+            add_help=True,
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         )
         parser.add_argument(
             "--host",
             action="store",
             type=str,
-            default="localhost",
+            default=configs["broker_ip"],
             help="Address of the MQTT broker",
         )
         parser.add_argument(
@@ -243,6 +246,7 @@ class Overlay(ABC):
             action="store",
             type=str,
             choices=["v2", "V2", "v3", "V3"],
+            default=configs["bike"],
             help="Specify the which bike to expect MQTT data from",
         )
         parser.add_argument(
