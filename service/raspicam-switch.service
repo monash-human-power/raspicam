@@ -6,6 +6,7 @@ WantedBy=default.target
 
 [Service]
 Environment=PYTHONUNBUFFERED=1
+Restart=on-failure
 ; Initialise pyenv to use correct python version,
 ; then use poetry virtualenv interpreter to run switch.py.
 ExecStart=/bin/bash -c 'eval "$($HOME/.pyenv/bin/pyenv init -)" && $($HOME/.poetry/bin/poetry env info -p)/bin/python switch.py'
