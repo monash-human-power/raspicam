@@ -3,6 +3,7 @@ import argparse
 import json
 import sys
 import time
+import socket
 from json import dumps
 
 import paho.mqtt.client as mqtt
@@ -22,6 +23,21 @@ def get_args(argv=[]):
         help="ip address of the broker",
     )
     return parser.parse_args(argv)
+
+
+def get_ip():
+    """ Get IP address of the raspicam and return the value. """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # Any IP address should work
+        # Source: https://stackoverflow.com/a/28950776
+        s.connect(("192.168.100.100", 1))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = "127.0.0.1"
+    finally:
+        s.close()
+    return ip
 
 
 class Orchestrator:
@@ -46,7 +62,9 @@ class Orchestrator:
         # reconnect then subscriptions will be renewed.
         client.subscribe(str(topics.Camera.set_overlay))
         client.subscribe(str(topics.Camera.get_overlays))
-        self.publish_camera_status(dumps({"connected": True}))
+        self.publish_camera_status(
+            dumps({"connected": True, "ip_address": get_ip()})
+        )
 
     def on_message(self, client, userdata, msg):
         """The callback for when a PUBLISH message is received."""
