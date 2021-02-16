@@ -24,19 +24,21 @@ def get_args(argv=[]):
     )
     return parser.parse_args(argv)
 
+
 def get_ip():
     """ Get IP address of the raspicam and return the value. """
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         # Any IP address should work
         # Source: https://stackoverflow.com/a/28950776
-        s.connect(('192.168.100.100',1)) 
+        s.connect(("192.168.100.100", 1))
         ip = s.getsockname()[0]
     except Exception:
-        ip = '127.0.0.1'
+        ip = "127.0.0.1"
     finally:
         s.close()
     return ip
+
 
 class Orchestrator:
     def __init__(self, broker_ip, port=1883):
@@ -61,12 +63,7 @@ class Orchestrator:
         client.subscribe(str(topics.Camera.set_overlay))
         client.subscribe(str(topics.Camera.get_overlays))
         self.publish_camera_status(
-            dumps(
-                {
-                    "connected": True, 
-                    "ip_address": get_ip()
-                }
-            )
+            dumps({"connected": True, "ip_address": get_ip()})
         )
 
     def on_message(self, client, userdata, msg):
