@@ -42,8 +42,7 @@ class Overlay(ABC):
 
         # Bike configuration set up
         configs = read_configs()
-        bike_version = bike or configs["bike"]
-        self.data = DataFactory.create(bike_version)
+        self.data = DataFactory.create(bike)
         self.device = configs["device"]
 
         # MQTT client options
