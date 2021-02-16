@@ -1,4 +1,5 @@
 """ Test Script For Orchestrator Class """
+from config import read_configs
 import orchestrator
 
 
@@ -33,7 +34,7 @@ class TestGetArgs:
         Test the arguments parser for the file
         """
         test_input = vars(orchestrator.get_args())
-        expected_result = {"host": "192.168.100.100"}
+        expected_result = {"host": read_configs()["broker_ip"]}
         assert (
             test_input == expected_result
         ), "failed - default ip in function get_args is incorrect"
