@@ -15,8 +15,6 @@ from canvas import Canvas
 from config import read_configs
 from data import Data, DataFactory
 
-DEFAULT_BIKE = "V2"
-
 
 class Overlay(ABC):
     def __init__(self, bike, width=1280, height=740, bg: str = None):
@@ -44,8 +42,7 @@ class Overlay(ABC):
 
         # Bike configuration set up
         configs = read_configs()
-        bike_version = bike or configs["bike"] or DEFAULT_BIKE
-        self.data = DataFactory.create(bike_version)
+        self.data = DataFactory.create(bike)
         self.device = configs["device"]
 
         # MQTT client options
@@ -227,14 +224,17 @@ class Overlay(ABC):
 
     @staticmethod
     def get_overlay_args(overlay_description: str):
+        configs = read_configs()
         parser = argparse.ArgumentParser(
-            description=overlay_description, add_help=True
+            description=overlay_description,
+            add_help=True,
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         )
         parser.add_argument(
             "--host",
             action="store",
             type=str,
-            default="localhost",
+            default=configs["broker_ip"],
             help="Address of the MQTT broker",
         )
         parser.add_argument(
@@ -243,6 +243,7 @@ class Overlay(ABC):
             action="store",
             type=str,
             choices=["v2", "V2", "v3", "V3"],
+            default=configs["bike"],
             help="Specify the which bike to expect MQTT data from",
         )
         parser.add_argument(

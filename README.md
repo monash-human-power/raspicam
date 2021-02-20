@@ -1,4 +1,4 @@
-# MHP_Raspicam
+# MHP Raspicam
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors)
 
 This repo contains code used to run the Monash Human Power camera system. The `master` branch is write protected to ensure it is always left in a working state.
@@ -37,6 +37,18 @@ This repo contains code used to run the Monash Human Power camera system. The `m
 
     With that done, `raspicam` dependencies may be installed using `poetry install --dev`.
 
+6. **Install and enable `systemd` services (optional)**
+
+    If you are setting up `raspicam` on the actual display Pis, enable and start the `raspicam` services so that `raspicam` begins on startup.
+
+    ```bash
+    # Install the raspicam services
+    ./service/install.sh
+    # Enable running on boot, and start running now
+    systemctl --user enable --now raspicam-orchestrator
+    systemctl --user enable --now raspicam-switch
+    ```
+
 ## Usage
 
 **Important:** *You must be in a poetry shell to run any scripts/tests.* To start a poetry shell, run `poetry shell`. You may exit the shell at any time with `exit`.
@@ -49,7 +61,13 @@ Any overlay (e.g. `overlay_top_strip.py`) may be run from the terminal with Pyth
 
 If you are trying run an overlay over VNC, you will need to enable direct capture mode on the Pi's VNC server. Right click on the VNC logo in the Pi's system tray, click `Options -> Troubleshooting -> Enable direct capture mode -> OK`.
 
-Overlays may be run from the terminal, as before. However, for use on the bike, you should have `switch.py` and `orchestrator.py` running on startup. Currently, this is run automatically by `/etc/rc.local` on the display Pis, but they may also be run manually.
+Overlays may be run from the terminal, as before. However, for use on the bike, you should have `switch.py` and `orchestrator.py` running on startup using systemd services as described in [Installation](#installation). Once this is setup, you can view the output of the two scripts with
+
+```bash
+systemctl --user status raspicam-orchestrator
+```
+
+You may also find `systemctl`'s `start`, `stop`, `restart` and `disable` commands useful.
 
 ## Tests
 
