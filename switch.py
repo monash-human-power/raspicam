@@ -41,6 +41,13 @@ def turn_off(led):
     gpio.output(led, gpio.LOW)
 
 
+virtualenv_dir = (
+    subprocess.check_output(["poetry", "env", "info", "-p"])
+    .decode("utf-8")
+    .strip()
+)
+print("env dir:", virtualenv_dir)
+
 try:
     while True:
         prev_switch_state = gpio.input(15)
@@ -56,7 +63,12 @@ try:
         prev_switch_state = switch_state
         # TODO: Remove hard coding of directory of python script
         p1 = subprocess.Popen(
-            ["python3", config.get_active_overlay(), "--host", brokerIP]
+            [
+                f"{virtualenv_dir}/bin/python",
+                config.get_active_overlay(),
+                "--host",
+                brokerIP,
+            ]
         )
         turn_off(red_led)
         turn_on(green_led)
