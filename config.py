@@ -14,6 +14,7 @@ CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 DEFAULT_BROKER_IP = "192.168.100.100"
 DEFAULT_BIKE = "V2"
+DEFAULT_VIEWPORT_SIZE = [1024, 600]
 
 
 def get_overlays(directory=CURRENT_DIRECTORY):
@@ -70,6 +71,17 @@ def read_configs(directory=CURRENT_DIRECTORY):
             f"BROKER_IP is not set in .env, defaulting to {DEFAULT_BROKER_IP}"
         )
         configs["broker_ip"] = DEFAULT_BROKER_IP
+
+    try:
+        # Transform env var string "1280,740" into int tuple (1280, 740)
+        configs["viewport_size"] = tuple(
+            map(int, os.getenv("VIEWPORT_SIZE").split(","))
+        )
+    except:
+        warn(
+            f"VIEWPORT_SIZE is not set in .env, defaulting to {DEFAULT_VIEWPORT_SIZE}"
+        )
+        configs["viewport_size"] = DEFAULT_VIEWPORT_SIZE
 
     configs["overlays"] = get_overlays()
     return configs
