@@ -35,7 +35,7 @@ class Overlay(ABC):
             self.backend_name = "opencv_static_image"
             self.bg_path = bg
         # Raspberry Pis run ARM, PCs run x86_64
-        elif machine() == "armv7l":
+        elif machine() in ["armv7l", "armv6l"]:
             self.backend_name = "picamera"
         else:
             self.backend_name = "opencv"
