@@ -77,11 +77,22 @@ def read_configs(directory=CURRENT_DIRECTORY):
         configs["viewport_size"] = tuple(
             map(int, os.getenv("VIEWPORT_SIZE").split(","))
         )
-    except (AttributeError, ValueError):
-        # AttributeError for if getenv returns None,
-        # ValueError for failed int cast
+    except AttributeError:
         warn(
             "VIEWPORT_SIZE is not set in .env, "
+            + f"defaulting to {DEFAULT_VIEWPORT_SIZE}"
+        )
+        configs["viewport_size"] = DEFAULT_VIEWPORT_SIZE
+    except ValueError:
+        warn(
+            f"VIEWPORT_SIZE '{os.getenv('VIEWPORT_SIZE')}' in .env is invalid, "
+            + f"defaulting to {DEFAULT_VIEWPORT_SIZE}"
+        )
+        configs["viewport_size"] = DEFAULT_VIEWPORT_SIZE
+
+    if len(configs["viewport_size"]) != 2:
+        warn(
+            f"VIEWPORT_SIZE must contain exactly two integers, "
             + f"defaulting to {DEFAULT_VIEWPORT_SIZE}"
         )
         configs["viewport_size"] = DEFAULT_VIEWPORT_SIZE
