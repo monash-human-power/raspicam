@@ -85,14 +85,14 @@ def read_configs(directory=CURRENT_DIRECTORY):
         configs["viewport_size"] = DEFAULT_VIEWPORT_SIZE
     except ValueError:
         warn(
-            f"VIEWPORT_SIZE '{os.getenv('VIEWPORT_SIZE')}' in .env is invalid, "
-            + f"defaulting to {DEFAULT_VIEWPORT_SIZE}"
+            f"VIEWPORT_SIZE '{os.getenv('VIEWPORT_SIZE')}' in .env is invalid,"
+            + f" defaulting to {DEFAULT_VIEWPORT_SIZE}"
         )
         configs["viewport_size"] = DEFAULT_VIEWPORT_SIZE
 
     if len(configs["viewport_size"]) != 2:
         warn(
-            f"VIEWPORT_SIZE must contain exactly two integers, "
+            "VIEWPORT_SIZE must contain exactly two integers, "
             + f"defaulting to {DEFAULT_VIEWPORT_SIZE}"
         )
         configs["viewport_size"] = DEFAULT_VIEWPORT_SIZE
