@@ -6,12 +6,12 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "~3.7"
-opencv-python = "4.1.0.25"
+opencv-python = "^4"
 paho-mqtt = "^1.5.0"
 python-dotenv = "^0.13.0"
 # Raspberry Pi uses the ARM platform, so these will only install on a Pi
-picamera = { version = "^1.13", markers = "platform_machine == 'armv7l'" }
-"RPi.GPIO" = { version = "^0.7.0", markers = "platform_machine == 'armv7l'" }
+picamera = { version = "^1.13", markers = "platform_machine == 'armv6l' or platform_machine == 'armv7l'" }
+"RPi.GPIO" = { version = "^0.7.0", markers = "platform_machine == 'armv6l' or platform_machine == 'armv7l'" }
 mhp = {git = "https://github.com/monash-human-power/common.git", rev="202012.9"}
 
 [tool.poetry.dev-dependencies]

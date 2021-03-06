@@ -17,11 +17,15 @@ from data import Data, DataFactory
 
 
 class Overlay(ABC):
-    def __init__(self, bike, width=1280, height=740, bg: str = None):
+    def __init__(self, bike, width=None, height=None, bg: str = None):
+
+        configs = read_configs()
 
         # Overlay dimension sizes
-        self.width = width
-        self.height = height
+        if width and height:
+            self.width, self.height = width, height
+        else:
+            self.width, self.height = configs["viewport_size"]
 
         # Canvas set up
         self.base_canvas = Canvas(self.width, self.height)
@@ -35,13 +39,12 @@ class Overlay(ABC):
             self.backend_name = "opencv_static_image"
             self.bg_path = bg
         # Raspberry Pis run ARM, PCs run x86_64
-        elif machine() == "armv7l":
+        elif machine() in ["armv7l", "armv6l"]:
             self.backend_name = "picamera"
         else:
             self.backend_name = "opencv"
 
         # Bike configuration set up
-        configs = read_configs()
         self.data = DataFactory.create(bike)
         self.device = configs["device"]
 

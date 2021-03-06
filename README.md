@@ -7,7 +7,7 @@ This repo contains code used to run the Monash Human Power camera system. The `m
 
 1. **Setup `.env` file**
 
-    Firstly, you'll need to create a `.env` file containing either `MHP_CAMERA=primary` or `MHP_CAMERA=secondary`. Similarly, set `MHP_BIKE` to `V2` or `V3` so that the overlays listen for data on the correct MQTT topics. This step may be skipped (and can be overriden with terminal arguments) but should always be done on the actual camera overlays.
+    Duplicate `.env.example` into `.env` and alter the environment variables accordingly. This file is how the overlay knows whether it is primary or secondary, the bike it is on, the broker IP and the screen resolution.
 
 2. **Configure `config.json`**
 
