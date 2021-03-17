@@ -56,6 +56,10 @@ class Orchestrator:
         """ Send a message on the current device's camera status topic. """
         status_topic = str(topics.Camera.status_camera / self.device)
         self.mqtt_client.publish(status_topic, message, retain=True)
+    
+    def publish_colour_adjustments(self) -> None:
+        """ Send a message on the color adjustment topic. """
+        
 
     def on_connect(self, client, userdata, flags, rc):
         """The callback for when the client receives a CONNACK response."""
