@@ -100,6 +100,7 @@ def read_configs(directory=CURRENT_DIRECTORY):
     configs["overlays"] = get_overlays()
     return configs
 
+# TODO: Create write to configs function
 
 def create_default_configs(directory):
     """Create a default config file"""

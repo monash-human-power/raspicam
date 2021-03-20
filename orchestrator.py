@@ -49,17 +49,21 @@ class Orchestrator:
         self.broker_ip = broker_ip
         self.port = port
         self.mqtt_client = None
-        configs = config.read_configs()
-        self.device = configs["device"]
+        self.configs = config.read_configs()
+        self.device = self.configs["device"] 
 
-    def publish_camera_status(self, message: str) -> None:
+    def publish_camera_status(self) -> None:
         """ Send a message on the current device's camera status topic. """
+        message = dumps(
+            {
+                "connected": True, 
+                "ip_address": get_ip(),
+                "brightness": self.configs["brightness"], 
+                "contrast": self.configs["contrast"]
+            }
+        )
         status_topic = str(topics.Camera.status_camera / self.device)
         self.mqtt_client.publish(status_topic, message, retain=True)
-    
-    def publish_colour_adjustments(self) -> None:
-        """ Send a message on the color adjustment topic. """
-        
 
     def on_connect(self, client, userdata, flags, rc):
         """The callback for when the client receives a CONNACK response."""
@@ -69,9 +73,8 @@ class Orchestrator:
         # reconnect then subscriptions will be renewed.
         client.subscribe(str(topics.Camera.set_overlay))
         client.subscribe(str(topics.Camera.get_overlays))
-        self.publish_camera_status(
-            dumps({"connected": True, "ip_address": get_ip()})
-        )
+        client.subscribe(str(topics.Camera.status_camera / self.device))
+        self.publish_camera_status()
 
     def on_message(self, client, userdata, msg):
         """The callback for when a PUBLISH message is received."""
@@ -83,6 +86,9 @@ class Orchestrator:
             )
         elif topics.Camera.set_overlay.matches(msg.topic):
             config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
+        # TODO: handling for new topic
+        elif (topics.Camera.status_camera / self.device).matches(msg.topic):
+            # Write to config function here
 
     def on_log(self, client, userdata, level, buf):
         """The callback to log all MQTT information"""
