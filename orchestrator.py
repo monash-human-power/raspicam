@@ -86,9 +86,10 @@ class Orchestrator:
             )
         elif topics.Camera.set_overlay.matches(msg.topic):
             config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
-        # TODO: handling for new topic
         elif (topics.Camera.status_camera / self.device).matches(msg.topic):
-            # Write to config function here
+            message = str(msg.payload.decode("utf-8"))
+            brightness = message["brightness"]
+            contrast = message["contrast"]
 
     def on_log(self, client, userdata, level, buf):
         """The callback to log all MQTT information"""
