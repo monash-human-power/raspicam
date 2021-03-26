@@ -90,6 +90,8 @@ class Orchestrator:
             message = str(msg.payload.decode("utf-8"))
             brightness = message["brightness"]
             contrast = message["contrast"]
+            config.write_to_configs("brightness", brightness)
+            config.write_to_configs("contrast", contrast)
 
     def on_log(self, client, userdata, level, buf):
         """The callback to log all MQTT information"""

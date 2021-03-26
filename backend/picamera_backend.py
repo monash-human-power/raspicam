@@ -4,6 +4,7 @@ from typing import Dict
 
 from backend import Backend, PublishFunc
 from canvas import Canvas
+from config import read_configs
 
 # This check needs to be done here, as it's only place we use picamera.
 try:
@@ -57,6 +58,10 @@ class PiCameraBackend(Backend):
             )
 
         self.pi_camera = PiCamera(resolution=(self.width, self.height))
+
+        configs = read_configs()
+        self.pi_camera.brightness = configs["brightness"]
+        self.pi_camera.contrast = configs["contrast"]
 
         self.prev_overlays: Dict[
             PiCameraOverlayLayer, self.pi_camera.PiOverlayRenderer
