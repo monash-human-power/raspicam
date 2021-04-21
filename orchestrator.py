@@ -4,7 +4,7 @@ import json
 import sys
 import time
 import socket
-from json import dumps
+from json import dumps # TODO: Clean this up
 
 import paho.mqtt.client as mqtt
 
@@ -87,7 +87,7 @@ class Orchestrator:
         elif topics.Camera.set_overlay.matches(msg.topic):
             config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
         elif (topics.Camera.status_camera / self.device).matches(msg.topic):
-            message = str(msg.payload.decode("utf-8"))
+            message = json.loads(msg.payload.decode("utf-8"))
             brightness = message["brightness"]
             contrast = message["contrast"]
             config.write_to_configs("brightness", brightness)
