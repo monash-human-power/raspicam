@@ -4,7 +4,6 @@ import json
 import sys
 import time
 import socket
-from json import dumps # TODO: Clean this up
 
 import paho.mqtt.client as mqtt
 
@@ -54,7 +53,7 @@ class Orchestrator:
 
     def publish_camera_status(self) -> None:
         """ Send a message on the current device's camera status topic. """
-        message = dumps(
+        message = json.dumps(
             {
                 "connected": True, 
                 "ip_address": get_ip(),
