@@ -112,13 +112,16 @@ class Orchestrator:
         # Set the camera status to offline if connection breaks
         camera_topic = str(topics.Camera.status_camera / self.device)
         self.mqtt_client.will_set(
-            camera_topic, json.dumps(
+            camera_topic,
+            json.dumps(
                 {
                     "connected": False,
-                    "brightness": 0,
-                    "contrast": 0
+                    "brightness": self.configs["brightness"],
+                    "contrast": self.configs["contrast"]
                 }
-            ), 1, True
+            ),
+            1,
+            True
         )
 
         # Blocking call that processes network traffic, dispatches callbacks
