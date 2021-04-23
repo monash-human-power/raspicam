@@ -100,6 +100,7 @@ def read_configs(directory=CURRENT_DIRECTORY):
     configs["overlays"] = get_overlays()
     return configs
 
+
 def write_to_configs(key: str, value, directory=CURRENT_DIRECTORY) -> dict:
     """ Write a value into a key in the configs file. """
     configs_file = os.path.join(directory, CONFIG_FILE)
@@ -115,6 +116,7 @@ def write_to_configs(key: str, value, directory=CURRENT_DIRECTORY) -> dict:
         json.dump(configs, file, indent=2, sort_keys=True)
 
     return configs
+
 
 def create_default_configs(directory):
     """Create a default config file"""

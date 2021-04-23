@@ -49,16 +49,16 @@ class Orchestrator:
         self.port = port
         self.mqtt_client = None
         self.configs = config.read_configs()
-        self.device = self.configs["device"] 
+        self.device = self.configs["device"]
 
     def publish_camera_status(self) -> None:
         """ Send a message on the current device's camera status topic. """
         message = json.dumps(
             {
-                "connected": True, 
+                "connected": True,
                 "ip_address": get_ip(),
-                "brightness": self.configs["brightness"], 
-                "contrast": self.configs["contrast"]
+                "brightness": self.configs["brightness"],
+                "contrast": self.configs["contrast"],
             }
         )
         status_topic = str(topics.Camera.status_camera / self.device)
@@ -117,11 +117,11 @@ class Orchestrator:
                 {
                     "connected": False,
                     "brightness": self.configs["brightness"],
-                    "contrast": self.configs["contrast"]
+                    "contrast": self.configs["contrast"],
                 }
             ),
             1,
-            True
+            True,
         )
 
         # Blocking call that processes network traffic, dispatches callbacks
