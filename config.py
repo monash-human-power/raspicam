@@ -126,7 +126,7 @@ def create_default_configs(directory):
             {
                 ACTIVE_OVERLAY_KEY: random_overlay,
                 "brightness": -1,
-                "contrast": -1
+                "contrast": -1,
             },
             file,
             indent=2,

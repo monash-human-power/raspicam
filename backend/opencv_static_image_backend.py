@@ -6,8 +6,8 @@ from canvas import Canvas
 
 
 class OpenCVStaticImageBackend(Backend):
-    """ Displays a static, local image in place of a video feed.
-        Uses the OpenCV (`cv2`) library. """
+    """Displays a static, local image in place of a video feed.
+    Uses the OpenCV (`cv2`) library."""
 
     def __init__(
         self,
@@ -58,8 +58,8 @@ class OpenCVStaticImageBackend(Backend):
         self.message_canvas = message_canvas
 
     def _on_loop(self) -> None:
-        """ This function uses the cached overlays, as OpenCV needs us to
-            manually add it to each frame. """
+        """This function uses the cached overlays, as OpenCV needs us to
+        manually add it to each frame."""
         frame = self.background
 
         frame = self.base_canvas.copy_to(frame)

@@ -4,10 +4,10 @@ from canvas import Canvas
 
 
 class OpenCVBackend(Backend):
-    """ Gets and displays video using the OpenCV (`cv2`) library.
+    """Gets and displays video using the OpenCV (`cv2`) library.
 
-        This is intended for use with laptops with webcams, not on the
-        Raspberry Pi. """
+    This is intended for use with laptops with webcams, not on the
+    Raspberry Pi."""
 
     def __init__(
         self,
@@ -54,8 +54,8 @@ class OpenCVBackend(Backend):
         self.message_canvas = message_canvas
 
     def _on_loop(self) -> None:
-        """ This function uses the cached overlays, as OpenCV needs us to
-            manually add it to each frame. """
+        """This function uses the cached overlays, as OpenCV needs us to
+        manually add it to each frame."""
         _, frame = self.webcam.read()
         frame = cv2.resize(frame, (self.width, self.height))
 
