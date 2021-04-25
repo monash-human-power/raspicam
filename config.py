@@ -123,7 +123,11 @@ def create_default_configs(directory):
     random_overlay = random.choice(get_overlays(directory))
     with open(os.path.join(directory, CONFIG_FILE), "w") as file:
         json.dump(
-            {ACTIVE_OVERLAY_KEY: random_overlay},
+            {
+                ACTIVE_OVERLAY_KEY: random_overlay,
+                "brightness": -1,
+                "contrast": -1
+            },
             file,
             indent=2,
             sort_keys=True,

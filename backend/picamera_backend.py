@@ -60,8 +60,10 @@ class PiCameraBackend(Backend):
         self.pi_camera = PiCamera(resolution=(self.width, self.height))
 
         configs = read_configs()
-        self.pi_camera.brightness = configs["brightness"]
-        self.pi_camera.contrast = configs["contrast"]
+        if configs["brightness"] != -1:
+            self.pi_camera.brightness = configs["brightness"]
+        if configs["contrast"] != -1:
+            self.pi_camera.contrast = configs["contrast"]
 
         self.prev_overlays: Dict[
             PiCameraOverlayLayer, self.pi_camera.PiOverlayRenderer
