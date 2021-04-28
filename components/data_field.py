@@ -62,14 +62,14 @@ class DataField(Component):
 
 
 class SpeedField(DataField):
-    """ A specialised version of DataField which prefers to display GPS speed,
-        but falls back to reed velocity if GPS is unavailable """
+    """ A specialised version of DataField which prefers to display reed velocity,
+        but falls back to GPS speed if reed velocity is unavailable """
 
     def __init__(self, coordinate: Tuple[int, int]):
         def value_func(data):
             return (
-                data["gps_speed"].get_string(decimals=1)
-                or data["reed_velocity"].get_string(decimals=1)
+                data["reed_velocity"].get_string(decimals=1)
+                or data["gps_speed"].get_string(decimals=1)
                 or "--"
             )
 
@@ -79,5 +79,5 @@ class SpeedField(DataField):
         pass
 
     def draw_data(self, canvas: Canvas, data: Data):
-        self.title = "GPS KPH" if data["gps_speed"] else "REED KPH"
+        self.title = "REED KPH" if data["reed_velocity"] else "GPS KPH"
         super().draw_data(canvas, data)
