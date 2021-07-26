@@ -8,9 +8,18 @@ from json import dumps
 
 import paho.mqtt.client as mqtt
 
+try:
+    import RPi.GPIO as gpio
+    ON_PI = True
+except (ImportError, RuntimeError):
+    ON_PI = False
+
 from mhp import topics
 
 import config
+
+
+logging_button_pin = 7
 
 
 def get_args(argv=[]):
@@ -51,6 +60,17 @@ class Orchestrator:
         self.mqtt_client = None
         configs = config.read_configs()
         self.device = configs["device"]
+
+        if ON_PI:
+            gpio.setmode(gpio.BOARD)
+            # Ignore warnings about multiple scripts playing with GPIO
+            gpio.setwarnings(False)
+
+            gpio.setup(logging_button_pin, gpio.IN, gpio.PUD_DOWN)
+            gpio.add_event_detect(logging_button_pin, gpio.RISING, callback=self.toggle_logging)
+
+    def toggle_logging(self, channel) -> None:
+        print(f"pressed on channel {channel}")
 
     def publish_camera_status(self, message: str) -> None:
         """ Send a message on the current device's camera status topic. """
@@ -119,4 +139,8 @@ if __name__ == "__main__":
     orchestrator = Orchestrator(BROKER_IP)
 
     # Start
-    orchestrator.start()
+    try:
+        orchestrator.start()
+    except KeyboardInterrupt:
+        if ON_PI:
+            gpio.cleanup()
