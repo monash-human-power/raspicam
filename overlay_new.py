@@ -20,6 +20,8 @@ class OverlayNew(Overlay):
         row_coords = [
             self.height - (2 * spacing + DataField.height),
             self.height - spacing,
+            # this coordinates are for the voltage, need advice for voltage position later
+            self.height - (6 * spacing + DataField.height)
         ]
         col_coords = [
             spacing,
@@ -43,7 +45,8 @@ class OverlayNew(Overlay):
             (col_coords[2], row_coords[0] - DataField.height - spacing),
             (self.width, self.height),
         ]
-
+        print(self.height)
+        print(self.width)
         # Create all overlay components
         self.components = [
             TransparentRectangle(*left_rect),
@@ -76,9 +79,17 @@ class OverlayNew(Overlay):
                 self.get_data_func("reed_distance", 2, 0.001),
                 data_field_coord(3, 1),
             ),
+            # TODO voltage configs?
+            DataField(
+                "VOLTAGE",
+                # voltage to 1 decimal place
+                self.get_data_func("voltage", 1),
+                data_field_coord(3, 2),
+            ),
             CentrePower(self.width, self.height),
             DAShboardMessage(),
             DASDisconnectMessage(self.client),
+            
         ]
 
     def _draw_base_layer(self):

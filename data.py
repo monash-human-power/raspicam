@@ -92,6 +92,8 @@ class Data(ABC):
             "predicted_max_speed": DataValue(float),
             "zdist": DataValue(float),
             "plan_name": DataValue(str),
+            # Voltage
+            "voltage" : DataValue(float)
         }
         self.message = DataValue(str, 20)
 
