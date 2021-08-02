@@ -20,7 +20,8 @@ class OverlayNew(Overlay):
         row_coords = [
             self.height - (2 * spacing + DataField.height),
             self.height - spacing,
-            # this coordinates are for the voltage, need advice for voltage position later
+            # this coordinates are for the voltage, 
+            # need advice for voltage position later
             self.height - (6 * spacing + DataField.height)
         ]
         col_coords = [
@@ -89,7 +90,6 @@ class OverlayNew(Overlay):
             CentrePower(self.width, self.height),
             DAShboardMessage(),
             DASDisconnectMessage(self.client),
-
         ]
 
     def _draw_base_layer(self):
