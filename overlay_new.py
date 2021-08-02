@@ -20,7 +20,7 @@ class OverlayNew(Overlay):
         row_coords = [
             self.height - (2 * spacing + DataField.height),
             self.height - spacing,
-            # this coordinates are for the voltage, 
+            # this coordinates are for the voltage,
             # need advice for voltage position later
             self.height - (6 * spacing + DataField.height)
         ]
