@@ -93,7 +93,7 @@ class Data(ABC):
             "zdist": DataValue(float),
             "plan_name": DataValue(str),
             # Voltage
-            "voltage" : DataValue(float)
+            "voltage": DataValue(float)
         }
         self.message = DataValue(str, 20)
 

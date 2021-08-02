@@ -89,7 +89,7 @@ class OverlayNew(Overlay):
             CentrePower(self.width, self.height),
             DAShboardMessage(),
             DASDisconnectMessage(self.client),
-            
+
         ]
 
     def _draw_base_layer(self):
