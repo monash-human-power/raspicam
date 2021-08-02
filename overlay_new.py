@@ -29,7 +29,6 @@ class OverlayNew(Overlay):
             self.width - 2 * (spacing + DataField.width),
             self.width - (spacing + DataField.width),
         ]
-        # testing commenting and gitr pushing
 
         def data_field_coord(x, y):
             """Coordinates of the data field in column x, row y."""
