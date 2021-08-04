@@ -30,7 +30,7 @@ import config
 # BCM pin numbering
 logging_button_pin = 4
 
-# See https://github.com/monash-human-power/V3-display-unit-pcb-tests/blob/master/calibrate.py
+# See https://github.com/monash-human-power/V3-display-unit-pcb-tests/blob/72d02c270be413b1d4e97b9d10a33c97f551eafe/calibrate.py # noqa: E501
 battery_calibration_factor = 3.1432999689025483
 battery_publish_interval = 5 * 60  # seconds
 
@@ -105,7 +105,7 @@ class Orchestrator:
     def publish_camera_status(self) -> None:
         """ Send a message on the current device's camera status topic. """
         status_topic = str(topics.Camera.status_camera / self.device)
-        message = dumps({"connected": True, "ip_address": get_ip(),})
+        message = dumps({"connected": True, "ip_address": get_ip()})
         self.mqtt_client.publish(status_topic, message, retain=True)
 
     def battery_loop(self) -> None:
