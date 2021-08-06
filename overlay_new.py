@@ -45,6 +45,7 @@ class OverlayNew(Overlay):
             (col_coords[2], row_coords[0] - DataField.height - spacing),
             (self.width, self.height),
         ]
+
         # Dimensions of the top right Transparent rectangle
         top_right_rect = [
             (col_coords[3] + spacing, 0),
@@ -86,7 +87,6 @@ class OverlayNew(Overlay):
             ),
             DataField(
                 "VOLTAGE",
-                # voltage to 1 decimal place
                 self.get_data_func("voltage", 1),
                 data_field_coord(3, 2),
             ),
