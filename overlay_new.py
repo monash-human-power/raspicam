@@ -48,14 +48,13 @@ class OverlayNew(Overlay):
         # Dimensions of the top right Transparent rectangle
         top_right_rect = [
             (col_coords[3] + spacing, 0),
-            (self.width, row_coords[2])
+            (self.width, DataField.height + spacing)
         ]
-        print(self.height)
-        print(self.width)
         # Create all overlay components
         self.components = [
             TransparentRectangle(*left_rect),
             TransparentRectangle(*right_rect),
+            # rectangle for voltage
             TransparentRectangle(*top_right_rect),
             DataField(
                 "RPM", self.get_data_func("cadence"), data_field_coord(0, 0)

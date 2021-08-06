@@ -245,12 +245,12 @@ class DataV3(Data):
                 self.data["reed_distance"].update(sensor_value)
             elif sensor_name in self.data.keys():
                 self.data[sensor_name].update(sensor_value)
-                
+
     def load_voltage_data(self, data: str) -> None:
-        voltage_data = loads('{"voltage":1}')
+        voltage_data = loads('{"voltage":4.3123}')
         # voltage_data = loads(data)
         self.data["voltage"].update(voltage_data["voltage"])
-        
+
     def load_recommended_sp(self, data: str) -> None:
         python_data = loads(data)
         self.data["rec_power"].update(python_data["power"])
