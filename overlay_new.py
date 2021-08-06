@@ -20,9 +20,8 @@ class OverlayNew(Overlay):
         row_coords = [
             self.height - (2 * spacing + DataField.height),
             self.height - spacing,
-            # this coordinates are for the voltage,
-            # need advice for voltage position later
-            self.height - (6 * spacing + DataField.height)
+            # top right position for voltage
+            (spacing + DataField.height)
         ]
         col_coords = [
             spacing,
@@ -46,12 +45,18 @@ class OverlayNew(Overlay):
             (col_coords[2], row_coords[0] - DataField.height - spacing),
             (self.width, self.height),
         ]
+        # Dimensions of the top right Transparent rectangle
+        top_right_rect = [
+            (col_coords[3] + spacing, 0),
+            (self.width, row_coords[2])
+        ]
         print(self.height)
         print(self.width)
         # Create all overlay components
         self.components = [
             TransparentRectangle(*left_rect),
             TransparentRectangle(*right_rect),
+            TransparentRectangle(*top_right_rect),
             DataField(
                 "RPM", self.get_data_func("cadence"), data_field_coord(0, 0)
             ),
@@ -80,7 +85,6 @@ class OverlayNew(Overlay):
                 self.get_data_func("reed_distance", 2, 0.001),
                 data_field_coord(3, 1),
             ),
-            # TODO voltage configs?
             DataField(
                 "VOLTAGE",
                 # voltage to 1 decimal place
