@@ -201,6 +201,7 @@ class DataV3(Data):
         return [
             topics.WirelessModule.all().data,
             topics.Camera.overlay_message,
+            topics.WirelessModule.all().battery
             # TODO: BOOST currently publishes data in the deprecated V2 format
             # on the V3 topic. Uncomment below when updated.
             # topics.BOOST.recommended_sp,
@@ -215,6 +216,8 @@ class DataV3(Data):
             self.load_message_json(data)
         elif topics.WirelessModule.all().data.matches(topic):
             self.load_sensor_data(data)
+        elif topics.WirelessModule.all().battery.matches(topic):
+            self.load_voltage_data(data)
         elif topic == topics.BOOST.recommended_sp:
             self.load_recommended_sp(data)
         elif topic == topics.BOOST.predicted_max_speed:
@@ -229,7 +232,6 @@ class DataV3(Data):
         """Load data in the json V3 wireless sensor module format."""
         module_data = loads(data)
         sensor_data = module_data["sensors"]
-
         for sensor in sensor_data:
             sensor_name = sensor["type"]
             sensor_value = sensor["value"]
@@ -243,7 +245,12 @@ class DataV3(Data):
                 self.data["reed_distance"].update(sensor_value)
             elif sensor_name in self.data.keys():
                 self.data[sensor_name].update(sensor_value)
-
+                
+    def load_voltage_data(self, data: str) -> None:
+        voltage_data = loads('{"voltage":1}')
+        # voltage_data = loads(data)
+        self.data["voltage"].update(voltage_data["voltage"])
+        
     def load_recommended_sp(self, data: str) -> None:
         python_data = loads(data)
         self.data["rec_power"].update(python_data["power"])
