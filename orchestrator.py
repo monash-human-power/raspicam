@@ -125,7 +125,8 @@ class Orchestrator:
         client.subscribe(str(topics.Camera.get_overlays))
         client.subscribe(str(topics.WirelessModule.all().module))
         self.publish_camera_status()
-        self.battery_loop()
+        if ON_PI:
+            self.battery_loop()
 
     def on_message(self, client, userdata, msg):
         """The callback for when a PUBLISH message is received."""
