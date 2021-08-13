@@ -253,8 +253,7 @@ class DataV3(Data):
                 self.data[sensor_name].update(sensor_value)
 
     def load_voltage_data(self, data: str) -> None:
-        # voltage_data = loads(data)
-        voltage_data = loads('{"voltage":7.12321}')
+        voltage_data = loads(data)
         self.data["voltage"].update(voltage_data["voltage"])
 
     def load_recommended_sp(self, data: str) -> None:
