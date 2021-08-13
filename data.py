@@ -199,7 +199,8 @@ class DataV3(Data):
     @staticmethod
     def get_topics() -> List[topics.Topic]:
         device = config.read_configs()["device"]
-        battery_topic = topics.Camera.status_camera.__truediv__(device).__truediv__("battery")
+        battery_topic = topics.Camera.status_camera.__truediv__(
+            device).__truediv__("battery")
         return [
             topics.WirelessModule.all().data,
             topics.Camera.overlay_message,
@@ -215,7 +216,8 @@ class DataV3(Data):
         """Update stored fields with data from a V3 sensor module data packet.
         """
         device = config.read_configs()["device"]
-        battery_topic = topics.Camera.status_camera.__truediv__(device).__truediv__("battery")
+        battery_topic = topics.Camera.status_camera.__truediv__(
+            device).__truediv__("battery")
         if topic == topics.Camera.overlay_message:
             self.load_message_json(data)
         elif topics.WirelessModule.all().data.matches(topic):

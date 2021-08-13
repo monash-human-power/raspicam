@@ -16,7 +16,7 @@ class Colour(Enum):
     blue = (255, 0, 0, 255)
     green = (0, 255, 0, 255)
     red = (0, 0, 255, 255)
-    yellow = (0,255,255,0)
+    yellow = (0, 255, 255, 0)
 
 
 ColourTuple3 = Tuple[int, int, int]
