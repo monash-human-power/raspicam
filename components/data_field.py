@@ -81,3 +81,37 @@ class SpeedField(DataField):
     def draw_data(self, canvas: Canvas, data: Data):
         self.title = "GPS KPH" if data["gps_speed"] else "REED KPH"
         super().draw_data(canvas, data)
+
+# Voltage Class
+class VoltageField(DataField):
+    """A specialised version of DataField which displays the voltage adjusting 
+    for it's values whether the battery is low, medium or high. """
+    
+    def __init__(self, title: str,
+        value_func: Callable[[Data], str],
+        coordinate: Tuple[int, int],
+        is_title_static: bool = True):
+        super().__init__(title, value_func, coordinate, is_title_static)
+        
+    def draw_base(self, canvas: Canvas):
+        return super().draw_base(canvas)
+    
+    def draw_data(self, canvas: Canvas, data: Data):
+        if not self.is_title_static:
+            DataField.draw_base(self, canvas)
+        voltage_value = self.value_func(data)
+        if voltage_value == '--' or float(voltage_value) >= 7.3:
+            colour = Colour.white
+        elif float(voltage_value) >= 7.0:
+            colour = Colour.yellow
+        else:
+            colour = Colour.red
+        canvas.draw_text(
+                voltage_value,
+                self.data_coord,
+                DataField.data_size * 0.7,
+                colour,
+                "right",
+            )
+            
+# TODO VoltageField class -> red when it reaches a threshold

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from json import loads
 from time import time
 from typing import Any, List, Optional
-
+import config
 from mhp import topics
 
 
@@ -198,10 +198,12 @@ class DataV2(Data):
 class DataV3(Data):
     @staticmethod
     def get_topics() -> List[topics.Topic]:
+        device = config.read_configs()["device"]
+        battery_topic = topics.Camera.status_camera.__truediv__(device).__truediv__("battery")
         return [
             topics.WirelessModule.all().data,
             topics.Camera.overlay_message,
-            topics.WirelessModule.all().battery
+            battery_topic,
             # TODO: BOOST currently publishes data in the deprecated V2 format
             # on the V3 topic. Uncomment below when updated.
             # topics.BOOST.recommended_sp,
@@ -212,11 +214,13 @@ class DataV3(Data):
     def load_data(self, topic: str, data: str) -> None:
         """Update stored fields with data from a V3 sensor module data packet.
         """
+        device = config.read_configs()["device"]
+        battery_topic = topics.Camera.status_camera.__truediv__(device).__truediv__("battery")
         if topic == topics.Camera.overlay_message:
             self.load_message_json(data)
         elif topics.WirelessModule.all().data.matches(topic):
             self.load_sensor_data(data)
-        elif topics.WirelessModule.all().battery.matches(topic):
+        elif battery_topic.matches(topic):
             self.load_voltage_data(data)
         elif topic == topics.BOOST.recommended_sp:
             self.load_recommended_sp(data)
@@ -247,7 +251,8 @@ class DataV3(Data):
                 self.data[sensor_name].update(sensor_value)
 
     def load_voltage_data(self, data: str) -> None:
-        voltage_data = loads(data)
+        # voltage_data = loads(data)
+        voltage_data = loads('{"voltage":7.12321}')
         self.data["voltage"].update(voltage_data["voltage"])
 
     def load_recommended_sp(self, data: str) -> None:

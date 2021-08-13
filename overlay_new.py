@@ -2,6 +2,7 @@ from components import (
     TransparentRectangle,
     DataField,
     SpeedField,
+    VoltageField,
     CentrePower,
     DAShboardMessage,
     DASDisconnectMessage,
@@ -49,7 +50,7 @@ class OverlayNew(Overlay):
         # Dimensions of the top right Transparent rectangle
         top_right_rect = [
             (col_coords[3] + spacing, 0),
-            (self.width, DataField.height + spacing)
+            (self.width, DataField.height + 2*spacing)
         ]
         # Create all overlay components
         self.components = [
@@ -85,9 +86,10 @@ class OverlayNew(Overlay):
                 self.get_data_func("reed_distance", 2, 0.001),
                 data_field_coord(3, 1),
             ),
-            DataField(
+            VoltageField(
+                # should change colour at 3.5V
                 "VOLTAGE",
-                self.get_data_func("voltage", 1),
+                self.get_data_func("voltage", 2),
                 data_field_coord(3, 2),
             ),
             CentrePower(self.width, self.height),
