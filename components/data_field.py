@@ -83,7 +83,7 @@ class SpeedField(DataField):
 
 
 class VoltageField(DataField):
-    """ A specialised version of DataField which displays the voltage adjusting 
+    """ A specialised version of DataField which displays the voltage adjusting
         for it's values whether the battery is low, medium or high."""
 
     def __init__(self, title: str,
