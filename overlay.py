@@ -6,7 +6,6 @@ from platform import machine
 from typing import Callable, List
 
 import paho.mqtt.client as mqtt
-
 from mhp.topics import Camera, Topic
 
 from backend import BackendFactory
@@ -65,6 +64,10 @@ class Overlay(ABC):
         self.set_callback_for_topic_list(
             [Camera.recording], self.on_recording_message
         )
+        self.set_callback_for_topic_list(
+            [Camera.flip_video_feed], lambda _a, _b, _c: self.backend.flip_video_feed()
+        )
+
         self.exception_handler = CameraErrorHandler(
             self.client, self.device, self.backend_name, self.bg_path, configs
         )
