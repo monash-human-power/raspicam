@@ -214,7 +214,7 @@ class DataV3(Data):
         device = config.read_configs()["device"]
         battery_topic = topics.Camera.status_camera/device/"battery"
         return battery_topic
-    
+
     def load_data(self, topic: str, data: str) -> None:
         """Update stored fields with data from a V3 sensor module data packet.
         """
@@ -251,7 +251,7 @@ class DataV3(Data):
                 self.data["reed_distance"].update(sensor_value)
             elif sensor_name in self.data.keys():
                 self.data[sensor_name].update(sensor_value)
-    
+
     def load_voltage_data(self, data: str) -> None:
         # voltage_data = loads(data)
         voltage_data = loads('{"voltage":7.1312}')
