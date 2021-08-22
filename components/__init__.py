@@ -11,7 +11,7 @@ __all__ = [
     "TransparentRectangle",
     "DataField",
     "SpeedField",
-    "VoltageField"
+    "VoltageField",
     "CentrePower",
     "Message",
     "DAShboardMessage",
