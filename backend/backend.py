@@ -11,7 +11,6 @@ from canvas import Canvas
 # A function which accepts a string and returns None
 PublishFunc = Callable[[str], None]
 
-
 class Backend(ABC):
     """ Backend for getting and processing video feed.
 
@@ -45,6 +44,9 @@ class Backend(ABC):
         self.prev_video_status_time = 0
         # Time between recording statuses, in seconds
         self.video_status_interval = 60
+
+        # Rotation of video feed in degrees clockwise
+        self.video_rotation = 0;
 
     @abstractmethod
     def _is_video_on(self) -> bool:
@@ -235,6 +237,13 @@ class Backend(ABC):
             status = self._is_video_on()
         self.publish_video_status_func(dumps({"online": status}))
         self.prev_video_status_time = time()
+
+    # Effects
+
+    def flip_video_feed(self) -> None:
+        """ Flip video feed by rotation of 180 degrees"""
+        self.video_rotation = (self.video_rotation + 180) % 360
+
 
     def __enter__(self):
         """ Ran when Python's `with ...` syntax is used on an instance of this

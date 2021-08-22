@@ -1,6 +1,7 @@
 import cv2
-from backend import Backend, PublishFunc
 from canvas import Canvas
+
+from backend import Backend, PublishFunc
 
 
 class OpenCVBackend(Backend):
@@ -57,6 +58,15 @@ class OpenCVBackend(Backend):
         """ This function uses the cached overlays, as OpenCV needs us to
             manually add it to each frame. """
         _, frame = self.webcam.read()
+
+        # Check flip
+        if self.video_rotation == 90:
+            frame = cv2.rotate(frame, cv2.cv2.ROTATE_90_CLOCKWISE)
+        elif self.video_rotation == 180:
+            frame = cv2.rotate(frame, cv2.cv2.ROTATE_180_CLOCKWISE)
+        elif self.video_rotation == 270:
+            frame = cv2.rotate(frame, cv2.cv2.ROTATE_270_CLOCKWISE)
+
         frame = cv2.resize(frame, (self.width, self.height))
 
         frame = self.base_canvas.copy_to(frame)
