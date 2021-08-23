@@ -196,21 +196,21 @@ class DataV2(Data):
 
 
 class DataV3(Data):
+
     @staticmethod
-    def get_topics(self) -> List[topics.Topic]:
+    def get_topics() -> List[topics.Topic]:
         # TODO: Not have to read configs everytime
         return [
             topics.WirelessModule.all().data,
             topics.Camera.overlay_message,
-            self.create_voltage_topic(),
-            # TODO: BOOST currently publishes data in the deprecated V2 format
-            # on the V3 topic. Uncomment below when updated.
-            # topics.BOOST.recommended_sp,
-            # topics.BOOST.predicted_max_speed,
+            DataV3.create_voltage_topic(),
+            topics.BOOST.recommended_sp,
+            topics.BOOST.predicted_max_speed,
             # TODO: Implement handling topics.BOOST.generate_complete
         ]
 
-    def create_voltage_topic(self):
+    @staticmethod
+    def create_voltage_topic() -> topics.Topic:
         device = config.read_configs()["device"]
         battery_topic = topics.Camera.status_camera/device/"battery"
         return battery_topic
@@ -253,8 +253,7 @@ class DataV3(Data):
                 self.data[sensor_name].update(sensor_value)
 
     def load_voltage_data(self, data: str) -> None:
-        # voltage_data = loads(data)
-        voltage_data = loads('{"voltage":7.1312}')
+        voltage_data = loads(data)
         self.data["voltage"].update(voltage_data["voltage"])
 
     def load_recommended_sp(self, data: str) -> None:

@@ -87,7 +87,6 @@ class OverlayNew(Overlay):
                 data_field_coord(3, 1),
             ),
             VoltageField(
-                # should change colour at 3.5V
                 "VOLTAGE",
                 self.get_data_func("voltage", 2),
                 data_field_coord(3, 2),
