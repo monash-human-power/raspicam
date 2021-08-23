@@ -243,6 +243,7 @@ class Backend(ABC):
     def flip_video_feed(self) -> None:
         """ Flip video feed by rotation of 180 degrees"""
         self.video_rotation = (self.video_rotation + 180) % 360
+        print(f"rotation set to {self.video_rotation}")
 
 
     def __enter__(self):

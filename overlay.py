@@ -64,9 +64,8 @@ class Overlay(ABC):
         self.set_callback_for_topic_list(
             [Camera.recording], self.on_recording_message
         )
-        self.set_callback_for_topic_list(
-            [Camera.flip_video_feed], lambda _a, _b, _c: self.backend.flip_video_feed()
-        )
+        # TODO: Remove this after common PR is merged
+        self.client.message_callback_add("flip", self.on_flip_message)
 
         self.exception_handler = CameraErrorHandler(
             self.client, self.device, self.backend_name, self.bg_path, configs
@@ -176,6 +175,8 @@ class Overlay(ABC):
     def _on_connect(self, client, userdata, flags, rc):
         self.subscribe_to_topic_list(self.data.get_topics())
         self.client.subscribe(str(Camera.recording))
+        # TODO: Remove this after  common PR is merged
+        self.client.subscribe('flip')
         with self.exception_handler:
             self.on_connect(client, userdata, flags, rc)
         print("Connected with rc: {}".format(rc))
@@ -196,6 +197,10 @@ class Overlay(ABC):
             self.backend.start_recording()
         elif msg.topic == Camera.recording_stop:
             self.backend.stop_recording()
+
+    def on_flip_message(self, client, userdata, msg):
+        print("flipping")
+        self.backend.flip_video_feed()
 
     def draw_base_layer(self):
         """ Set up the base layer as soon as camera turns on.

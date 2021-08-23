@@ -66,9 +66,9 @@ class OpenCVStaticImageBackend(Backend):
         if self.video_rotation == 90:
             frame = cv2.rotate(frame, cv2.cv2.ROTATE_90_CLOCKWISE)
         elif self.video_rotation == 180:
-            frame = cv2.rotate(frame, cv2.cv2.ROTATE_180_CLOCKWISE)
+            frame = cv2.rotate(frame, cv2.cv2.ROTATE_180)
         elif self.video_rotation == 270:
-            frame = cv2.rotate(frame, cv2.cv2.ROTATE_270_CLOCKWISE)
+            frame = cv2.rotate(frame, cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
 
         frame = self.base_canvas.copy_to(frame)
         frame = self.data_canvas.copy_to(frame)
