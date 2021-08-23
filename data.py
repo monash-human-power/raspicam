@@ -93,7 +93,7 @@ class Data(ABC):
             "zdist": DataValue(float),
             "plan_name": DataValue(str),
             # Voltage
-            "voltage": DataValue(float)
+            "voltage": DataValue(float),
         }
         self.message = DataValue(str, 20)
 
@@ -196,7 +196,6 @@ class DataV2(Data):
 
 
 class DataV3(Data):
-
     @staticmethod
     def get_topics() -> List[topics.Topic]:
         # TODO: Not have to read configs everytime
@@ -212,7 +211,7 @@ class DataV3(Data):
     @staticmethod
     def create_voltage_topic() -> topics.Topic:
         device = config.read_configs()["device"]
-        battery_topic = topics.Camera.status_camera/device/"battery"
+        battery_topic = topics.Camera.status_camera / device / "battery"
         return battery_topic
 
     def load_data(self, topic: str, data: str) -> None:

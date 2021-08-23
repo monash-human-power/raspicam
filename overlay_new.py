@@ -22,7 +22,7 @@ class OverlayNew(Overlay):
             self.height - (2 * spacing + DataField.height),
             self.height - spacing,
             # top right position for voltage
-            (spacing + DataField.height)
+            (spacing + DataField.height),
         ]
         col_coords = [
             spacing,
@@ -50,7 +50,7 @@ class OverlayNew(Overlay):
         # Dimensions of the top right Transparent rectangle
         top_right_rect = [
             (col_coords[3] + spacing, 0),
-            (self.width, DataField.height + 2*spacing)
+            (self.width, DataField.height + 2 * spacing),
         ]
         # Create all overlay components
         self.components = [

@@ -86,10 +86,13 @@ class VoltageField(DataField):
     """ A specialised version of DataField which displays the voltage adjusting
         for it's values whether the battery is low, medium or high."""
 
-    def __init__(self, title: str,
-                 value_func: Callable[[Data], str],
-                 coordinate: Tuple[int, int],
-                 is_title_static: bool = True):
+    def __init__(
+        self,
+        title: str,
+        value_func: Callable[[Data], str],
+        coordinate: Tuple[int, int],
+        is_title_static: bool = True,
+    ):
         super().__init__(title, value_func, coordinate, is_title_static)
 
     def draw_base(self, canvas: Canvas):
@@ -99,7 +102,7 @@ class VoltageField(DataField):
         if not self.is_title_static:
             DataField.draw_base(self, canvas)
         voltage_value = self.value_func(data)
-        if voltage_value == '--' or float(voltage_value) >= 7.3:
+        if voltage_value == "--" or float(voltage_value) >= 7.3:
             colour = Colour.white
         elif float(voltage_value) >= 7.0:
             colour = Colour.yellow
