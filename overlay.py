@@ -65,7 +65,7 @@ class Overlay(ABC):
             [Camera.recording], self.on_recording_message
         )
         # TODO: Remove this after common PR is merged
-        self.client.message_callback_add("flip", self.on_flip_message)
+        self.client.message_callback_add(Camera.flip_video_feed, self.on_flip_message)
 
         self.exception_handler = CameraErrorHandler(
             self.client, self.device, self.backend_name, self.bg_path, configs
@@ -176,7 +176,7 @@ class Overlay(ABC):
         self.subscribe_to_topic_list(self.data.get_topics())
         self.client.subscribe(str(Camera.recording))
         # TODO: Remove this after  common PR is merged
-        self.client.subscribe('flip')
+        self.client.subscribe(Camera.flip_video_feed)
         with self.exception_handler:
             self.on_connect(client, userdata, flags, rc)
         print("Connected with rc: {}".format(rc))
@@ -199,7 +199,6 @@ class Overlay(ABC):
             self.backend.stop_recording()
 
     def on_flip_message(self, client, userdata, msg):
-        print("flipping")
         self.backend.flip_video_feed()
 
     def draw_base_layer(self):
