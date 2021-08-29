@@ -118,7 +118,6 @@ class PiCameraBackend(Backend):
     def _on_loop(self) -> None:
         # Set rotation
         self.pi_camera.rotation = self.video_rotation
-        pass
 
     def stop_video(self) -> None:
         self.pi_camera.stop_preview()
