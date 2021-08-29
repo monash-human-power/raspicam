@@ -12,6 +12,7 @@ from config import ROTATION_KEY, read_configs, set_rotation
 # A function which accepts a string and returns None
 PublishFunc = Callable[[str], None]
 
+
 class Backend(ABC):
     """ Backend for getting and processing video feed.
 
@@ -47,7 +48,7 @@ class Backend(ABC):
         self.video_status_interval = 60
 
         # Rotation of video feed in degrees clockwise
-        self.video_rotation = read_configs().get(ROTATION_KEY, 0);
+        self.video_rotation = read_configs().get(ROTATION_KEY, 0)
 
     @abstractmethod
     def _is_video_on(self) -> bool:
@@ -245,7 +246,6 @@ class Backend(ABC):
         """ Flip video feed by rotation of 180 degrees"""
         set_rotation((self.video_rotation + 180) % 360)
         print(f"rotation set to {(self.video_rotation + 180) % 360}")
-
 
     def __enter__(self):
         """ Ran when Python's `with ...` syntax is used on an instance of this
