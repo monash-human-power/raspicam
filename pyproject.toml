@@ -13,7 +13,7 @@ python-dotenv = "^0.13.0"
 picamera = { version = "^1.13", markers = "platform_machine == 'armv6l' or platform_machine == 'armv7l'" }
 "RPi.GPIO" = { version = "^0.7.0", markers = "platform_machine == 'armv6l' or platform_machine == 'armv7l'" }
 adafruit-circuitpython-mcp3xxx =  { version = "^1.4.5", markers = "platform_machine == 'armv6l' or platform_machine == 'armv7l'" }
-mhp = {git = "git@github.com:monash-human-power/common.git", rev="202012.9"}
+mhp = {git = "git@github.com:monash-human-power/common.git", rev="202108.13"}
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.5.2"
