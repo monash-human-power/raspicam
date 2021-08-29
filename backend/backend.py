@@ -7,6 +7,7 @@ from traceback import format_exc
 from typing import Callable
 
 from canvas import Canvas
+from config import ROTATION_KEY, read_configs, set_rotation
 
 # A function which accepts a string and returns None
 PublishFunc = Callable[[str], None]
@@ -46,7 +47,7 @@ class Backend(ABC):
         self.video_status_interval = 60
 
         # Rotation of video feed in degrees clockwise
-        self.video_rotation = 0;
+        self.video_rotation = read_configs().get(ROTATION_KEY, 0);
 
     @abstractmethod
     def _is_video_on(self) -> bool:
@@ -242,8 +243,8 @@ class Backend(ABC):
 
     def flip_video_feed(self) -> None:
         """ Flip video feed by rotation of 180 degrees"""
-        self.video_rotation = (self.video_rotation + 180) % 360
-        print(f"rotation set to {self.video_rotation}")
+        set_rotation((self.video_rotation + 180) % 360)
+        print(f"rotation set to {(self.video_rotation + 180) % 360}")
 
 
     def __enter__(self):
