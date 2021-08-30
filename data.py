@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from json import loads
 from time import time
 from typing import Any, List, Optional
-
+import config
 from mhp import topics
 
 
@@ -92,6 +92,8 @@ class Data(ABC):
             "predicted_max_speed": DataValue(float),
             "zdist": DataValue(float),
             "plan_name": DataValue(str),
+            # Voltage
+            "voltage": DataValue(float),
         }
         self.message = DataValue(str, 20)
 
@@ -196,15 +198,21 @@ class DataV2(Data):
 class DataV3(Data):
     @staticmethod
     def get_topics() -> List[topics.Topic]:
+        # TODO: Not have to read configs everytime
         return [
             topics.WirelessModule.all().data,
             topics.Camera.overlay_message,
-            # TODO: BOOST currently publishes data in the deprecated V2 format
-            # on the V3 topic. Uncomment below when updated.
-            # topics.BOOST.recommended_sp,
-            # topics.BOOST.predicted_max_speed,
+            DataV3.create_voltage_topic(),
+            topics.BOOST.recommended_sp,
+            topics.BOOST.predicted_max_speed,
             # TODO: Implement handling topics.BOOST.generate_complete
         ]
+
+    @staticmethod
+    def create_voltage_topic() -> topics.Topic:
+        device = config.read_configs()["device"]
+        battery_topic = topics.Camera.status_camera / device / "battery"
+        return battery_topic
 
     def load_data(self, topic: str, data: str) -> None:
         """Update stored fields with data from a V3 sensor module data packet.
@@ -213,6 +221,8 @@ class DataV3(Data):
             self.load_message_json(data)
         elif topics.WirelessModule.all().data.matches(topic):
             self.load_sensor_data(data)
+        elif self.create_voltage_topic().matches(topic):
+            self.load_voltage_data(data)
         elif topic == topics.BOOST.recommended_sp:
             self.load_recommended_sp(data)
         elif topic == topics.BOOST.predicted_max_speed:
@@ -227,7 +237,6 @@ class DataV3(Data):
         """Load data in the json V3 wireless sensor module format."""
         module_data = loads(data)
         sensor_data = module_data["sensors"]
-
         for sensor in sensor_data:
             sensor_name = sensor["type"]
             sensor_value = sensor["value"]
@@ -241,6 +250,10 @@ class DataV3(Data):
                 self.data["reed_distance"].update(sensor_value)
             elif sensor_name in self.data.keys():
                 self.data[sensor_name].update(sensor_value)
+
+    def load_voltage_data(self, data: str) -> None:
+        voltage_data = loads(data)
+        self.data["voltage"].update(voltage_data["voltage"])
 
     def load_recommended_sp(self, data: str) -> None:
         python_data = loads(data)
