@@ -32,7 +32,8 @@ jobs:
       - name: Config Github URL to download Private Repo
         env:
           GITHUB_TOKEN: ${{ secrets.CICD_ACCESS_TOKEN }}
-        run: git config --global url."https://$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/"
+        # Change from ssh based cloning (better for normal people) to token based cloning (better for CICD)
+        run: git config --global url."https://$GITHUB_TOKEN@github.com/".insteadOf "git@github.com:"
 
       - name: Install Dependencies
         run: poetry install
