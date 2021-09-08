@@ -2,6 +2,7 @@ from components import (
     TransparentRectangle,
     DataField,
     SpeedField,
+    VoltageField,
     CentrePower,
     DAShboardMessage,
     DASDisconnectMessage,
@@ -20,6 +21,8 @@ class OverlayNew(Overlay):
         row_coords = [
             self.height - (2 * spacing + DataField.height),
             self.height - spacing,
+            # top right position for voltage
+            (spacing + DataField.height),
         ]
         col_coords = [
             spacing,
@@ -44,10 +47,17 @@ class OverlayNew(Overlay):
             (self.width, self.height),
         ]
 
+        # Dimensions of the top right Transparent rectangle
+        top_right_rect = [
+            (col_coords[3] + spacing, 0),
+            (self.width, DataField.height + 2 * spacing),
+        ]
         # Create all overlay components
         self.components = [
             TransparentRectangle(*left_rect),
             TransparentRectangle(*right_rect),
+            # rectangle for voltage
+            TransparentRectangle(*top_right_rect),
             DataField(
                 "RPM", self.get_data_func("cadence"), data_field_coord(0, 0)
             ),
@@ -75,6 +85,11 @@ class OverlayNew(Overlay):
                 "DIST KM",
                 self.get_data_func("reed_distance", 2, 0.001),
                 data_field_coord(3, 1),
+            ),
+            VoltageField(
+                "VOLTAGE",
+                self.get_data_func("voltage", 2),
+                data_field_coord(3, 2),
             ),
             CentrePower(self.width, self.height),
             DAShboardMessage(),
