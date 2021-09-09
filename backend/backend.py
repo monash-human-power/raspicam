@@ -7,7 +7,7 @@ from traceback import format_exc
 from typing import Callable
 
 from canvas import Canvas
-from config import ROTATION_KEY, read_configs, set_rotation
+from config import ROTATION_KEY, read_configs
 
 # A function which accepts a string and returns None
 PublishFunc = Callable[[str], None]
@@ -241,11 +241,6 @@ class Backend(ABC):
         self.prev_video_status_time = time()
 
     # Effects
-
-    def flip_video_feed(self) -> None:
-        """ Flip video feed by rotation of 180 degrees"""
-        set_rotation((self.video_rotation + 180) % 360)
-        print(f"rotation set to {(self.video_rotation + 180) % 360}")
 
     def __enter__(self):
         """ Ran when Python's `with ...` syntax is used on an instance of this
