@@ -240,8 +240,6 @@ class Backend(ABC):
         self.publish_video_status_func(dumps({"online": status}))
         self.prev_video_status_time = time()
 
-    # Effects
-
     def __enter__(self):
         """ Ran when Python's `with ...` syntax is used on an instance of this
             class. """

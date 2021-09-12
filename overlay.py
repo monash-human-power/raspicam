@@ -64,7 +64,6 @@ class Overlay(ABC):
         self.set_callback_for_topic_list(
             [Camera.recording], self.on_recording_message
         )
-        # TODO: Remove this after common PR is merged
         self.client.message_callback_add(str(Camera.flip_video_feed), self.on_flip_message)
 
         self.exception_handler = CameraErrorHandler(
