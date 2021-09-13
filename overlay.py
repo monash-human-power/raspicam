@@ -64,7 +64,6 @@ class Overlay(ABC):
         self.set_callback_for_topic_list(
             [Camera.recording], self.on_recording_message
         )
-        self.client.message_callback_add(str(Camera.flip_video_feed), self.on_flip_message)
 
         self.exception_handler = CameraErrorHandler(
             self.client, self.device, self.backend_name, self.bg_path, configs
