@@ -144,7 +144,8 @@ class Orchestrator:
         elif topics.WirelessModule.all().stop.matches(msg.topic):
             self.currently_logging = False
         elif msg.topic == topics.Camera.flip_video_feed:
-            config.set_rotation((config.read_configs().get(config.ROTATION_KEY, 0) + 180) % 360)
+            rotation = config.read_configs().get(config.ROTATION_KEY, 0) + 180
+            config.set_rotation(rotation % 360)
 
     def on_log(self, client, userdata, level, buf):
         """The callback to log all MQTT information"""
