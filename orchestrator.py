@@ -1,21 +1,20 @@
 """Orchestrator Script That Controls The Camera System"""
 import argparse
 import json
+import socket
 import sys
 import time
-from threading import Timer
-import socket
 from json import dumps
+from threading import Timer
 
 import paho.mqtt.client as mqtt
 
 try:
-    import RPi.GPIO as gpio
-
+    import adafruit_mcp3xxx.mcp3004 as MCP
+    import board
     import busio
     import digitalio
-    import board
-    import adafruit_mcp3xxx.mcp3004 as MCP
+    import RPi.GPIO as gpio
     from adafruit_mcp3xxx.analog_in import AnalogIn
 
     ON_PI = True
@@ -25,7 +24,6 @@ except (ImportError, RuntimeError):
 from mhp import topics
 
 import config
-
 
 # BCM pin numbering
 logging_button_pin = 4
@@ -124,6 +122,7 @@ class Orchestrator:
         client.subscribe(str(topics.Camera.set_overlay))
         client.subscribe(str(topics.Camera.get_overlays))
         client.subscribe(str(topics.WirelessModule.all().module))
+        client.subscribe(str(topics.Camera.flip_video_feed))
         self.publish_camera_status()
         if ON_PI:
             self.battery_loop()
@@ -144,6 +143,9 @@ class Orchestrator:
             self.currently_logging = True
         elif topics.WirelessModule.all().stop.matches(msg.topic):
             self.currently_logging = False
+        elif msg.topic == topics.Camera.flip_video_feed:
+            rotation = config.read_configs().get(config.ROTATION_KEY, 0) + 180
+            config.set_rotation(rotation % 360)
 
     def on_log(self, client, userdata, level, buf):
         """The callback to log all MQTT information"""

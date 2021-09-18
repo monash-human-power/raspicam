@@ -2,8 +2,9 @@ from enum import Enum
 from time import time
 from typing import Dict
 
-from backend import Backend, PublishFunc
 from canvas import Canvas
+
+from backend import Backend, PublishFunc
 
 # This check needs to be done here, as it's only place we use picamera.
 try:
@@ -115,8 +116,8 @@ class PiCameraBackend(Backend):
         )
 
     def _on_loop(self) -> None:
-        # Nothing to do
-        pass
+        # Set rotation
+        self.pi_camera.rotation = self.video_rotation
 
     def stop_video(self) -> None:
         self.pi_camera.stop_preview()

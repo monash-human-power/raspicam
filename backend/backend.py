@@ -7,6 +7,7 @@ from traceback import format_exc
 from typing import Callable
 
 from canvas import Canvas
+from config import ROTATION_KEY, read_configs
 
 # A function which accepts a string and returns None
 PublishFunc = Callable[[str], None]
@@ -45,6 +46,9 @@ class Backend(ABC):
         self.prev_video_status_time = 0
         # Time between recording statuses, in seconds
         self.video_status_interval = 60
+
+        # Rotation of video feed in degrees clockwise
+        self.video_rotation = read_configs().get(ROTATION_KEY, 0)
 
     @abstractmethod
     def _is_video_on(self) -> bool:

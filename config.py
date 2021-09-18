@@ -1,16 +1,19 @@
 """Helper functions for editing configuration file"""
-import os
-import json
-import random
 import fnmatch
-from dotenv import load_dotenv
+import json
+import os
+import random
 from warnings import warn
+
+from dotenv import load_dotenv
 
 load_dotenv()
 CONFIG_FILE = "configs.json"
 ACTIVE_OVERLAY_KEY = "activeOverlay"
 OVERLAY_FILE_PATTERN = "overlay_*.py"
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+
+ROTATION_KEY = "rotation"
 
 DEFAULT_BROKER_IP = "192.168.100.100"
 DEFAULT_BIKE = "V2"
@@ -36,6 +39,17 @@ def set_overlay(new_overlays, directory=CURRENT_DIRECTORY):
     if "device" in configs:
         configs.pop("device")
     configs[ACTIVE_OVERLAY_KEY] = new_overlay
+
+    with open(os.path.join(directory, CONFIG_FILE), "w") as file:
+        json.dump(configs, file, indent=2, sort_keys=True)
+
+
+def set_rotation(rotation, directory=CURRENT_DIRECTORY):
+    """Set rotation for device"""
+    configs = read_configs(directory)
+    if "device" in configs:
+        configs.pop("device")
+    configs[ROTATION_KEY] = rotation
 
     with open(os.path.join(directory, CONFIG_FILE), "w") as file:
         json.dump(configs, file, indent=2, sort_keys=True)

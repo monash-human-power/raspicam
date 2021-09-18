@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
+from canvas import Canvas
 
 from backend import Backend, PublishFunc
-from canvas import Canvas
 
 
 class OpenCVStaticImageBackend(Backend):
@@ -61,6 +61,14 @@ class OpenCVStaticImageBackend(Backend):
         """ This function uses the cached overlays, as OpenCV needs us to
             manually add it to each frame. """
         frame = self.background
+
+        # Check flip
+        if self.video_rotation == 90:
+            frame = cv2.rotate(frame, cv2.cv2.ROTATE_90_CLOCKWISE)
+        elif self.video_rotation == 180:
+            frame = cv2.rotate(frame, cv2.cv2.ROTATE_180)
+        elif self.video_rotation == 270:
+            frame = cv2.rotate(frame, cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
 
         frame = self.base_canvas.copy_to(frame)
         frame = self.data_canvas.copy_to(frame)
