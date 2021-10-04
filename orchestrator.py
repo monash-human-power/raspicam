@@ -6,7 +6,6 @@ import sys
 import time
 from json import dumps
 from threading import Timer
-
 import paho.mqtt.client as mqtt
 
 try:
@@ -103,7 +102,7 @@ class Orchestrator:
     def publish_camera_status(self) -> None:
         """ Send a message on the current device's camera status topic. """
         status_topic = str(topics.Camera.status_camera / self.device)
-        message = dumps({"connected": True, "ip_address": get_ip()})
+        message = dumps({"connected": True, "ipAddress": get_ip()})
         self.mqtt_client.publish(status_topic, message, retain=True)
 
     def battery_loop(self) -> None:
