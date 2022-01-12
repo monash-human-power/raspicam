@@ -3,8 +3,8 @@ from canvas import Colour
 
 
 class OverlayBlank(Overlay):
-    def __init__(self, bike=None, bg=None):
-        super(OverlayBlank, self).__init__(bike, bg=bg)
+    def __init__(self, bike=None, bg=None, mqtt_username=None):
+        super(OverlayBlank, self).__init__(bike, bg=bg, mqtt_username=mqtt_username)
 
     def _draw_base_layer(self):
         # To draw static text/whatever onto the overlay,
@@ -21,5 +21,5 @@ class OverlayBlank(Overlay):
 
 if __name__ == "__main__":
     args = Overlay.get_overlay_args("An empty, example overlay")
-    my_overlay = OverlayBlank(args.bike, args.bg)
+    my_overlay = OverlayBlank(args.bike, args.bg, args.username)
     my_overlay.connect(ip=args.host)

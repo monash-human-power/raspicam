@@ -11,8 +11,8 @@ from overlay import Overlay
 
 
 class OverlayNew(Overlay):
-    def __init__(self, bike=None, bg=None):
-        super().__init__(bike, bg=bg)
+    def __init__(self, bike=None, bg=None, mqtt_username=None):
+        super().__init__(bike, bg=bg, mqtt_username=mqtt_username)
 
         # Generate coordinates for each of the data fields in the
         # bottom corners.
@@ -109,5 +109,5 @@ class OverlayNew(Overlay):
 
 if __name__ == "__main__":
     args = Overlay.get_overlay_args("An empty, example overlay")
-    my_overlay = OverlayNew(args.bike, args.bg)
+    my_overlay = OverlayNew(args.bike, args.bg, args.username)
     my_overlay.connect(ip=args.host)

@@ -14,8 +14,8 @@ class OverlayErrorTest(OverlayNew):
     To exit the script, press CTRL+C.
     """
 
-    def __init__(self, bike=DEFAULT_TEST_BIKE, bg=None):
-        super().__init__(bike, bg)
+    def __init__(self, bike=DEFAULT_TEST_BIKE, bg=None, mqtt_username=None):
+        super().__init__(bike, bg, mqtt_username=mqtt_username)
 
     def on_connect(self, client, userdata, flags, rc):
         """ Raises an exception which should be caught by _on_connect. """
@@ -25,5 +25,5 @@ class OverlayErrorTest(OverlayNew):
 
 if __name__ == "__main__":
     args = OverlayErrorTest.get_overlay_args("Test Overlay")
-    my_overlay = OverlayErrorTest(args.bike, args.bg)
+    my_overlay = OverlayErrorTest(args.bike, args.bg, args.username)
     my_overlay.connect(ip=args.host)

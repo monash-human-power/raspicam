@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 from json import dumps
 from platform import machine
 from typing import Callable, List
-
+from dotenv.main import load_dotenv
+import os
 import paho.mqtt.client as mqtt
 from mhp.topics import Camera, Topic
 
@@ -16,8 +17,8 @@ from data import Data, DataFactory
 
 
 class Overlay(ABC):
-    def __init__(self, bike, width=None, height=None, bg: str = None):
-
+    def __init__(self, bike, width=None, height=None, bg: str = None, mqtt_username=None):
+        self.username = mqtt_username
         configs = read_configs()
 
         # Overlay dimension sizes
@@ -49,6 +50,9 @@ class Overlay(ABC):
 
         # MQTT client options
         self.client = mqtt.Client()
+        if self.username:
+            load_dotenv()
+            self.client.username_pw_set(self.username, os.getenv(self.username))
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self.on_disconnect
         self.client.on_log = self.on_log
@@ -255,5 +259,13 @@ class Overlay(ABC):
             type=str,
             help="Replaces the video feed with a static background image at a\
                  given location",
+        )
+        parser.add_argument(
+            "-u",
+            "--username",
+            type=str,
+            default=None,
+            help="""Username for MQTT broker. Password should be stored as username=pwd
+            key value pair in the .env file""",
         )
         return parser.parse_args()

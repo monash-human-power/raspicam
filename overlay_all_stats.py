@@ -3,8 +3,8 @@ from canvas import Colour
 
 
 class OverlayAllStats(Overlay):
-    def __init__(self, bike=None, bg=None):
-        super(OverlayAllStats, self).__init__(bike, bg=bg)
+    def __init__(self, bike=None, bg=None, mqtt_username=None):
+        super(OverlayAllStats, self).__init__(bike, bg=bg, mqtt_username=mqtt_username)
         self.text_height = 50
         self.speed_height = 70
         self.message_received_time = 0
@@ -136,5 +136,5 @@ if __name__ == "__main__":
     args = Overlay.get_overlay_args(
         "Overlay displaying all (or just many) statistics"
     )
-    my_overlay = OverlayAllStats(args.bike, args.bg)
+    my_overlay = OverlayAllStats(args.bike, args.bg, args.username)
     my_overlay.connect(ip=args.host)
