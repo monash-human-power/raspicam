@@ -215,7 +215,8 @@ class DataV3(Data):
         return battery_topic
 
     def load_data(self, topic: str, data: str) -> None:
-        """Update stored fields with data from a V3 sensor module data packet."""
+        """Update stored fields with data from a V3 sensor
+        module data packet."""
         if topic == topics.Camera.overlay_message:
             self.load_message_json(data)
         elif topics.WirelessModule.all().data.matches(topic):

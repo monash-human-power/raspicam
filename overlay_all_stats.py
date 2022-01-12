@@ -4,7 +4,9 @@ from canvas import Colour
 
 class OverlayAllStats(Overlay):
     def __init__(self, bike=None, bg=None, mqtt_username=None):
-        super(OverlayAllStats, self).__init__(bike, bg=bg, mqtt_username=mqtt_username)
+        super(OverlayAllStats, self).__init__(
+            bike, bg=bg, mqtt_username=mqtt_username
+        )
         self.text_height = 50
         self.speed_height = 70
         self.message_received_time = 0
@@ -62,7 +64,9 @@ class OverlayAllStats(Overlay):
                     power_colour = Colour.green
 
         self.data_canvas.draw_text(
-            power_text, (340, self.text_height * 2), colour=power_colour,
+            power_text,
+            (340, self.text_height * 2),
+            colour=power_colour,
         )
 
     def draw_cadence(self):
