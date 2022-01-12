@@ -48,18 +48,18 @@ def get_args(argv=[]):
         help="ip address of the broker",
     )
     parser.add_argument(
-            "-u",
-            "--username",
-            type=str,
-            default=None,
-            help="""Username for MQTT broker. Password should be stored as username=pwd
+        "-u",
+        "--username",
+        type=str,
+        default=None,
+        help="""Username for MQTT broker. Password should be stored as username=pwd
             key value pair in the .env file""",
-        )
+    )
     return parser.parse_args(argv)
 
 
 def get_ip():
-    """ Get IP address of the raspicam and return the value. """
+    """Get IP address of the raspicam and return the value."""
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         # Any IP address should work
@@ -78,7 +78,7 @@ class Orchestrator:
 
         self.broker_ip = broker_ip
         self.port = port
-        self.username= mqtt_username
+        self.username = mqtt_username
         self.mqtt_client = None
         configs = config.read_configs()
         self.device = configs["device"]
@@ -112,7 +112,7 @@ class Orchestrator:
         # we publish above.
 
     def publish_camera_status(self) -> None:
-        """ Send a message on the current device's camera status topic. """
+        """Send a message on the current device's camera status topic."""
         status_topic = str(topics.Camera.status_camera / self.device)
         message = dumps({"connected": True, "ipAddress": get_ip()})
         self.mqtt_client.publish(status_topic, message, retain=True)
@@ -127,7 +127,7 @@ class Orchestrator:
     def on_connect(self, client, userdata, flags, rc):
         """The callback for when the client receives a CONNACK response."""
         print("Connected with result code " + str(rc))
-        
+
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
         client.subscribe(str(topics.Camera.set_overlay))
@@ -172,12 +172,14 @@ class Orchestrator:
         # if username is specified
         if self.username:
             load_dotenv()
-            self.mqtt_client.username_pw_set(self.username, os.getenv(self.username))
+            self.mqtt_client.username_pw_set(
+                self.username, os.getenv(self.username)
+            )
         self.mqtt_client.on_connect = self.on_connect
         self.mqtt_client.on_message = self.on_message
         self.mqtt_client.on_log = self.on_log
         self.mqtt_client.on_disconnect = self.on_disconnect
-        
+
         self.mqtt_client.connect_async(self.broker_ip, self.port, 60)
         # Set the camera status to offline if connection breaks
         camera_topic = str(topics.Camera.status_camera / self.device)

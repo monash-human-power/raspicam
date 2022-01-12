@@ -4,7 +4,9 @@ from canvas import Colour
 
 class OverlayBlank(Overlay):
     def __init__(self, bike=None, bg=None, mqtt_username=None):
-        super(OverlayBlank, self).__init__(bike, bg=bg, mqtt_username=mqtt_username)
+        super(OverlayBlank, self).__init__(
+            bike, bg=bg, mqtt_username=mqtt_username
+        )
 
     def _draw_base_layer(self):
         # To draw static text/whatever onto the overlay,

@@ -17,7 +17,9 @@ from data import Data, DataFactory
 
 
 class Overlay(ABC):
-    def __init__(self, bike, width=None, height=None, bg: str = None, mqtt_username=None):
+    def __init__(
+        self, bike, width=None, height=None, bg: str = None, mqtt_username=None
+    ):
         self.username = mqtt_username
         configs = read_configs()
 
@@ -52,7 +54,9 @@ class Overlay(ABC):
         self.client = mqtt.Client()
         if self.username:
             load_dotenv()
-            self.client.username_pw_set(self.username, os.getenv(self.username))
+            self.client.username_pw_set(
+                self.username, os.getenv(self.username)
+            )
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self.on_disconnect
         self.client.on_log = self.on_log
@@ -79,12 +83,12 @@ class Overlay(ABC):
         self.start_time = time.time()
 
     def publish_recording_status(self, message: str) -> None:
-        """ Send a message on the current device's recording status topic. """
+        """Send a message on the current device's recording status topic."""
         status_topic = str(Camera.status_recording / self.device)
         self.client.publish(status_topic, message, retain=True)
 
     def publish_video_status(self, message: str) -> None:
-        """ Send a message on the current device's online topic. """
+        """Send a message on the current device's online topic."""
         online_status_topic = str(Camera.status_video_feed / self.device)
         self.client.publish(online_status_topic, message, retain=True)
 
@@ -129,14 +133,14 @@ class Overlay(ABC):
                     self.backend.on_loop()
 
     def set_callback_for_topic_list(self, topics: List[Topic], callback):
-        """ Set the on_message callback for every topic in topics to the
-            provided callback """
+        """Set the on_message callback for every topic in topics to the
+        provided callback"""
         for topic in map(str, topics):
             self.client.message_callback_add(topic, callback)
 
     def subscribe_to_topic_list(self, topics: List[Topic]):
-        """ Construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
-            see https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe """
+        """Construct a list in the format [("topic1", qos1), ("topic2", qos2), ...]
+        see https://pypi.org/project/paho-mqtt/#subscribe-unsubscribe"""
         topic_values = map(str, topics)
         at_most_once_qos = [0] * len(topics)
 
@@ -146,9 +150,9 @@ class Overlay(ABC):
     def get_data_func(
         self, data_key: str, decimals=0, scalar=1
     ) -> Callable[[Data], str]:
-        """ Return a lambda function which, when called, returns the current
-            value for the data field `data_key`, multiplied by `scalar`, and
-            formatted to `decimals` decimal places. """
+        """Return a lambda function which, when called, returns the current
+        value for the data field `data_key`, multiplied by `scalar`, and
+        formatted to `decimals` decimal places."""
 
         def data_func(data: Data) -> str:
             if data[data_key].is_valid():
@@ -182,10 +186,10 @@ class Overlay(ABC):
         print("Connected with rc: {}".format(rc))
 
     def on_connect(self, client, userdata, flags, rc):
-        """ Called automatically when the overlay connects successfully to the
-            MQTT broker.
+        """Called automatically when the overlay connects successfully to the
+        MQTT broker.
 
-            Overlay implementations may override for one-off operations."""
+        Overlay implementations may override for one-off operations."""
 
     def on_data_message(self, client, userdata, msg):
         with self.exception_handler:
@@ -199,35 +203,35 @@ class Overlay(ABC):
             self.backend.stop_recording()
 
     def draw_base_layer(self):
-        """ Set up the base layer as soon as camera turns on.
+        """Set up the base layer as soon as camera turns on.
 
-            Method only needs to be called once. Should also catch any errors
-            that occur when base layer is displayed. """
+        Method only needs to be called once. Should also catch any errors
+        that occur when base layer is displayed."""
         with self.exception_handler:
             self._draw_base_layer()
 
     @abstractmethod
     def _draw_base_layer(self):
-        """ Called immediately once camera turns on.
+        """Called immediately once camera turns on.
 
-            Overlay implementations should override this method with code which
-            displays self.base_canvas. """
+        Overlay implementations should override this method with code which
+        displays self.base_canvas."""
 
     def update_data_layer(self):
-        """ Update the data layer of the overlay at a regular interval.
+        """Update the data layer of the overlay at a regular interval.
 
-            Catches any errors that occurs while the data layer is being
-            updated. """
+        Catches any errors that occurs while the data layer is being
+        updated."""
         with self.exception_handler:
             self._update_data_layer()
 
     @abstractmethod
     def _update_data_layer(self):
-        """ Called automatically at a regular interval defined by
-            self.data_update_interval.
+        """Called automatically at a regular interval defined by
+        self.data_update_interval.
 
-            Overlay implementations should override this method with code which
-            updates self.data_canvas. """
+        Overlay implementations should override this method with code which
+        updates self.data_canvas."""
 
     @staticmethod
     def get_overlay_args(overlay_description: str):
