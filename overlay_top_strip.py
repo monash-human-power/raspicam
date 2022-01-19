@@ -67,9 +67,7 @@ class OverlayTopStrip(Overlay):
         else:
             rec_power_text = "--"
         self.data_canvas.draw_text(
-            rec_power_text,
-            (600, self.top_text_pos),
-            colour=Colour.white,
+            rec_power_text, (600, self.top_text_pos), colour=Colour.white,
         )
 
         # Display power (no colour change)
@@ -94,9 +92,7 @@ class OverlayTopStrip(Overlay):
         else:
             max_speed_text = "--"
         self.data_canvas.draw_text(
-            max_speed_text,
-            (890, self.top_text_pos),
-            colour=Colour.white,
+            max_speed_text, (890, self.top_text_pos), colour=Colour.white,
         )
 
         # Actual speed (no colour change)
@@ -116,9 +112,7 @@ class OverlayTopStrip(Overlay):
             colour=Colour.red,
         )
         self.data_canvas.draw_text(
-            speed_text,
-            (1120, self.top_text_pos),
-            colour=Colour.white,
+            speed_text, (1120, self.top_text_pos), colour=Colour.white,
         )
 
     def draw_zone_dist(self):
@@ -128,9 +122,7 @@ class OverlayTopStrip(Overlay):
         else:
             zdist_left_text = "--"
         self.data_canvas.draw_text(
-            zdist_left_text,
-            (360, self.top_text_pos),
-            colour=Colour.white,
+            zdist_left_text, (360, self.top_text_pos), colour=Colour.white,
         )
 
     def draw_plan_name(self):

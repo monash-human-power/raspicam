@@ -64,9 +64,7 @@ class OverlayAllStats(Overlay):
                     power_colour = Colour.green
 
         self.data_canvas.draw_text(
-            power_text,
-            (340, self.text_height * 2),
-            colour=power_colour,
+            power_text, (340, self.text_height * 2), colour=power_colour,
         )
 
     def draw_cadence(self):
