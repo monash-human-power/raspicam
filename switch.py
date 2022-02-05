@@ -1,9 +1,12 @@
 import argparse
+import asyncio
 import subprocess
-from time import sleep
 
 import RPi.GPIO as gpio
 import config
+
+poll_frequency = 0.5
+switch_on_state = True
 
 configs = config.read_configs()
 
@@ -32,6 +35,12 @@ class Switch:
     def read(self):
         return gpio.input(self.pin)
 
+    async def wait_for_state(self, state):
+        while True:
+            if self.read() == state:
+                return
+            await asyncio.sleep(poll_frequency)
+
 
 class LED:
     def __init__(self, pin):
@@ -57,44 +66,43 @@ virtualenv_dir = (
 )
 print("env dir:", virtualenv_dir)
 
-try:
-    while True:
-        prev_switch_state = switch.read()
+
+async def main():
+    overlay_process = None
+    try:
         while True:
+            await switch.wait_for_state(not switch_on_state)
+            print("OFF")
+
             red_led.turn_on()
-            switch_state = switch.read()
-            if switch_state == prev_switch_state:
-                print("OFF")
-            else:
-                print("ON")
-                break
-            sleep(0.25)
-        prev_switch_state = switch_state
-        # TODO: Remove hard coding of directory of python script
-        p1 = subprocess.Popen(
-            [
-                f"{virtualenv_dir}/bin/python",
-                config.get_active_overlay(),
-                "--host",
-                brokerIP,
-            ]
-        )
-        red_led.turn_off()
-        green_led.turn_on()
-        sleep(1)
+            green_led.turn_off()
 
-        while True:
-            switch_state = switch.read()
-            if switch_state != prev_switch_state:
-                print("OFF")
-                subprocess.Popen.kill(p1)
-                green_led.turn_off()
-                break
-            else:
-                print("ON")
-            sleep(1)
-            prev_switch_state = switch_state
+            if overlay_process:
+                subprocess.Popen.kill(overlay_process)
 
-except KeyboardInterrupt:
-    subprocess.Popen.kill(p1)
-    gpio.cleanup()
+            await switch.wait_for_state(switch_on_state)
+            print("ON")
+
+            red_led.turn_off()
+            green_led.turn_on()
+
+            overlay_process = subprocess.Popen(
+                [
+                    f"{virtualenv_dir}/bin/python",
+                    config.get_active_overlay(),
+                    "--host",
+                    brokerIP,
+                ]
+            )
+
+            red_led.turn_on()
+            green_led.turn_off()
+
+    except KeyboardInterrupt:
+        if overlay_process:
+            subprocess.Popen.kill(overlay_process)
+        gpio.cleanup()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
