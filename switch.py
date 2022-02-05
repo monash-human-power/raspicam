@@ -20,25 +20,34 @@ args = parser.parse_args()
 
 brokerIP = args.host
 
-# Pins
-switch = 15
-green_led = 11
-red_led = 13
-
 gpio.setmode(gpio.BOARD)
 gpio.setwarnings(False)
 
-gpio.setup(switch, gpio.IN, pull_up_down=gpio.PUD_UP)  # toggle switch
-gpio.setup(green_led, gpio.OUT)  # green LED
-gpio.setup(red_led, gpio.OUT)
+
+class Switch:
+    def __init__(self, pin):
+        self.pin = pin
+        gpio.setup(pin, gpio.IN, pull_up_down=gpio.PUD_UP)
+
+    def read(self):
+        return gpio.input(self.pin)
 
 
-def turn_on(led):
-    gpio.output(led, gpio.HIGH)
+class LED:
+    def __init__(self, pin):
+        self.pin = pin
+        gpio.setup(pin, gpio.OUT)
+
+    def turn_on(self):
+        gpio.output(self.pin, gpio.HIGH)
+
+    def turn_off(self):
+        gpio.output(self.pin, gpio.LOW)
 
 
-def turn_off(led):
-    gpio.output(led, gpio.LOW)
+switch = Switch(15)
+green_led = LED(11)
+red_led = LED(13)
 
 
 virtualenv_dir = (
@@ -50,10 +59,10 @@ print("env dir:", virtualenv_dir)
 
 try:
     while True:
-        prev_switch_state = gpio.input(15)
+        prev_switch_state = switch.read()
         while True:
-            turn_on(red_led)
-            switch_state = gpio.input(15)
+            red_led.turn_on()
+            switch_state = switch.read()
             if switch_state == prev_switch_state:
                 print("OFF")
             else:
@@ -70,16 +79,16 @@ try:
                 brokerIP,
             ]
         )
-        turn_off(red_led)
-        turn_on(green_led)
+        red_led.turn_off()
+        green_led.turn_on()
         sleep(1)
 
         while True:
-            switch_state = gpio.input(15)
+            switch_state = switch.read()
             if switch_state != prev_switch_state:
                 print("OFF")
                 subprocess.Popen.kill(p1)
-                turn_off(green_led)
+                green_led.turn_off()
                 break
             else:
                 print("ON")
