@@ -13,6 +13,10 @@ def use_board_pins():
     gpio.setmode(gpio.BOARD)
 
 
+def cleanup():
+    gpio.cleanup()
+
+
 class Switch:
     def __init__(self, pin):
         self.pin = pin

@@ -9,7 +9,7 @@ from threading import Timer
 import paho.mqtt.client as mqtt
 
 try:
-    from utils.hardware import LED, Switch
+    from utils.hardware import LED, cleanup
     import adafruit_mcp3xxx.mcp3004 as MCP
     import board
     import busio
@@ -193,4 +193,4 @@ if __name__ == "__main__":
         orchestrator.start()
     finally:
         if ON_PI:
-            gpio.cleanup()
+            cleanup()

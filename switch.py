@@ -3,7 +3,7 @@ import asyncio
 import subprocess
 
 import config
-from utils.hardware import LED, Switch, use_board_pins
+from utils.hardware import LED, Switch, use_board_pins, cleanup
 
 switch_on_state = True
 
@@ -82,7 +82,7 @@ async def main():
     except KeyboardInterrupt:
         if overlay_process:
             subprocess.Popen.kill(overlay_process)
-        gpio.cleanup()
+        cleanup()
 
 
 if __name__ == "__main__":
