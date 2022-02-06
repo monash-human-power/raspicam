@@ -36,34 +36,48 @@ virtualenv_dir = (
 )
 print("env dir:", virtualenv_dir)
 
+overlay_process = None
+
+
+def enable():
+    print("ON")
+
+    red_led.turn_off()
+    green_led.turn_on()
+
+    global overlay_process
+    overlay_process = subprocess.Popen(
+        [
+            f"{virtualenv_dir}/bin/python",
+            config.get_active_overlay(),
+            "--host",
+            brokerIP,
+        ]
+    )
+
+
+def disable():
+    print("OFF")
+
+    red_led.turn_on()
+    green_led.turn_off()
+
+    global overlay_process
+    if overlay_process:
+        subprocess.Popen.kill(overlay_process)
+
 
 async def main():
-    overlay_process = None
     try:
+        if switch.read() == switch_on_state:
+            enable()
+
         while True:
             await switch.wait_for_state(not switch_on_state)
-            print("OFF")
-
-            red_led.turn_on()
-            green_led.turn_off()
-
-            if overlay_process:
-                subprocess.Popen.kill(overlay_process)
+            disable()
 
             await switch.wait_for_state(switch_on_state)
-            print("ON")
-
-            red_led.turn_off()
-            green_led.turn_on()
-
-            overlay_process = subprocess.Popen(
-                [
-                    f"{virtualenv_dir}/bin/python",
-                    config.get_active_overlay(),
-                    "--host",
-                    brokerIP,
-                ]
-            )
+            enable()
 
     except KeyboardInterrupt:
         if overlay_process:
