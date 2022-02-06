@@ -22,7 +22,7 @@ class Message(Component):
     spacing = 10
     # Set height tall enough to fit the largest expected string
     _, text_height = Canvas.get_text_dimensions("blah", text_size)
-    chars_per_line = 75
+    chars_per_line = 65
 
     def draw_base(self, canvas: Canvas):
         pass
