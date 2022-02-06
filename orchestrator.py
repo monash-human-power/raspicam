@@ -9,6 +9,7 @@ from threading import Timer
 import paho.mqtt.client as mqtt
 
 try:
+    from utils.hardware import LED, Switch
     import adafruit_mcp3xxx.mcp3004 as MCP
     import board
     import busio
@@ -74,9 +75,6 @@ class Orchestrator:
         self.currently_logging = False
 
         if ON_PI:
-            # Ignore warnings about multiple scripts playing with GPIO
-            gpio.setwarnings(False)
-
             gpio.setup(logging_button_pin, gpio.IN, gpio.PUD_DOWN)
             gpio.add_event_detect(
                 logging_button_pin, gpio.RISING, callback=self.toggle_logging
@@ -87,6 +85,9 @@ class Orchestrator:
             cs = digitalio.DigitalInOut(board.CE0)
             mcp = MCP.MCP3004(spi, cs)
             self.battery_adc = AnalogIn(mcp, MCP.P0)
+
+            # BCM pin numbering
+            self.connected_led = LED(18)
 
     def get_battery_voltage(self) -> float:
         return self.battery_adc.voltage * battery_calibration_factor
@@ -124,6 +125,7 @@ class Orchestrator:
         client.subscribe(str(topics.Camera.flip_video_feed))
         self.publish_camera_status()
         if ON_PI:
+            self.connected_led.turn_on()
             self.battery_loop()
 
     def on_message(self, client, userdata, msg):
@@ -153,6 +155,8 @@ class Orchestrator:
     def on_disconnect(self, client, userdata, msg):
         """The callback called when user is disconnected from the broker."""
         print("Disconnected from broker")
+        if ON_PI:
+            self.connected_led.turn_off()
 
     def start(self):
         """start Orchestrator"""
