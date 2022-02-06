@@ -24,12 +24,12 @@ from mhp import topics
 
 import config
 
+
 # BCM pin numbering
 logging_button_pin = 4
 
 # See https://github.com/monash-human-power/V3-display-unit-pcb-tests/blob/72d02c270be413b1d4e97b9d10a33c97f551eafe/calibrate.py # noqa: E501
 battery_calibration_factor = 3.1432999689025483
-battery_publish_interval = 5 * 60  # seconds
 
 
 def get_args(argv=[]):
@@ -48,7 +48,7 @@ def get_args(argv=[]):
 
 
 def get_ip():
-    """ Get IP address of the raspicam and return the value. """
+    """Get IP address of the raspicam and return the value."""
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         # Any IP address should work
@@ -100,7 +100,7 @@ class Orchestrator:
         # we publish above.
 
     def publish_camera_status(self) -> None:
-        """ Send a message on the current device's camera status topic. """
+        """Send a message on the current device's camera status topic."""
         status_topic = str(topics.Camera.status_camera / self.device)
         message = dumps({"connected": True, "ipAddress": get_ip()})
         self.mqtt_client.publish(status_topic, message, retain=True)
@@ -110,7 +110,7 @@ class Orchestrator:
         message = dumps({"voltage": self.get_battery_voltage()})
         self.mqtt_client.publish(str(status_topic), message, retain=True)
 
-        Timer(battery_publish_interval, self.battery_loop).start()
+        Timer(config.BATTERY_PUBLISH_INTERVAL, self.battery_loop).start()
 
     def on_connect(self, client, userdata, flags, rc):
         """The callback for when the client receives a CONNACK response."""
