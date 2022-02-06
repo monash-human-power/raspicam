@@ -19,6 +19,8 @@ DEFAULT_BROKER_IP = "192.168.100.100"
 DEFAULT_BIKE = "V2"
 DEFAULT_VIEWPORT_SIZE = [1024, 600]
 
+BATTERY_PUBLISH_INTERVAL = 5 * 60  # seconds
+
 
 def get_overlays(directory=CURRENT_DIRECTORY):
     """Get overlays stored in directory"""
