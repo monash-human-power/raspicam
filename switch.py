@@ -2,10 +2,9 @@ import argparse
 import asyncio
 import subprocess
 
-import RPi.GPIO as gpio
 import config
+from utils.hardware import LED, Switch, use_board_pins
 
-poll_frequency = 0.5
 switch_on_state = True
 
 configs = config.read_configs()
@@ -23,36 +22,7 @@ args = parser.parse_args()
 
 brokerIP = args.host
 
-gpio.setmode(gpio.BOARD)
-gpio.setwarnings(False)
-
-
-class Switch:
-    def __init__(self, pin):
-        self.pin = pin
-        gpio.setup(pin, gpio.IN, pull_up_down=gpio.PUD_UP)
-
-    def read(self):
-        return gpio.input(self.pin)
-
-    async def wait_for_state(self, state):
-        while True:
-            if self.read() == state:
-                return
-            await asyncio.sleep(poll_frequency)
-
-
-class LED:
-    def __init__(self, pin):
-        self.pin = pin
-        gpio.setup(pin, gpio.OUT)
-
-    def turn_on(self):
-        gpio.output(self.pin, gpio.HIGH)
-
-    def turn_off(self):
-        gpio.output(self.pin, gpio.LOW)
-
+use_board_pins()
 
 switch = Switch(15)
 green_led = LED(11)
@@ -94,9 +64,6 @@ async def main():
                     brokerIP,
                 ]
             )
-
-            red_led.turn_on()
-            green_led.turn_off()
 
     except KeyboardInterrupt:
         if overlay_process:
