@@ -71,7 +71,7 @@ class Orchestrator:
         self.mqtt_client = None
         configs = config.read_configs()
         self.device = configs["device"]
-
+        
         self.currently_logging = False
 
         if ON_PI:
@@ -122,7 +122,7 @@ class Orchestrator:
         client.subscribe(str(topics.Camera.set_overlay))
         client.subscribe(str(topics.Camera.get_overlays))
         client.subscribe(str(topics.WirelessModule.all().module))
-        client.subscribe(str(topics.Camera.flip_video_feed))
+        client.subscribe(str(topics.Camera.flip_video_feed / self.device))
         self.publish_camera_status()
         if ON_PI:
             self.connected_led.turn_on()
@@ -144,7 +144,7 @@ class Orchestrator:
             self.currently_logging = True
         elif topics.WirelessModule.all().stop.matches(msg.topic):
             self.currently_logging = False
-        elif msg.topic == topics.Camera.flip_video_feed:
+        elif msg.topic == topics.Camera.flip_video_feed / self.device:
             rotation = config.read_configs().get(config.ROTATION_KEY, 0) + 180
             config.set_rotation(rotation % 360)
 
