@@ -71,7 +71,7 @@ class Orchestrator:
         self.mqtt_client = None
         configs = config.read_configs()
         self.device = configs["device"]
-        
+
         self.currently_logging = False
 
         if ON_PI:
