@@ -27,7 +27,7 @@ import config
 
 
 # BCM pin numbering
-logging_button_pin = 4
+logging_button_pin = 5 # Board pin 29
 
 # See https://github.com/monash-human-power/V3-display-unit-pcb-tests/blob/72d02c270be413b1d4e97b9d10a33c97f551eafe/calibrate.py # noqa: E501
 battery_calibration_factor = 3.1432999689025483
