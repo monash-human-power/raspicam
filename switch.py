@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import subprocess
+import sys
 
 import config
 from utils.hardware import LED, Switch, use_board_pins, cleanup
@@ -29,13 +30,6 @@ green_led = LED(11)
 red_led = LED(13)
 
 
-virtualenv_dir = (
-    subprocess.check_output(["poetry", "env", "info", "-p"])
-    .decode("utf-8")
-    .strip()
-)
-print("env dir:", virtualenv_dir)
-
 overlay_process = None
 
 
@@ -48,7 +42,7 @@ def enable():
     global overlay_process
     overlay_process = subprocess.Popen(
         [
-            f"{virtualenv_dir}/bin/python",
+            sys.executable,
             config.get_active_overlay(),
             "--host",
             brokerIP,
