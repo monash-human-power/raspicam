@@ -9,7 +9,7 @@ from threading import Timer
 import paho.mqtt.client as mqtt
 
 try:
-    from utils.hardware import LED, cleanup
+    from utils.hardware import cleanup, LED, Switch
     import adafruit_mcp3xxx.mcp3004 as MCP
     import board
     import busio
@@ -75,10 +75,8 @@ class Orchestrator:
         self.currently_logging = False
 
         if ON_PI:
-            gpio.setup(logging_button_pin, gpio.IN, gpio.PUD_DOWN)
-            gpio.add_event_detect(
-                logging_button_pin, gpio.RISING, callback=self.toggle_logging
-            )
+            logging_button = Switch(logging_button_pin, gpio.PUD_DOWN)
+            logging_button.create_interrupt(self.toggle_logging)
 
             # ADC is connected to SPI bus 0, CE pin 0
             spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
@@ -92,7 +90,7 @@ class Orchestrator:
     def get_battery_voltage(self) -> float:
         return self.battery_adc.voltage * battery_calibration_factor
 
-    def toggle_logging(self, _) -> None:
+    def toggle_logging(self) -> None:
         modules = [topics.WirelessModule.id(i) for i in range(1, 5)]
         for module in modules:
             topic = module.stop if self.currently_logging else module.start
