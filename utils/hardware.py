@@ -43,7 +43,9 @@ class Switch:
     def create_interrupt(self, callback, debounce=True):
         self.callback = callback
         self.debounce = debounce
-        gpio.add_event_detect(self.pin, gpio.RISING, callback=self._interrupt_callback)
+        gpio.add_event_detect(
+            self.pin, gpio.RISING, callback=self._interrupt_callback
+        )
 
 
 class LED:
