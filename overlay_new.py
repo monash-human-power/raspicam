@@ -7,6 +7,7 @@ from components import (
     DAShboardMessage,
     DASDisconnectMessage,
 )
+from components.logging_indicator import LoggingIndicator
 from overlay import Overlay
 
 
@@ -86,6 +87,9 @@ class OverlayNew(Overlay):
             CentrePower(self.width, self.height),
             DAShboardMessage(),
             DASDisconnectMessage(self.client),
+            LoggingIndicator(
+                (self.width - spacing, top_right_rect[1][1] + spacing)
+            ),
         ]
 
     def _draw_base_layer(self):

@@ -5,6 +5,7 @@ from .centre_power import CentrePower
 from .message import Message
 from .dashboard_message import DAShboardMessage
 from .das_disconnect_message import DASDisconnectMessage
+from .logging_indicator import LoggingIndicator
 
 __all__ = [
     "Component",
@@ -16,4 +17,5 @@ __all__ = [
     "Message",
     "DAShboardMessage",
     "DASDisconnectMessage",
+    "LoggingIndicator",
 ]
