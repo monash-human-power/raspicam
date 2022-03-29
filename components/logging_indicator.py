@@ -13,9 +13,10 @@ class LoggingIndicator(Component):
         self.center = center
 
     def draw_base(self, canvas: Canvas):
-        canvas.draw_circle(
-            self.center, LoggingIndicator.RADIUS, LoggingIndicator.COLOUR
-        )
+        pass
 
     def draw_data(self, canvas: Canvas, data: Data):
-        pass
+        if data.is_logging():
+            canvas.draw_circle(
+                self.center, LoggingIndicator.RADIUS, LoggingIndicator.COLOUR
+            )
