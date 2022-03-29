@@ -103,7 +103,10 @@ class Orchestrator:
         """Set the data logging state of the camera, updating the LED."""
         self.currently_logging = logging
         if ON_PI:
-            self.logging_led.turn_on() if logging else self.logging_led.turn_off()
+            if logging:
+                self.logging_led.turn_on()
+            else:
+                self.logging_led.turn_off()
 
     def publish_camera_status(self) -> None:
         """Send a message on the current device's camera status topic."""
