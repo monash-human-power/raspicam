@@ -43,7 +43,7 @@ class CentrePower(Component):
             rec_power_str = "--"
 
         if rec_power == 0 or rec_power is None or power is None:
-            rec_power_colour = Colour.black
+            rec_power_colour = Colour.white
         else:
             power_diff = abs(power / rec_power - 1)
             # Colour.green is too light against the white fairing
@@ -58,7 +58,7 @@ class CentrePower(Component):
             power_str,
             self.power_coord,
             CentrePower.power_size,
-            Colour.red,
+            Colour.white,
             "centre",
         )
         canvas.draw_text(

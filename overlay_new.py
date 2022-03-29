@@ -35,15 +35,9 @@ class OverlayNew(Overlay):
             """Coordinates of the data field in column x, row y."""
             return col_coords[x], row_coords[y]
 
-        # Dimensions of the left TransparentRectangle
-        left_rect = [
+        # Dimensions of the bottom TransparentRectangle
+        bottom_rect = [
             (0, row_coords[0] - DataField.height - spacing),
-            (col_coords[1] + DataField.width + spacing, self.height),
-        ]
-
-        # Dimensions of the right TransparentRectangle
-        right_rect = [
-            (col_coords[2], row_coords[0] - DataField.height - spacing),
             (self.width, self.height),
         ]
 
@@ -54,9 +48,7 @@ class OverlayNew(Overlay):
         ]
         # Create all overlay components
         self.components = [
-            TransparentRectangle(*left_rect),
-            TransparentRectangle(*right_rect),
-            # rectangle for voltage
+            TransparentRectangle(*bottom_rect),
             TransparentRectangle(*top_right_rect),
             DataField(
                 "RPM", self.get_data_func("cadence"), data_field_coord(0, 0)
