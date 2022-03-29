@@ -41,12 +41,7 @@ def enable():
 
     global overlay_process
     overlay_process = subprocess.Popen(
-        [
-            sys.executable,
-            config.get_active_overlay(),
-            "--host",
-            brokerIP,
-        ]
+        [sys.executable, config.get_active_overlay(), "--host", brokerIP]
     )
 
 
