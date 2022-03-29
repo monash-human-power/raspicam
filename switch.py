@@ -27,7 +27,6 @@ use_board_pins()
 
 switch = Switch(15)
 green_led = LED(11)
-red_led = LED(13)
 
 
 overlay_process = None
@@ -36,8 +35,7 @@ overlay_process = None
 def enable():
     print("ON")
 
-    red_led.turn_off()
-    green_led.turn_on()
+    green_led.turn_off()
 
     global overlay_process
     overlay_process = subprocess.Popen(
@@ -48,8 +46,7 @@ def enable():
 def disable():
     print("OFF")
 
-    red_led.turn_on()
-    green_led.turn_off()
+    green_led.turn_on()
 
     global overlay_process
     if overlay_process:

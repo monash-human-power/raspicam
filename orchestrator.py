@@ -85,7 +85,8 @@ class Orchestrator:
             self.battery_adc = AnalogIn(mcp, MCP.P0)
 
             # BCM pin numbering
-            self.connected_led = LED(18)
+            self.connected_led = LED(18)  # Board pin 24
+            self.logging_led = LED(27)  # Board pin 13
 
     def get_battery_voltage(self) -> float:
         return self.battery_adc.voltage * battery_calibration_factor
@@ -97,6 +98,12 @@ class Orchestrator:
             self.mqtt_client.publish(str(topic))
         # `self.currently_logging` will be updated when we receive the message
         # we publish above.
+
+    def set_logging_state(self, logging: bool) -> None:
+        """Set the data logging state of the camera, updating the LED."""
+        self.currently_logging = logging
+        if ON_PI:
+            self.logging_led.turn_on() if logging else self.logging_led.turn_off()
 
     def publish_camera_status(self) -> None:
         """Send a message on the current device's camera status topic."""
@@ -137,11 +144,11 @@ class Orchestrator:
         elif topics.Camera.set_overlay.matches(msg.topic):
             config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
         elif topics.WirelessModule.all().start.matches(msg.topic):
-            self.currently_logging = True
+            self.set_logging_state(True)
         elif topics.WirelessModule.all().data.matches(msg.topic):
-            self.currently_logging = True
+            self.set_logging_state(True)
         elif topics.WirelessModule.all().stop.matches(msg.topic):
-            self.currently_logging = False
+            self.set_logging_state(False)
         elif msg.topic == topics.Camera.flip_video_feed / self.device:
             rotation = config.read_configs().get(config.ROTATION_KEY, 0) + 180
             config.set_rotation(rotation % 360)
