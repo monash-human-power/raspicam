@@ -31,7 +31,7 @@ class Switch:
                 return
             await asyncio.sleep(poll_frequency)
 
-    def create_interrupt(self, callback, bouncetime=0.5):
+    def create_interrupt(self, callback, bouncetime=500):
         gpio.add_event_detect(
             self.pin, gpio.RISING, callback=callback, bouncetime=bouncetime
         )
