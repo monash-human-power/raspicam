@@ -73,6 +73,8 @@ class Orchestrator:
         self.device = configs["device"]
 
         self.currently_logging = False
+        # Used to detect missed start messages
+        self.data_messages_received = 0
 
         if ON_PI:
             logging_button = Switch(logging_button_pin, gpio.PUD_DOWN)
@@ -147,9 +149,15 @@ class Orchestrator:
         elif topics.Camera.set_overlay.matches(msg.topic):
             config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
         elif topics.WirelessModule.all().start.matches(msg.topic):
+            self.data_messages_received = 0
             self.set_logging_state(True)
         elif topics.WirelessModule.all().data.matches(msg.topic):
-            self.set_logging_state(True)
+            self.data_messages_received += 1
+            # We have 4 WMs, so in the worst case we shouldn't receive more
+            # than four messages due to delay after logging stops. If we do,
+            # we know we missed the start message.
+            if not self.currently_logging and self.data_messages_received > 4:
+                self.set_logging_state(True)
         elif topics.WirelessModule.all().stop.matches(msg.topic):
             self.set_logging_state(False)
         elif msg.topic == topics.Camera.flip_video_feed / self.device:
