@@ -91,7 +91,7 @@ class Orchestrator:
     def get_battery_voltage(self) -> float:
         return self.battery_adc.voltage * battery_calibration_factor
 
-    def toggle_logging(self) -> None:
+    def toggle_logging(self, _) -> None:
         modules = [topics.WirelessModule.id(i) for i in range(1, 5)]
         for module in modules:
             topic = module.stop if self.currently_logging else module.start
