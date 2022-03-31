@@ -228,15 +228,26 @@ class DataV3(Data):
         battery_topic = topics.Camera.status_camera / device / "battery"
         return battery_topic
 
+    def __init__(self):
+        super().__init__()
+        # Used to detect missed start messages
+        self.data_messages_received = 0
+
     def load_data(self, topic: str, data: str) -> None:
         """Update stored fields with data from a V3 sensor module data packet.
         """
         if topic == topics.Camera.overlay_message:
             self.load_message_json(data)
         elif topics.WirelessModule.all().data.matches(topic):
-            self.set_logging(True)
             self.load_sensor_data(data)
+            # We have 3 WMs, so in the worst case we shouldn't receive more
+            # than four messages due to delay after logging stops. If we do,
+            # we know we missed the start message.
+            self.data_messages_received += 1
+            if not self.logging.get() and self.data_messages_received > 3:
+                self.set_logging(True)
         elif topics.WirelessModule.all().start.matches(topic):
+            self.data_messages_received = 0
             self.set_logging(True)
         elif topics.WirelessModule.all().stop.matches(topic):
             self.set_logging(False)
