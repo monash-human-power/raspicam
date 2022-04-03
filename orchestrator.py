@@ -87,8 +87,8 @@ class Orchestrator:
             self.battery_adc = AnalogIn(mcp, MCP.P0)
 
             # BCM pin numbering
-            self.connected_led = LED(18)  # Board pin 24
-            self.logging_led = LED(27)  # Board pin 13
+            self.connected_led = LED(18)  # Board pin 24, yellow led
+            self.logging_led = LED(27)  # Board pin 13, red led
 
     def get_battery_voltage(self) -> float:
         return self.battery_adc.voltage * battery_calibration_factor
