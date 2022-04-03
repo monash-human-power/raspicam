@@ -123,6 +123,17 @@ class Canvas:
             self.img, top_left, bottom_right, colour, thickness=cv2.FILLED
         )
 
+    def draw_circle(
+        self, center: Coord, radius: float, colour: Colourlike = Colour.black,
+    ) -> None:
+        """Draws a circle to the canvas.
+
+        center is a tuple, and specifies the dimensions of the circle (the top
+        left of the screen is the origin).
+        """
+        colour = Canvas._get_colour_tuple(colour)
+        cv2.circle(self.img, center, radius, colour, thickness=cv2.FILLED)
+
     def copy_to(self, dest: np.ndarray) -> np.ndarray:
         """Writes the contents of self.img over dest.
 

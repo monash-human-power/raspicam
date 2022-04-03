@@ -84,7 +84,7 @@ class PiCameraBackend(Backend):
         If the overlay was already added, removes the old instance.
         """
         overlay = self.pi_camera.add_overlay(
-            canvas.img, format="rgba", size=(self.width, self.height)
+            canvas.img, format="bgra", size=(self.width, self.height)
         )
         overlay.layer = layer.value
         overlay.fullscreen = False

@@ -43,6 +43,9 @@ class DataValue:
         if self.data_type is str:
             return self.get()
 
+        if self.data_type is bool:
+            return str(self.get())
+
         if self.is_valid():
             format_str = f"{{:.{decimals}f}}"
             return format_str.format(self.value * scalar)
@@ -95,7 +98,16 @@ class Data(ABC):
             # Voltage
             "voltage": DataValue(float, config.BATTERY_PUBLISH_INTERVAL),
         }
+        self.logging = DataValue(bool, time_to_expire=3600)
         self.message = DataValue(str, 20)
+
+    def set_logging(self, logging: bool) -> None:
+        """Set the logging status of the DAS."""
+        self.logging.update(logging)
+
+    def is_logging(self) -> bool:
+        """Return whether the DAS is logging."""
+        return self.logging.get()
 
     def load_message(self, message: str) -> None:
         """Store a message which is made available by self.get_message."""
@@ -200,7 +212,9 @@ class DataV3(Data):
     def get_topics() -> List[topics.Topic]:
         # TODO: Not have to read configs everytime
         return [
+            topics.WirelessModule.all().start,
             topics.WirelessModule.all().data,
+            topics.WirelessModule.all().stop,
             topics.Camera.overlay_message,
             DataV3.create_voltage_topic(),
             topics.BOOST.recommended_sp,
@@ -214,6 +228,11 @@ class DataV3(Data):
         battery_topic = topics.Camera.status_camera / device / "battery"
         return battery_topic
 
+    def __init__(self):
+        super().__init__()
+        # Used to detect missed start messages
+        self.data_messages_received = 0
+
     def load_data(self, topic: str, data: str) -> None:
         """Update stored fields with data from a V3 sensor module data packet.
         """
@@ -221,6 +240,17 @@ class DataV3(Data):
             self.load_message_json(data)
         elif topics.WirelessModule.all().data.matches(topic):
             self.load_sensor_data(data)
+            # We have 3 WMs, so in the worst case we shouldn't receive more
+            # than four messages due to delay after logging stops. If we do,
+            # we know we missed the start message.
+            self.data_messages_received += 1
+            if not self.logging.get() and self.data_messages_received > 3:
+                self.set_logging(True)
+        elif topics.WirelessModule.all().start.matches(topic):
+            self.data_messages_received = 0
+            self.set_logging(True)
+        elif topics.WirelessModule.all().stop.matches(topic):
+            self.set_logging(False)
         elif self.create_voltage_topic().matches(topic):
             self.load_voltage_data(data)
         elif topic == topics.BOOST.recommended_sp:
