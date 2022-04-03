@@ -9,7 +9,7 @@ from threading import Timer
 import paho.mqtt.client as mqtt
 
 try:
-    from utils.hardware import LED, cleanup
+    from utils.hardware import cleanup, LED, Switch
     import adafruit_mcp3xxx.mcp3004 as MCP
     import board
     import busio
@@ -27,7 +27,7 @@ import config
 
 
 # BCM pin numbering
-logging_button_pin = 4
+logging_button_pin = 5  # Board pin 29
 
 # See https://github.com/monash-human-power/V3-display-unit-pcb-tests/blob/72d02c270be413b1d4e97b9d10a33c97f551eafe/calibrate.py # noqa: E501
 battery_calibration_factor = 3.1432999689025483
@@ -73,12 +73,12 @@ class Orchestrator:
         self.device = configs["device"]
 
         self.currently_logging = False
+        # Used to detect missed start messages
+        self.data_messages_received = 0
 
         if ON_PI:
-            gpio.setup(logging_button_pin, gpio.IN, gpio.PUD_DOWN)
-            gpio.add_event_detect(
-                logging_button_pin, gpio.RISING, callback=self.toggle_logging
-            )
+            logging_button = Switch(logging_button_pin, gpio.PUD_DOWN)
+            logging_button.create_interrupt(self.toggle_logging)
 
             # ADC is connected to SPI bus 0, CE pin 0
             spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
@@ -87,7 +87,8 @@ class Orchestrator:
             self.battery_adc = AnalogIn(mcp, MCP.P0)
 
             # BCM pin numbering
-            self.connected_led = LED(18)
+            self.connected_led = LED(18)  # Board pin 24, yellow led
+            self.logging_led = LED(27)  # Board pin 13, red led
 
     def get_battery_voltage(self) -> float:
         return self.battery_adc.voltage * battery_calibration_factor
@@ -97,8 +98,18 @@ class Orchestrator:
         for module in modules:
             topic = module.stop if self.currently_logging else module.start
             self.mqtt_client.publish(str(topic))
+        self.mqtt_client.publish(topics.BOOST.start)
         # `self.currently_logging` will be updated when we receive the message
         # we publish above.
+
+    def set_logging_state(self, logging: bool) -> None:
+        """Set the data logging state of the camera, updating the LED."""
+        self.currently_logging = logging
+        if ON_PI:
+            if logging:
+                self.logging_led.turn_on()
+            else:
+                self.logging_led.turn_off()
 
     def publish_camera_status(self) -> None:
         """Send a message on the current device's camera status topic."""
@@ -139,11 +150,17 @@ class Orchestrator:
         elif topics.Camera.set_overlay.matches(msg.topic):
             config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
         elif topics.WirelessModule.all().start.matches(msg.topic):
-            self.currently_logging = True
+            self.data_messages_received = 0
+            self.set_logging_state(True)
         elif topics.WirelessModule.all().data.matches(msg.topic):
-            self.currently_logging = True
+            self.data_messages_received += 1
+            # We have 3 WMs, so in the worst case we shouldn't receive more
+            # than four messages due to delay after logging stops. If we do,
+            # we know we missed the start message.
+            if not self.currently_logging and self.data_messages_received > 3:
+                self.set_logging_state(True)
         elif topics.WirelessModule.all().stop.matches(msg.topic):
-            self.currently_logging = False
+            self.set_logging_state(False)
         elif msg.topic == topics.Camera.flip_video_feed / self.device:
             rotation = config.read_configs().get(config.ROTATION_KEY, 0) + 180
             config.set_rotation(rotation % 360)

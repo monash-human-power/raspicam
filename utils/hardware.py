@@ -18,9 +18,9 @@ def cleanup():
 
 
 class Switch:
-    def __init__(self, pin):
+    def __init__(self, pin, pull_up_down=gpio.PUD_UP):
         self.pin = pin
-        gpio.setup(pin, gpio.IN, pull_up_down=gpio.PUD_UP)
+        gpio.setup(pin, gpio.IN, pull_up_down=pull_up_down)
 
     def read(self):
         return gpio.input(self.pin)
@@ -30,6 +30,11 @@ class Switch:
             if self.read() == state:
                 return
             await asyncio.sleep(poll_frequency)
+
+    def create_interrupt(self, callback, bouncetime=500):
+        gpio.add_event_detect(
+            self.pin, gpio.RISING, callback=callback, bouncetime=bouncetime
+        )
 
 
 class LED:

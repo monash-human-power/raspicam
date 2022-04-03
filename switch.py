@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import subprocess
+import sys
 
 import config
 from utils.hardware import LED, Switch, use_board_pins, cleanup
@@ -26,15 +27,7 @@ use_board_pins()
 
 switch = Switch(15)
 green_led = LED(11)
-red_led = LED(13)
 
-
-virtualenv_dir = (
-    subprocess.check_output(["poetry", "env", "info", "-p"])
-    .decode("utf-8")
-    .strip()
-)
-print("env dir:", virtualenv_dir)
 
 overlay_process = None
 
@@ -42,25 +35,18 @@ overlay_process = None
 def enable():
     print("ON")
 
-    red_led.turn_off()
-    green_led.turn_on()
+    green_led.turn_off()
 
     global overlay_process
     overlay_process = subprocess.Popen(
-        [
-            f"{virtualenv_dir}/bin/python",
-            config.get_active_overlay(),
-            "--host",
-            brokerIP,
-        ]
+        [sys.executable, config.get_active_overlay(), "--host", brokerIP]
     )
 
 
 def disable():
     print("OFF")
 
-    red_led.turn_on()
-    green_led.turn_off()
+    green_led.turn_on()
 
     global overlay_process
     if overlay_process:
