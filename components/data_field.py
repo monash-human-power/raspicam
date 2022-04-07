@@ -79,7 +79,14 @@ class SpeedField(DataField):
         pass
 
     def draw_data(self, canvas: Canvas, data: Data):
-        self.title = "REED KPH" if data["reed_velocity"] else "GPS KPH"
+        if data["ant_speed"]:
+            self.title = "ANT+ KPH"
+        elif data["gps_speed"]:
+            self.title = "GPS KPH"
+        elif data["reed_velocity"]:
+            self.title = "REED KPH"
+        else:
+            self.title = "KPH"
         super().draw_data(canvas, data)
 
 
