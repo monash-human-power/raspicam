@@ -76,7 +76,7 @@ class OverlayNew(Overlay):
             ),
             DataField(
                 "DIST KM",
-                self.get_data_func("reed_distance", 2, 0.001),
+                self.get_data_func("ant_distance", 2, 0.001),
                 data_field_coord(3, 1),
             ),
             VoltageField(

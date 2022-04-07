@@ -276,7 +276,8 @@ class DataV3(Data):
                 self.data["gps"].update(1)
                 self.data["gps_speed"].update(sensor_value["speed"])
             elif sensor_name == "antSpeed":
-                self.data["ant_speed"].update(sensor_value)
+                self.data["ant_speed"].update(sensor_value["speed"])
+                self.data["ant_distance"].update(sensor_value["distance"])
             elif sensor_name == "reedVelocity":
                 self.data["reed_velocity"].update(sensor_value)
             elif sensor_name == "reedDistance":
