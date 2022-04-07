@@ -67,8 +67,9 @@ class SpeedField(DataField):
     def __init__(self, coordinate: Tuple[int, int]):
         def value_func(data):
             return (
-                data["reed_velocity"].get_string(decimals=1)
+                data["ant_speed"].get_string(decimals=1)
                 or data["gps_speed"].get_string(decimals=1)
+                or data["reed_velocity"].get_string(decimals=1)
                 or "--"
             )
 
