@@ -192,8 +192,8 @@ class TestDataV3:
         # No fields tracked from front or mid module
         # Test back module
         assert data["gps"].get() == 1
-        assert data["gps_speed"].get() == 20.5
-        assert data["reed_velocity"].get() == 20.1
+        assert data["gps_speed"].get() == 20.5 * 3.6
+        assert data["reed_velocity"].get() == 20.1 * 3.6
         assert data["reed_distance"].get() == 1040.3
         # Test antplus data
         assert data["power"].get() == 249
