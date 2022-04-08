@@ -87,6 +87,8 @@ class Data(ABC):
             "heartRate": DataValue(int),
             "gps": DataValue(int),
             "gps_speed": DataValue(float),
+            "ant_speed": DataValue(float),
+            "ant_distance": DataValue(float),
             "reed_velocity": DataValue(float),
             "reed_distance": DataValue(float),
             # Power model data
@@ -273,9 +275,13 @@ class DataV3(Data):
 
             if sensor_name == "gps":
                 self.data["gps"].update(1)
-                self.data["gps_speed"].update(sensor_value["speed"])
+                self.data["gps_speed"].update(sensor_value["speed"] * 3.6)
+            elif sensor_name == "antSpeed":
+                self.data["ant_speed"].update(sensor_value * 3.6)
+            elif sensor_name == "antDistance":
+                self.data["ant_distance"].update(sensor_value)
             elif sensor_name == "reedVelocity":
-                self.data["reed_velocity"].update(sensor_value)
+                self.data["reed_velocity"].update(sensor_value * 3.6)
             elif sensor_name == "reedDistance":
                 self.data["reed_distance"].update(sensor_value)
             elif sensor_name in self.data.keys():

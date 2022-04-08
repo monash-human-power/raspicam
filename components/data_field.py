@@ -67,8 +67,9 @@ class SpeedField(DataField):
     def __init__(self, coordinate: Tuple[int, int]):
         def value_func(data):
             return (
-                data["reed_velocity"].get_string(decimals=1)
+                data["ant_speed"].get_string(decimals=1)
                 or data["gps_speed"].get_string(decimals=1)
+                or data["reed_velocity"].get_string(decimals=1)
                 or "--"
             )
 
@@ -78,7 +79,14 @@ class SpeedField(DataField):
         pass
 
     def draw_data(self, canvas: Canvas, data: Data):
-        self.title = "REED KPH" if data["reed_velocity"] else "GPS KPH"
+        if data["ant_speed"]:
+            self.title = "ANT+ KPH"
+        elif data["gps_speed"]:
+            self.title = "GPS KPH"
+        elif data["reed_velocity"]:
+            self.title = "REED KPH"
+        else:
+            self.title = "KPH"
         super().draw_data(canvas, data)
 
 
