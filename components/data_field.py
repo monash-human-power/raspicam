@@ -61,17 +61,22 @@ class DataField(Component):
 
 
 class SpeedField(DataField):
-    """ A specialised version of DataField which prefers to display reed velocity,
-        but falls back to GPS speed if reed velocity is unavailable """
+    """ A specialised version of DataField which prefers to display GPS velocity,
+        but falls back to reed or ANT+ speed if GPS velocity is unavailable """
+
+    def get_data_source(data: Data) -> str or None:
+        priority_list = ["gps_speed", "reed_velocity", "ant_speed"]
+        for source in priority_list:
+            if data[source].get() is not None:
+                return source
+        return None
 
     def __init__(self, coordinate: Tuple[int, int]):
         def value_func(data):
-            return (
-                data["ant_speed"].get_string(decimals=1)
-                or data["gps_speed"].get_string(decimals=1)
-                or data["reed_velocity"].get_string(decimals=1)
-                or "--"
-            )
+            source = SpeedField.get_data_source(data)
+            if source is None:
+                return "--"
+            return data[source].get_string(decimals=1)
 
         super().__init__("", value_func, coordinate, False)
 
@@ -79,14 +84,14 @@ class SpeedField(DataField):
         pass
 
     def draw_data(self, canvas: Canvas, data: Data):
-        if data["ant_speed"]:
-            self.title = "ANT+ KPH"
-        elif data["gps_speed"]:
-            self.title = "GPS KPH"
-        elif data["reed_velocity"]:
-            self.title = "REED KPH"
-        else:
-            self.title = "KPH"
+        source = SpeedField.get_data_source(data)
+        titles = {
+            "gps_speed": "GPS KPH",
+            "ant_speed": "ANT+ KPH",
+            "reed_velocity": "REED KPH",
+            None: "KPH",
+        }
+        self.title = titles[source]
         super().draw_data(canvas, data)
 
 
