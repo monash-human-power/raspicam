@@ -14,9 +14,6 @@ try:
 except (ImportError, RuntimeError):
     ON_PI = False
 
-# Top of window is outside the screen to hide title bar
-PI_WINDOW_TOP_LEFT = (0, -20)
-
 
 class PiCameraOverlayLayer(Enum):
     """ The `picamera` layers which each overlay canvas should be placed on.
@@ -72,8 +69,7 @@ class PiCameraBackend(Backend):
         Non blocking, but runs forever in separate thread.
         """
         self.pi_camera.start_preview(
-            fullscreen=False,
-            window=(*PI_WINDOW_TOP_LEFT, self.width, self.height),
+            fullscreen=False, window=(0, 0, self.width, self.height),
         )
 
     def update_picamera_overlay(
@@ -88,7 +84,7 @@ class PiCameraBackend(Backend):
         )
         overlay.layer = layer.value
         overlay.fullscreen = False
-        overlay.window = (*PI_WINDOW_TOP_LEFT, self.width, self.height)
+        overlay.window = (0, 0, self.width, self.height)
 
         """
         Rather than creating and swapping out overlays, the proper way to do
