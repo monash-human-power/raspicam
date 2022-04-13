@@ -71,7 +71,7 @@ class OverlayNew(Overlay):
             ),
             DataField(
                 "MAX KPH",
-                self.get_data_func("predicted_max_speed", 1),
+                self.get_data_func("max_speed_achieved", 1),
                 data_field_coord(3, 0),
             ),
             DataField(
