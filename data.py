@@ -27,7 +27,7 @@ class DataValue:
 
     def get(self) -> Any:
         """Return the data value if the expiry hasn't exceeded. Otherwise,
-        it will return None. """
+        it will return None."""
         if self.is_valid():
             return self.value
         return None
@@ -75,11 +75,11 @@ class DataValue:
 
 
 class Data(ABC):
-    """ A class to keep track of the most recent bike data for the overlays.
+    """A class to keep track of the most recent bike data for the overlays.
 
-        Data comes into the class in the V2/V3 MQTT formats and may be accessed
-        by using this class as a dictionary. This class is implemented by
-        versions for specific bikes (DataV2, DataV3,...) """
+    Data comes into the class in the V2/V3 MQTT formats and may be accessed
+    by using this class as a dictionary. This class is implemented by
+    versions for specific bikes (DataV2, DataV3,...)"""
 
     def __init__(self):
         # This is by no means a complete list of data fields we could track -
@@ -160,9 +160,9 @@ class Data(ABC):
     @staticmethod
     @abstractmethod
     def get_topics() -> List[topics.Topic]:
-        """ Return a list of the topics the data for the bike comes from.
+        """Return a list of the topics the data for the bike comes from.
 
-            Should be implemented by Data subclasses. """
+        Should be implemented by Data subclasses."""
         pass
 
 
@@ -193,7 +193,7 @@ class DataV2(Data):
         ]
 
     def load_data(self, topic: str, data: str) -> None:
-        """ Loads V2 query strings and V3 DAShboard messages """
+        """Loads V2 query strings and V3 DAShboard messages"""
         if topics.Camera.overlay_message.matches(topic):
             self.load_message(data)
         elif str(topic) in DataV2.get_topics():
@@ -242,8 +242,7 @@ class DataV3(Data):
         self.data_messages_received = 0
 
     def load_data(self, topic: str, data: str) -> None:
-        """Update stored fields with data from a V3 sensor module data packet.
-        """
+        """Update stored fields with data from a V3 sensor module data packet."""
         if topic == topics.Camera.overlay_message:
             self.load_message_json(data)
         elif topics.WirelessModule.all().data.matches(topic):
@@ -318,4 +317,3 @@ class DataV3(Data):
         else:
             python_data = loads(data)
             self.data["max_speed_achieved"].update(python_data["speed"] * 3.6)
-
