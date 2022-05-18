@@ -102,7 +102,11 @@ class Orchestrator:
             self.mqtt_client.publish(str(topic))
 
         self.mqtt_client.publish(
-            str(topics.BOOST.stop if self.currently_logging else topics.BOOST.start)
+            str(
+                topics.BOOST.stop
+                if self.currently_logging
+                else topics.BOOST.start
+            )
         )
 
         # `self.currently_logging` will be updated when we receive the message
