@@ -62,7 +62,7 @@ class TestDataFactory:
 class TestDataV2:
     @staticmethod
     def to_query_string(python_dict):
-        """ Converts {key1: value1, key2: value2} to key1=value1&key2value2 """
+        """Converts {key1: value1, key2: value2} to key1=value1&key2value2"""
         return "&".join([f"{k}={v}" for k, v in python_dict.items()])
 
     @staticmethod
@@ -215,7 +215,7 @@ class TestDataV3:
         data.load_data(topics.BOOST.recommended_sp, dumps(recommended_sp_data))
         data.load_data(topics.BOOST.predicted_max_speed, dumps(max_speed_data))
 
-        assert data["rec_power"].get() == 10 * 3.6
-        assert data["rec_speed"].get() == 20
+        assert data["rec_power"].get() == 10
+        assert data["rec_speed"].get() == 20 * 3.6
         assert data["zdist"].get() == 30
         assert data["predicted_max_speed"].get() == 100 * 3.6
