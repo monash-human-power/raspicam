@@ -27,7 +27,7 @@ class DataValue:
 
     def get(self) -> Any:
         """Return the data value if the expiry hasn't exceeded. Otherwise,
-        it will return None. """
+        it will return None."""
         if self.is_valid():
             return self.value
         return None
@@ -63,6 +63,10 @@ class DataValue:
         self.value = value
         self.time_updated = time()
 
+    def invalidate(self) -> None:
+        """Invalidate the data value by making it received a long time ago."""
+        self.time_updated = 0
+
     def is_valid(self) -> bool:
         """Assess whether data is valid by checking if the valid duration
         has exceeded. Return True if current time is less than the time
@@ -71,11 +75,11 @@ class DataValue:
 
 
 class Data(ABC):
-    """ A class to keep track of the most recent bike data for the overlays.
+    """A class to keep track of the most recent bike data for the overlays.
 
-        Data comes into the class in the V2/V3 MQTT formats and may be accessed
-        by using this class as a dictionary. This class is implemented by
-        versions for specific bikes (DataV2, DataV3,...) """
+    Data comes into the class in the V2/V3 MQTT formats and may be accessed
+    by using this class as a dictionary. This class is implemented by
+    versions for specific bikes (DataV2, DataV3,...)"""
 
     def __init__(self):
         # This is by no means a complete list of data fields we could track -
@@ -95,6 +99,7 @@ class Data(ABC):
             "rec_power": DataValue(float),
             "rec_speed": DataValue(float),
             "predicted_max_speed": DataValue(float),
+            "max_speed_achieved": DataValue(float, time_to_expire=3600),
             "zdist": DataValue(float),
             "plan_name": DataValue(str),
             # Voltage
@@ -155,9 +160,9 @@ class Data(ABC):
     @staticmethod
     @abstractmethod
     def get_topics() -> List[topics.Topic]:
-        """ Return a list of the topics the data for the bike comes from.
+        """Return a list of the topics the data for the bike comes from.
 
-            Should be implemented by Data subclasses. """
+        Should be implemented by Data subclasses."""
         pass
 
 
@@ -188,7 +193,7 @@ class DataV2(Data):
         ]
 
     def load_data(self, topic: str, data: str) -> None:
-        """ Loads V2 query strings and V3 DAShboard messages """
+        """Loads V2 query strings and V3 DAShboard messages"""
         if topics.Camera.overlay_message.matches(topic):
             self.load_message(data)
         elif str(topic) in DataV2.get_topics():
@@ -221,6 +226,7 @@ class DataV3(Data):
             DataV3.create_voltage_topic(),
             topics.BOOST.recommended_sp,
             topics.BOOST.predicted_max_speed,
+            topics.BOOST.max_speed_achieved,
             # TODO: Implement handling topics.BOOST.generate_complete
         ]
 
@@ -236,8 +242,7 @@ class DataV3(Data):
         self.data_messages_received = 0
 
     def load_data(self, topic: str, data: str) -> None:
-        """Update stored fields with data from a V3 sensor module data packet.
-        """
+        """Update stored fields with data from a V3 WM data packet."""
         if topic == topics.Camera.overlay_message:
             self.load_message_json(data)
         elif topics.WirelessModule.all().data.matches(topic):
@@ -259,6 +264,8 @@ class DataV3(Data):
             self.load_recommended_sp(data)
         elif topic == topics.BOOST.predicted_max_speed:
             self.load_predicted_max_speed(data)
+        elif topic == topics.BOOST.max_speed_achieved:
+            self.load_max_speed_achieved(data)
 
     def load_message_json(self, data: str) -> None:
         """Load a message in the V3 JSON format."""
@@ -294,9 +301,19 @@ class DataV3(Data):
     def load_recommended_sp(self, data: str) -> None:
         python_data = loads(data)
         self.data["rec_power"].update(python_data["power"])
-        self.data["rec_speed"].update(python_data["speed"])
+        self.data["rec_speed"].update(python_data["speed"] * 3.6)
         self.data["zdist"].update(python_data["zoneDistance"])
 
     def load_predicted_max_speed(self, data: str) -> None:
-        python_data = loads(data)
-        self.data["predicted_max_speed"].update(python_data["speed"])
+        if data == "":
+            self.data["predicted_max_speed"].invalidate()
+        else:
+            python_data = loads(data)
+            self.data["predicted_max_speed"].update(python_data["speed"] * 3.6)
+
+    def load_max_speed_achieved(self, data: str) -> None:
+        if data == "":
+            self.data["max_speed_achieved"].invalidate()
+        else:
+            python_data = loads(data)
+            self.data["max_speed_achieved"].update(python_data["speed"] * 3.6)

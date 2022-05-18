@@ -88,7 +88,9 @@ class Orchestrator:
 
             # BCM pin numbering
             self.connected_led = LED(18)  # Board pin 24, yellow led
+            self.connected_led.turn_off()
             self.logging_led = LED(27)  # Board pin 13, red led
+            self.logging_led.turn_off()
 
     def get_battery_voltage(self) -> float:
         return self.battery_adc.voltage * battery_calibration_factor
@@ -98,7 +100,15 @@ class Orchestrator:
         for module in modules:
             topic = module.stop if self.currently_logging else module.start
             self.mqtt_client.publish(str(topic))
-        self.mqtt_client.publish(topics.BOOST.start)
+
+        self.mqtt_client.publish(
+            str(
+                topics.BOOST.stop
+                if self.currently_logging
+                else topics.BOOST.start
+            )
+        )
+
         # `self.currently_logging` will be updated when we receive the message
         # we publish above.
 
