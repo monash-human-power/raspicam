@@ -101,18 +101,20 @@ class Orchestrator:
             topic = module.stop if self.currently_logging else module.start
             self.mqtt_client.publish(str(topic))
 
-        #NEW V3 start code
-        #If we are currently logging -> false payload
+        # NEW V3 start code
+        # If we are currently logging -> false payload
         if self.currently_logging:
-            msg = dumps({"start": False}) #JSON formatted string, this is the payload
+            msg = dumps(
+                {"start": False}
+            )  # JSON formatted string, this is the payload
             self.mqtt_client.publish(topics.V3.start, msg)
 
-        #If not -> true payload
+        # If not -> true payload
         else:
             msg = dumps({"start": True})
             self.mqtt_client.publish(topics.V3.start, msg)
 
-        #OLD BOOST start/stop code
+        # OLD BOOST start/stop code
         # self.mqtt_client.publish(
         #     str(
         #         topics.BOOST.stop
