@@ -104,15 +104,17 @@ class Orchestrator:
         # NEW V3 start code
         # If we are currently logging -> false payload
         if self.currently_logging:
-            msg = dumps(
-                {"start": False}
-            )  # JSON formatted string, this is the payload
+            msg = dumps({"start": False})  # JSON formatted string, this is the payload
             self.mqtt_client.publish(topics.V3.start, msg)
+            print('Stopping Logging')
+            self.set_logging_state(False) #Do we need to change the logging state?
 
         # If not -> true payload
         else:
             msg = dumps({"start": True})
             self.mqtt_client.publish(topics.V3.start, msg)
+            print('Starting Logging')
+            self.set_logging_state(True) #Changing the logging state
 
         # OLD BOOST start/stop code
         # self.mqtt_client.publish(
@@ -235,4 +237,3 @@ if __name__ == "__main__":
     finally:
         if ON_PI:
             cleanup()
-            
