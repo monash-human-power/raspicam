@@ -137,12 +137,12 @@ class Orchestrator:
 
     def publish_camera_status(self) -> None:
         """Send a message on the current device's camera status topic."""
-        status_topic = str(topics.Camera.status_camera / self.device)
+        status_topic = topics.Camera.status_camera + "/" + self.device #Quick fix to operator overload not working on rpi
         message = dumps({"connected": True, "ipAddress": get_ip()})
         self.mqtt_client.publish(status_topic, message, retain=True)
 
     def battery_loop(self) -> None:
-        status_topic = topics.Camera.status_camera / self.device / "battery"
+        status_topic = topics.Camera.status_camera + "/" + self.device + "/" + "battery" #Quick fix to operator overload not working on rpi
         message = dumps({"voltage": self.get_battery_voltage()})
         self.mqtt_client.publish(str(status_topic), message, retain=True)
 
@@ -157,7 +157,7 @@ class Orchestrator:
         client.subscribe(str(topics.Camera.set_overlay))
         client.subscribe(str(topics.Camera.get_overlays))
         client.subscribe(str(topics.WirelessModule.all().module))
-        client.subscribe(str(topics.Camera.flip_video_feed / self.device))
+        client.subscribe(topics.Camera.flip_video_feed + "/" + self.device) #operator overload wasn't working on rpi, quick fix
         self.publish_camera_status()
         if ON_PI:
             self.connected_led.turn_on()
@@ -185,7 +185,7 @@ class Orchestrator:
                 self.set_logging_state(True)
         elif topics.WirelessModule.all().stop.matches(msg.topic):
             self.set_logging_state(False)
-        elif msg.topic == topics.Camera.flip_video_feed / self.device:
+        elif msg.topic == topics.Camera.flip_video_feed + "/" + self.device: #Quick fix to operator overload not working on rpi
             rotation = config.read_configs().get(config.ROTATION_KEY, 0) + 180
             config.set_rotation(rotation % 360)
 
@@ -209,7 +209,7 @@ class Orchestrator:
         self.mqtt_client.connect_async(self.broker_ip, self.port, 60)
 
         # Set the camera status to offline if connection breaks
-        camera_topic = str(topics.Camera.status_camera / self.device)
+        camera_topic = topics.Camera.status_camera + "/" + self.device #Quick fix to operator overload not working on rpi
         self.mqtt_client.will_set(
             camera_topic, dumps({"connected": False}), 1, True
         )
@@ -235,3 +235,4 @@ if __name__ == "__main__":
     finally:
         if ON_PI:
             cleanup()
+            
