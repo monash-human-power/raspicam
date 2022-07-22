@@ -101,32 +101,26 @@ class Orchestrator:
             topic = module.stop if self.currently_logging else module.start
             self.mqtt_client.publish(str(topic))
 
-        # NEW V3 start code
+        # Publish to V3 start topic if button on display is pressed
         # If we are currently logging -> false payload
         if self.currently_logging:
-            msg = dumps({"start": False})  # JSON formatted string, this is the payload
-            self.mqtt_client.publish(topics.V3.start, msg)
-            print('Stopping Logging')
-            self.set_logging_state(False) #Do we need to change the logging state?
+            msg = dumps(
+                {"start": False}
+            )  # JSON formatted string, this is the payload
+            self.mqtt_client.publish(topics.V3.start, msg)  # Publish
+            self.set_logging_state(False)  # Changing the logging state
+            print(
+                "Stopping Logging"
+            )  # Check that at least if statement is executing
 
         # If not -> true payload
         else:
             msg = dumps({"start": True})
-            self.mqtt_client.publish(topics.V3.start, msg)
-            print('Starting Logging')
-            self.set_logging_state(True) #Changing the logging state
-
-        # OLD BOOST start/stop code
-        # self.mqtt_client.publish(
-        #     str(
-        #         topics.BOOST.stop
-        #         if self.currently_logging
-        #         else topics.BOOST.start
-        #     )
-        # )
-
-        # `self.currently_logging` will be updated when we receive the message
-        # we publish above.
+            self.mqtt_client.publish(topics.V3.start, msg)  # Publish
+            self.set_logging_state(True)  # Changing the logging state
+            print(
+                "Starting Logging"
+            )  # Check that at least if statement is executing
 
     def set_logging_state(self, logging: bool) -> None:
         """Set the data logging state of the camera, updating the LED."""
@@ -139,12 +133,16 @@ class Orchestrator:
 
     def publish_camera_status(self) -> None:
         """Send a message on the current device's camera status topic."""
-        status_topic = topics.Camera.status_camera + "/" + self.device #Quick fix to operator overload not working on rpi
+        status_topic = (
+            topics.Camera.status_camera + "/" + self.device
+        )  # Quick fix to operator overload not working on rpi
         message = dumps({"connected": True, "ipAddress": get_ip()})
         self.mqtt_client.publish(status_topic, message, retain=True)
 
     def battery_loop(self) -> None:
-        status_topic = topics.Camera.status_camera + "/" + self.device + "/" + "battery" #Quick fix to operator overload not working on rpi
+        status_topic = (
+            topics.Camera.status_camera + "/" + self.device + "/" + "battery"
+        )  # Quick fix to operator overload not working on rpi
         message = dumps({"voltage": self.get_battery_voltage()})
         self.mqtt_client.publish(str(status_topic), message, retain=True)
 
@@ -159,7 +157,9 @@ class Orchestrator:
         client.subscribe(str(topics.Camera.set_overlay))
         client.subscribe(str(topics.Camera.get_overlays))
         client.subscribe(str(topics.WirelessModule.all().module))
-        client.subscribe(topics.Camera.flip_video_feed + "/" + self.device) #operator overload wasn't working on rpi, quick fix
+        client.subscribe(
+            topics.Camera.flip_video_feed + "/" + self.device
+        )  # operator overload wasn't working on rpi, quick fix
         self.publish_camera_status()
         if ON_PI:
             self.connected_led.turn_on()
@@ -187,7 +187,9 @@ class Orchestrator:
                 self.set_logging_state(True)
         elif topics.WirelessModule.all().stop.matches(msg.topic):
             self.set_logging_state(False)
-        elif msg.topic == topics.Camera.flip_video_feed + "/" + self.device: #Quick fix to operator overload not working on rpi
+        elif (
+            msg.topic == topics.Camera.flip_video_feed + "/" + self.device
+        ):  # Quick fix to operator overload not working on rpi
             rotation = config.read_configs().get(config.ROTATION_KEY, 0) + 180
             config.set_rotation(rotation % 360)
 
@@ -211,7 +213,9 @@ class Orchestrator:
         self.mqtt_client.connect_async(self.broker_ip, self.port, 60)
 
         # Set the camera status to offline if connection breaks
-        camera_topic = topics.Camera.status_camera + "/" + self.device #Quick fix to operator overload not working on rpi
+        camera_topic = (
+            topics.Camera.status_camera + "/" + self.device
+        )  # Quick fix to operator overload not working on rpi
         self.mqtt_client.will_set(
             camera_topic, dumps({"connected": False}), 1, True
         )
