@@ -109,8 +109,8 @@ class Orchestrator:
 
         # `self.currently_logging` will be updated when we receive the message
         # we publish above.
-        # If start message is sent successfully, as we're subscribed to the topic
-        # `self.logging_state` will be updated in `on_message`
+        # If start message is sent successfully, as we're subscribed to the
+        # topic `self.logging_state` will be updated in `on_message`
         # If the message fails to send, we don't update internal logging state
         # so the next button press causes it to try again
 
