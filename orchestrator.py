@@ -102,25 +102,15 @@ class Orchestrator:
             self.mqtt_client.publish(str(topic))
 
         # Publish to V3 start topic if button on display is pressed
-        # If we are currently logging -> false payload
-        if self.currently_logging:
-            msg = dumps(
-                {"start": False}
-            )  # JSON formatted string, this is the payload
-            self.mqtt_client.publish(topics.V3.start, msg)  # Publish
-            self.set_logging_state(False)  # Changing the logging state
-            print(
-                "Stopping Logging"
-            )  # Check that at least if statement is executing
+        next_logging_state = not self.currently_logging
+        msg = dumps({"start": next_logging_state})
+        self.mqtt_client.publish(topics.V3.start, msg)
+        self.set_logging_state(next_logging_state)
+        print(f"Set logging state to {next_logging_state}")
 
-        # If not -> true payload
-        else:
-            msg = dumps({"start": True})
-            self.mqtt_client.publish(topics.V3.start, msg)  # Publish
-            self.set_logging_state(True)  # Changing the logging state
-            print(
-                "Starting Logging"
-            )  # Check that at least if statement is executing
+        # `self.currently_logging` will be updated when we receive the message we publish above.
+        # if start message is sent successfully, as we're also subscribed to the topic, self.logging_state will be updated in on_message
+        # if it fails to send we don't want to update the internal logging state so that the next button press causes it to try again
 
     def set_logging_state(self, logging: bool) -> None:
         """Set the data logging state of the camera, updating the LED."""
