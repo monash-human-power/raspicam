@@ -108,9 +108,8 @@ class Orchestrator:
         self.set_logging_state(next_logging_state)
         print(f"Set logging state to {next_logging_state}")
 
-        # `self.currently_logging` will be updated when we receive the message we publish above.
-        # if start message is sent successfully, as we're also subscribed to the topic, self.logging_state will be updated in on_message
-        # if it fails to send we don't want to update the internal logging state so that the next button press causes it to try again
+        # `self.currently_logging` will be updated when we receive the message
+        # we publish above.
 
     def set_logging_state(self, logging: bool) -> None:
         """Set the data logging state of the camera, updating the LED."""
