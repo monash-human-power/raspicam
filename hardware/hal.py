@@ -112,7 +112,7 @@ class V3HAL(HardwareAbstractionLayer):
 
 def get_hal(bike_str: str) -> HardwareAbstractionLayer:
     if bike_str.lower() == "v2":
-        return V3HAL()
+        return V2HAL()
     elif bike_str.lower() == "v3":
         return V3HAL()
     else:
