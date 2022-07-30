@@ -8,7 +8,7 @@ from json import dumps
 from threading import Timer
 import paho.mqtt.client as mqtt
 
-from utils.hardware import get_hal, cleanup
+from hardware.hal import get_hal, cleanup
 
 try:
     import adafruit_mcp3xxx.mcp3004 as MCP

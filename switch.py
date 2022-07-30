@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 import config
-from utils.hardware import get_hal, cleanup
+from hardware.hal import get_hal, cleanup
 
 switch_on_state = True
 
