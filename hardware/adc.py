@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from hardware.common import ON_PI
 
 if ON_PI:
-    import adafruit_mcp3xxx.mcp3004
+    from adafruit_mcp3xxx import mcp3004
     import board
     import busio
     import digitalio
