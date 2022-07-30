@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 import config
-from utils.hardware import LED, Switch, use_board_pins, cleanup
+from utils.hardware import get_hal, cleanup
 
 switch_on_state = True
 
@@ -23,10 +23,7 @@ args = parser.parse_args()
 
 brokerIP = args.host
 
-use_board_pins()
-
-switch = Switch(15)
-green_led = LED(11)
+hal = get_hal(configs["bike"])
 
 
 overlay_process = None
@@ -35,7 +32,7 @@ overlay_process = None
 def enable():
     print("ON")
 
-    green_led.turn_off()
+    hal.display_power_led.turn_off()
 
     global overlay_process
     overlay_process = subprocess.Popen(
@@ -46,7 +43,7 @@ def enable():
 def disable():
     print("OFF")
 
-    green_led.turn_on()
+    hal.display_power_led.turn_on()
 
     global overlay_process
     if overlay_process:
@@ -55,14 +52,14 @@ def disable():
 
 async def main():
     try:
-        if switch.read() == switch_on_state:
+        if hal.display_power_switch.read() == switch_on_state:
             enable()
 
         while True:
-            await switch.wait_for_state(not switch_on_state)
+            await hal.display_power_switch.wait_for_state(not switch_on_state)
             disable()
 
-            await switch.wait_for_state(switch_on_state)
+            await hal.display_power_switch.wait_for_state(switch_on_state)
             enable()
 
     except KeyboardInterrupt:

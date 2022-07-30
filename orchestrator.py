@@ -8,13 +8,13 @@ from json import dumps
 from threading import Timer
 import paho.mqtt.client as mqtt
 
+from utils.hardware import get_hal, cleanup
+
 try:
-    from utils.hardware import cleanup, LED, Switch
     import adafruit_mcp3xxx.mcp3004 as MCP
     import board
     import busio
     import digitalio
-    import RPi.GPIO as gpio
     from adafruit_mcp3xxx.analog_in import AnalogIn
 
     ON_PI = True
@@ -25,9 +25,6 @@ from mhp import topics
 
 import config
 
-
-# BCM pin numbering
-logging_button_pin = 5  # Board pin 29
 
 # See https://github.com/monash-human-power/V3-display-unit-pcb-tests/blob/72d02c270be413b1d4e97b9d10a33c97f551eafe/calibrate.py # noqa: E501
 battery_calibration_factor = 3.1432999689025483
@@ -76,21 +73,17 @@ class Orchestrator:
         # Used to detect missed start messages
         self.data_messages_received = 0
 
-        if ON_PI:
-            logging_button = Switch(logging_button_pin, gpio.PUD_DOWN)
-            logging_button.create_interrupt(self.toggle_logging)
+        self.hal = get_hal(configs["bike"])
+        self.hal.mqtt_connected_led.turn_off()
+        self.hal.logging_led.turn_off()
+        self.hal.logging_button.create_interrupt(self.toggle_logging)
 
+        if ON_PI:
             # ADC is connected to SPI bus 0, CE pin 0
             spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
             cs = digitalio.DigitalInOut(board.CE0)
             mcp = MCP.MCP3004(spi, cs)
             self.battery_adc = AnalogIn(mcp, MCP.P0)
-
-            # BCM pin numbering
-            self.connected_led = LED(18)  # Board pin 24, yellow led
-            self.connected_led.turn_off()
-            self.logging_led = LED(27)  # Board pin 13, red led
-            self.logging_led.turn_off()
 
     def get_battery_voltage(self) -> float:
         return self.battery_adc.voltage * battery_calibration_factor
@@ -219,5 +212,4 @@ if __name__ == "__main__":
     try:
         orchestrator.start()
     finally:
-        if ON_PI:
-            cleanup()
+        cleanup()
