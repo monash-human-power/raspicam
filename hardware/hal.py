@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from hardware import common
+from hardware.adc import ADC, DummyADC, init_v3_battery_adc
 from hardware.led import LED, NopLED, init_led
 from hardware.switch import NopSwitch, PullUpDown, Switch, init_switch
 
@@ -35,6 +36,11 @@ class HardwareAbstractionLayer(ABC):
     def display_power_switch(self) -> Switch:
         pass
 
+    @property
+    @abstractmethod
+    def battery_adc(self) -> ADC:
+        pass
+
 
 class V2HAL(HardwareAbstractionLayer):
     def __init__(self):
@@ -43,6 +49,7 @@ class V2HAL(HardwareAbstractionLayer):
         self._logging_led = init_led(27)  # board pin 13, red led
         self._logging_button = NopSwitch()  # Button not present on V2
         self._display_power_switch = init_switch(22)  # board pin 15
+        self._battery_adc = DummyADC(0)  # Battery ADC not present on V2
 
     @property
     def display_power_led(self) -> LED:
@@ -63,6 +70,10 @@ class V2HAL(HardwareAbstractionLayer):
     @property
     def display_power_switch(self) -> Switch:
         return self._display_power_switch
+
+    @property
+    def battery_adc(self) -> ADC:
+        return self._battery_adc
 
 
 class V3HAL(HardwareAbstractionLayer):
@@ -72,6 +83,7 @@ class V3HAL(HardwareAbstractionLayer):
         self._logging_led = init_led(27)  # board pin 13, red led
         self._logging_button = init_switch(5, PullUpDown.DOWN)  # board pin 29
         self._display_power_switch = init_switch(22)  # board pin 15
+        self._battery_adc = init_v3_battery_adc()
 
     @property
     def display_power_led(self) -> LED:
@@ -92,6 +104,10 @@ class V3HAL(HardwareAbstractionLayer):
     @property
     def display_power_switch(self) -> Switch:
         return self._display_power_switch
+
+    @property
+    def battery_adc(self) -> ADC:
+        return self._battery_adc
 
 
 def get_hal(bike_str: str) -> HardwareAbstractionLayer:

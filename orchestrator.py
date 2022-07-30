@@ -10,24 +10,9 @@ import paho.mqtt.client as mqtt
 
 from hardware.hal import get_hal, cleanup
 
-try:
-    import adafruit_mcp3xxx.mcp3004 as MCP
-    import board
-    import busio
-    import digitalio
-    from adafruit_mcp3xxx.analog_in import AnalogIn
-
-    ON_PI = True
-except (ImportError, RuntimeError):
-    ON_PI = False
-
 from mhp import topics
 
 import config
-
-
-# See https://github.com/monash-human-power/V3-display-unit-pcb-tests/blob/72d02c270be413b1d4e97b9d10a33c97f551eafe/calibrate.py # noqa: E501
-battery_calibration_factor = 3.1432999689025483
 
 
 def get_args(argv=[]):
@@ -78,16 +63,6 @@ class Orchestrator:
         self.hal.logging_led.turn_off()
         self.hal.logging_button.create_interrupt(self.toggle_logging)
 
-        if ON_PI:
-            # ADC is connected to SPI bus 0, CE pin 0
-            spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
-            cs = digitalio.DigitalInOut(board.CE0)
-            mcp = MCP.MCP3004(spi, cs)
-            self.battery_adc = AnalogIn(mcp, MCP.P0)
-
-    def get_battery_voltage(self) -> float:
-        return self.battery_adc.voltage * battery_calibration_factor
-
     def toggle_logging(self, _) -> None:
         modules = [topics.WirelessModule.id(i) for i in range(1, 5)]
         for module in modules:
@@ -108,11 +83,10 @@ class Orchestrator:
     def set_logging_state(self, logging: bool) -> None:
         """Set the data logging state of the camera, updating the LED."""
         self.currently_logging = logging
-        if ON_PI:
-            if logging:
-                self.logging_led.turn_on()
-            else:
-                self.logging_led.turn_off()
+        if logging:
+            self.logging_led.turn_on()
+        else:
+            self.logging_led.turn_off()
 
     def publish_camera_status(self) -> None:
         """Send a message on the current device's camera status topic."""
@@ -122,7 +96,7 @@ class Orchestrator:
 
     def battery_loop(self) -> None:
         status_topic = topics.Camera.status_camera / self.device / "battery"
-        message = dumps({"voltage": self.get_battery_voltage()})
+        message = dumps({"voltage": self.hal.battery_adc.read()})
         self.mqtt_client.publish(str(status_topic), message, retain=True)
 
         Timer(config.BATTERY_PUBLISH_INTERVAL, self.battery_loop).start()
@@ -138,9 +112,9 @@ class Orchestrator:
         client.subscribe(str(topics.WirelessModule.all().module))
         client.subscribe(str(topics.Camera.flip_video_feed / self.device))
         self.publish_camera_status()
-        if ON_PI:
-            self.connected_led.turn_on()
-            self.battery_loop()
+
+        self.connected_led.turn_on()
+        self.battery_loop()
 
     def on_message(self, client, userdata, msg):
         """The callback for when a PUBLISH message is received."""
@@ -175,8 +149,7 @@ class Orchestrator:
     def on_disconnect(self, client, userdata, msg):
         """The callback called when user is disconnected from the broker."""
         print("Disconnected from broker")
-        if ON_PI:
-            self.connected_led.turn_off()
+        self.connected_led.turn_off()
 
     def start(self):
         """start Orchestrator"""
