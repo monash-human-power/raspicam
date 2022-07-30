@@ -84,9 +84,9 @@ class Orchestrator:
         """Set the data logging state of the camera, updating the LED."""
         self.currently_logging = logging
         if logging:
-            self.logging_led.turn_on()
+            self.hal.logging_led.turn_on()
         else:
-            self.logging_led.turn_off()
+            self.hal.logging_led.turn_off()
 
     def publish_camera_status(self) -> None:
         """Send a message on the current device's camera status topic."""
@@ -113,7 +113,7 @@ class Orchestrator:
         client.subscribe(str(topics.Camera.flip_video_feed / self.device))
         self.publish_camera_status()
 
-        self.connected_led.turn_on()
+        self.hal.mqtt_connected_led.turn_on()
         self.battery_loop()
 
     def on_message(self, client, userdata, msg):
@@ -149,7 +149,7 @@ class Orchestrator:
     def on_disconnect(self, client, userdata, msg):
         """The callback called when user is disconnected from the broker."""
         print("Disconnected from broker")
-        self.connected_led.turn_off()
+        self.hal.mqtt_connected_led.turn_off()
 
     def start(self):
         """start Orchestrator"""

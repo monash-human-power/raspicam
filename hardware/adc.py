@@ -12,7 +12,7 @@ if ON_PI:
 
 class ADC(ABC):
     @abstractmethod
-    def read_voltage(self) -> float:
+    def read(self) -> float:
         pass
 
 
@@ -23,7 +23,7 @@ class MCP3004(ADC):
 
         self.calibration_factor = calibration_factor
 
-    def read_voltage(self) -> float:
+    def read(self) -> float:
         return self.adc.voltage * self.calibration_factor
 
 
@@ -31,7 +31,7 @@ class DummyADC(ADC):
     def __init__(self, voltage: float):
         self.voltage = voltage
 
-    def read_voltage(self) -> float:
+    def read(self) -> float:
         return self.voltage
 
 
