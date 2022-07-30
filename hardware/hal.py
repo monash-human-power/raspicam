@@ -7,10 +7,6 @@ from hardware.switch import NopSwitch, PullUpDown, Switch, init_switch
 
 
 class HardwareAbstractionLayer(ABC):
-    @abstractmethod
-    def __init__(self):
-        pass
-
     @property
     @abstractmethod
     def display_power_led(self) -> LED:

@@ -30,10 +30,6 @@ class PullUpDown(Enum):
 
 class Switch(ABC):
     @abstractmethod
-    def __init__(self, pin: int, pull_up_down: PullUpDown):
-        pass
-
-    @abstractmethod
     def read(self) -> bool:
         pass
 
@@ -63,7 +59,7 @@ class PhysicalSwitch(Switch):
 
 
 class DummySwitch(Switch):
-    def __init__(self, pin: int, pull_up_down: PullUpDown):
+    def __init__(self, pin: int):
         self.pin = pin
         self.pin_state = False
 
@@ -77,9 +73,6 @@ class DummySwitch(Switch):
 
 
 class NopSwitch(ABC):
-    def __init__(self, pin, pull_up_down):
-        pass
-
     def read(self):
         pass
 
@@ -94,4 +87,4 @@ def init_switch(pin: int, pull_up_down: PullUpDown = PullUpDown.UP) -> Switch:
     if ON_PI:
         return PhysicalSwitch(pin, pull_up_down)
     else:
-        return DummySwitch(pin, pull_up_down)
+        return DummySwitch(pin)

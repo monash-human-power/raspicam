@@ -12,10 +12,6 @@ if ON_PI:
 
 class LED(ABC):
     @abstractmethod
-    def __init__(self, pin: int):
-        pass
-
-    @abstractmethod
     def turn_on(self):
         pass
 
@@ -48,9 +44,6 @@ class DummyLED(LED):
 
 
 class NopLED(LED):
-    def __init__(self):
-        pass
-
     def turn_on(self):
         pass
 
