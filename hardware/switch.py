@@ -68,7 +68,8 @@ class DummySwitch(Switch):
 
     def create_interrupt(self, callback, bouncetime=500):
         print(
-            f"Creating dummy interrupt for pin {self.pin}. Callback will not be called."
+            f"Creating dummy interrupt for pin {self.pin}."
+            + "Callback will not be called."
         )
 
 
