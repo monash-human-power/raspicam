@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from hardware import common
 from hardware.adc import ADC, DummyADC, init_v3_battery_adc
 from hardware.led import LED, NopLED, init_led
-from hardware.switch import NopSwitch, PullUpDown, Switch, init_switch
+from hardware.switch import PullUpDown, Switch, init_switch
 
 
 class HardwareAbstractionLayer(ABC):
