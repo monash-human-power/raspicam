@@ -43,7 +43,8 @@ class V2HAL(HardwareAbstractionLayer):
         self._display_power_led = init_led(17)  # board pin 11, green led
         self._mqtt_connected_led = NopLED()  # LED not present on V2
         self._logging_led = init_led(27)  # board pin 13, red led
-        self._logging_button = init_switch(5, PullUpDown.DOWN)  # Button retrospectively added to pin 29, 05/08/2022
+        # Button retrospectively added to pin 29, 05/08/2022
+        self._logging_button = init_switch(5, PullUpDown.DOWN)
         self._display_power_switch = init_switch(22)  # board pin 15
         self._battery_adc = DummyADC(0)  # Battery ADC not present on V2
 
