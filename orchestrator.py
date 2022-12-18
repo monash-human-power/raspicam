@@ -101,16 +101,18 @@ class Orchestrator:
             topic = module.stop if self.currently_logging else module.start
             self.mqtt_client.publish(str(topic))
 
-        self.mqtt_client.publish(
-            str(
-                topics.BOOST.stop
-                if self.currently_logging
-                else topics.BOOST.start
-            )
-        )
+        # Publish to V3 start topic if button on display is pressed
+        next_logging_state = not self.currently_logging
+        msg = dumps({"start": next_logging_state})
+        self.mqtt_client.publish(topics.V3.start, msg)
+        print(f"Set logging state to {next_logging_state}")
 
         # `self.currently_logging` will be updated when we receive the message
         # we publish above.
+        # If start message is sent successfully, as we're subscribed to the
+        # topic `self.logging_state` will be updated in `on_message`
+        # If the message fails to send, we don't update internal logging state
+        # so the next button press causes it to try again
 
     def set_logging_state(self, logging: bool) -> None:
         """Set the data logging state of the camera, updating the LED."""
