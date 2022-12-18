@@ -2,7 +2,7 @@ from json import dumps
 import pytest
 from time import sleep
 
-from data import DataValue, DataFactory, DataV2, DataV3
+from data import DataValue, DataFactory, DataV3
 from mhp import topics
 
 
@@ -48,7 +48,7 @@ class TestDataValue:
 class TestDataFactory:
     @staticmethod
     def test_instance_creation():
-        assert isinstance(DataFactory.create("v2"), DataV2)
+        assert isinstance(DataFactory.create("v2"), DataV3)
         assert isinstance(DataFactory.create("V3"), DataV3)
 
     @staticmethod
@@ -57,61 +57,6 @@ class TestDataFactory:
             DataFactory.create(None)
         with pytest.raises(NotImplementedError):
             DataFactory.create("V9000")
-
-
-class TestDataV2:
-    @staticmethod
-    def to_query_string(python_dict):
-        """Converts {key1: value1, key2: value2} to key1=value1&key2value2"""
-        return "&".join([f"{k}={v}" for k, v in python_dict.items()])
-
-    @staticmethod
-    def test_v2_sensor_parsing():
-        test_data = {
-            "gps": 1,
-            "gps_speed": 78.1,
-            "reed_velocity": 78.5,
-            "reed_distance": 118,
-            "power": 320,
-            "cadence": 100,
-        }
-
-        data = DataV2()
-        data.load_data(topics.DAS.data, TestDataV2.to_query_string(test_data))
-
-        for key, value in test_data.items():
-            assert data[key].get() == value, f"Key {key} is not set correctly"
-
-    @staticmethod
-    def test_v2_power_model_parsing():
-        recommended_sp_data = {
-            "rec_power": 500.0,
-            "rec_speed": 9.2772,
-            "zdist": 1219.0,
-        }
-        max_speed_data = {"predicted_max_speed": 32.911}
-        plan_name_data = {"plan_name": "default.pkl"}
-
-        data = DataV2()
-        data.load_data(
-            topics.BOOST.recommended_sp,
-            TestDataV2.to_query_string(recommended_sp_data),
-        )
-        data.load_data(
-            topics.BOOST.predicted_max_speed,
-            TestDataV2.to_query_string(max_speed_data),
-        )
-        data.load_data(
-            "power_model/plan_name",
-            TestDataV2.to_query_string(plan_name_data),
-        )
-
-        for key, value in {
-            **recommended_sp_data,
-            **max_speed_data,
-            **plan_name_data,
-        }.items():
-            assert data[key].get() == value, f"Key {key} is not set correctly"
 
 
 class TestDataV3:

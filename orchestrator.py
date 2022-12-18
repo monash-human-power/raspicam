@@ -8,29 +8,11 @@ from json import dumps
 from threading import Timer
 import paho.mqtt.client as mqtt
 
-try:
-    from utils.hardware import cleanup, LED, Switch
-    import adafruit_mcp3xxx.mcp3004 as MCP
-    import board
-    import busio
-    import digitalio
-    import RPi.GPIO as gpio
-    from adafruit_mcp3xxx.analog_in import AnalogIn
-
-    ON_PI = True
-except (ImportError, RuntimeError):
-    ON_PI = False
+from hardware.hal import get_hal, cleanup
 
 from mhp import topics
 
 import config
-
-
-# BCM pin numbering
-logging_button_pin = 5  # Board pin 29
-
-# See https://github.com/monash-human-power/V3-display-unit-pcb-tests/blob/72d02c270be413b1d4e97b9d10a33c97f551eafe/calibrate.py # noqa: E501
-battery_calibration_factor = 3.1432999689025483
 
 
 def get_args(argv=[]):
@@ -76,24 +58,10 @@ class Orchestrator:
         # Used to detect missed start messages
         self.data_messages_received = 0
 
-        if ON_PI:
-            logging_button = Switch(logging_button_pin, gpio.PUD_DOWN)
-            logging_button.create_interrupt(self.toggle_logging)
-
-            # ADC is connected to SPI bus 0, CE pin 0
-            spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
-            cs = digitalio.DigitalInOut(board.CE0)
-            mcp = MCP.MCP3004(spi, cs)
-            self.battery_adc = AnalogIn(mcp, MCP.P0)
-
-            # BCM pin numbering
-            self.connected_led = LED(18)  # Board pin 24, yellow led
-            self.connected_led.turn_off()
-            self.logging_led = LED(27)  # Board pin 13, red led
-            self.logging_led.turn_off()
-
-    def get_battery_voltage(self) -> float:
-        return self.battery_adc.voltage * battery_calibration_factor
+        self.hal = get_hal(configs["bike"])
+        self.hal.mqtt_connected_led.turn_off()
+        self.hal.logging_led.turn_off()
+        self.hal.logging_button.create_interrupt(self.toggle_logging)
 
     def toggle_logging(self, _) -> None:
         modules = [topics.WirelessModule.id(i) for i in range(1, 5)]
@@ -117,11 +85,10 @@ class Orchestrator:
     def set_logging_state(self, logging: bool) -> None:
         """Set the data logging state of the camera, updating the LED."""
         self.currently_logging = logging
-        if ON_PI:
-            if logging:
-                self.logging_led.turn_on()
-            else:
-                self.logging_led.turn_off()
+        if logging:
+            self.hal.logging_led.turn_on()
+        else:
+            self.hal.logging_led.turn_off()
 
     def publish_camera_status(self) -> None:
         """Send a message on the current device's camera status topic."""
@@ -131,7 +98,7 @@ class Orchestrator:
 
     def battery_loop(self) -> None:
         status_topic = topics.Camera.status_camera / self.device / "battery"
-        message = dumps({"voltage": self.get_battery_voltage()})
+        message = dumps({"voltage": self.hal.battery_adc.read()})
         self.mqtt_client.publish(str(status_topic), message, retain=True)
 
         Timer(config.BATTERY_PUBLISH_INTERVAL, self.battery_loop).start()
@@ -147,9 +114,9 @@ class Orchestrator:
         client.subscribe(str(topics.WirelessModule.all().module))
         client.subscribe(str(topics.Camera.flip_video_feed / self.device))
         self.publish_camera_status()
-        if ON_PI:
-            self.connected_led.turn_on()
-            self.battery_loop()
+
+        self.hal.mqtt_connected_led.turn_on()
+        self.battery_loop()
 
     def on_message(self, client, userdata, msg):
         """The callback for when a PUBLISH message is received."""
@@ -184,8 +151,7 @@ class Orchestrator:
     def on_disconnect(self, client, userdata, msg):
         """The callback called when user is disconnected from the broker."""
         print("Disconnected from broker")
-        if ON_PI:
-            self.connected_led.turn_off()
+        self.hal.mqtt_connected_led.turn_off()
 
     def start(self):
         """start Orchestrator"""
@@ -221,5 +187,4 @@ if __name__ == "__main__":
     try:
         orchestrator.start()
     finally:
-        if ON_PI:
-            cleanup()
+        cleanup()

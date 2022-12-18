@@ -77,9 +77,9 @@ class DataValue:
 class Data(ABC):
     """A class to keep track of the most recent bike data for the overlays.
 
-    Data comes into the class in the V2/V3 MQTT formats and may be accessed
+    Data comes into the class in the V3 MQTT format and may be accessed
     by using this class as a dictionary. This class is implemented by
-    versions for specific bikes (DataV2, DataV3,...)"""
+    versions for specific bikes (i.e. DataV3)."""
 
     def __init__(self):
         # This is by no means a complete list of data fields we could track -
@@ -173,45 +173,12 @@ class DataFactory:
         if isinstance(bike_version, str):
             bike_version = bike_version.lower()
 
+        # V2 data is deprecated. Use V3 data format everywhere.
         if bike_version == "v2":
-            return DataV2()
+            return DataV3()
         if bike_version == "v3":
             return DataV3()
         raise NotImplementedError(f"Unknown bike: {bike_version}")
-
-
-class DataV2(Data):
-    @staticmethod
-    def get_topics() -> List[topics.Topic]:
-        return [
-            topics.DAS.data,
-            topics.BOOST.recommended_sp,
-            topics.BOOST.predicted_max_speed,
-            topics.Camera.overlay_message,
-            # TODO: Update to use topics.BOOST.generate_complete
-            topics.Topic("power_model/plan_name"),
-        ]
-
-    def load_data(self, topic: str, data: str) -> None:
-        """Loads V2 query strings and V3 DAShboard messages"""
-        if topics.Camera.overlay_message.matches(topic):
-            self.load_message(data)
-        elif str(topic) in DataV2.get_topics():
-            self.load_query_string(data)
-
-    def load_query_string(self, data: str) -> None:
-        """Update stored fields with data stored in a V2 query string.
-
-        Example:
-            `power=200&cadence=95`
-
-        """
-        terms = data.split("&")
-        for term in terms:
-            key, value = term.split("=")
-            if key not in self.data:
-                continue
-            self.data[key].update(value)
 
 
 class DataV3(Data):
