@@ -162,6 +162,8 @@ class Orchestrator:
         self.mqtt_client.on_disconnect = self.on_disconnect
         self.mqtt_client.connect_async(self.broker_ip, self.port, 60)
 
+        print("this is start topic: {topics.V3.start}")
+
         # Set the camera status to offline if connection breaks
         camera_topic = str(topics.Camera.status_camera / self.device)
         self.mqtt_client.will_set(
