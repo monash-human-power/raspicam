@@ -72,7 +72,10 @@ class Orchestrator:
         # Publish to V3 start topic if button on display is pressed
         next_logging_state = not self.currently_logging
         msg = dumps({"start": next_logging_state})
-        self.mqtt_client.publish(topics.V3.start, msg)
+
+        print(f"\n\nTopic: {str(topics.V3.start)} \nMessage: {msg}")
+
+        self.mqtt_client.publish(str(topics.V3.start), msg)
         print(f"Set logging state to {next_logging_state}")
 
         # `self.currently_logging` will be updated when we receive the message
@@ -161,8 +164,6 @@ class Orchestrator:
         self.mqtt_client.on_log = self.on_log
         self.mqtt_client.on_disconnect = self.on_disconnect
         self.mqtt_client.connect_async(self.broker_ip, self.port, 60)
-
-        print(f"this is start topic: {topics.V3.start}")
 
         # Set the camera status to offline if connection breaks
         camera_topic = str(topics.Camera.status_camera / self.device)
