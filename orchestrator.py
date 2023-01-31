@@ -72,7 +72,7 @@ class Orchestrator:
         # Publish to V3 start topic if button on display is pressed
         next_logging_state = not self.currently_logging
         msg = dumps({"start": next_logging_state})
-        self.mqtt_client.publish(topics.V3.start, msg)
+        self.mqtt_client.publish(str(topics.V3.start), msg)
         print(f"Set logging state to {next_logging_state}")
 
         # `self.currently_logging` will be updated when we receive the message
