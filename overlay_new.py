@@ -88,7 +88,7 @@ class OverlayNew(Overlay):
                 data_field_coord(3, 1),
             ),
             VoltageField(
-                "VOLTAGE",
+                "VOLTAGEE",
                 self.get_data_func("voltage", 2),
                 data_field_coord(3, 2),
             ),
