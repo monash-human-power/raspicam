@@ -47,10 +47,18 @@ class OverlayNew(Overlay):
             (col_coords[3] + spacing, 0),
             (self.width, DataField.height + 2 * spacing),
         ]
+
+        # Dimensions of the top left Transparent rectangle
+        top_left_rect = [
+            (col_coords[0] + spacing, 0),
+            (self.width, DataField.height + 2 * spacing),
+        ]
+
         # Create all overlay components
         self.components = [
             TransparentRectangle(*bottom_rect),
             TransparentRectangle(*top_right_rect),
+            TransparentRectangle(*top_left_rect),
             DataField(
                 "RPM", self.get_data_func("cadence"), data_field_coord(0, 0)
             ),
@@ -89,6 +97,11 @@ class OverlayNew(Overlay):
             DASDisconnectMessage(self.client),
             LoggingIndicator(
                 (self.width - spacing, top_right_rect[1][1] + spacing)
+            ),
+            DataField(
+                "WIND SPEED",
+                self.get_data_func("wind_speed"),
+                data_field_coord(0, 2),
             ),
         ]
 
