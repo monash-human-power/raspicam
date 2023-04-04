@@ -24,6 +24,8 @@ class OverlayNew(Overlay):
             self.height - spacing,
             # top right position for voltage
             (spacing + DataField.height),
+            # second row for top left rectangle for wind direction
+            2 * (spacing + DataField.height),
         ]
         col_coords = [
             spacing,
@@ -106,7 +108,7 @@ class OverlayNew(Overlay):
             DataField(
                 "WIND DIRECTION",
                 self.get_data_func("wind_direction"),
-                data_field_coord(0, 2),
+                data_field_coord(0, 3),
             ),
         ]
 
