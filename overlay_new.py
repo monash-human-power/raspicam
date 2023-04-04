@@ -50,7 +50,7 @@ class OverlayNew(Overlay):
 
         # Dimensions of the top left Transparent rectangle
         top_left_rect = [
-            (0, 0),
+            (col_coords[0] + spacing, 0),
             (self.width, DataField.height + 2 * spacing),
         ]
 
