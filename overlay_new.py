@@ -98,11 +98,11 @@ class OverlayNew(Overlay):
             LoggingIndicator(
                 (self.width - spacing, top_right_rect[1][1] + spacing)
             ),
-            # DataField(
-            #     "WIND SPEED",
-            #     self.get_data_func("wind_speed"),
-            #     data_field_coord(0, 2),
-            # ),
+            DataField(
+                "WIND SPEED",
+                self.get_data_func("wind_speed"),
+                data_field_coord(0, 2),
+            ),
         ]
 
     def _draw_base_layer(self):
