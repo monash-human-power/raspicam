@@ -51,7 +51,7 @@ class OverlayNew(Overlay):
         # Dimensions of the top left Transparent rectangle
         top_left_rect = [
             (0, 0),
-            (spacing + DataField.width, DataField.height + 2 * spacing),
+            (spacing + DataField.width, 2 * (DataField.height + 2 * spacing)),
         ]
 
         # Create all overlay components
@@ -101,6 +101,11 @@ class OverlayNew(Overlay):
             DataField(
                 "WIND SPEED",
                 self.get_data_func("wind_speed"),
+                data_field_coord(0, 2),
+            ),
+            DataField(
+                "WIND DIRECTION",
+                self.get_data_func("wind_direction"),
                 data_field_coord(0, 2),
             ),
         ]

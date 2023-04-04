@@ -261,6 +261,8 @@ class DataV3(Data):
                 self.data["reed_distance"].update(sensor_value)
             elif sensor_name == "windSpeed":
                 self.data["wind_speed"].update(sensor_value)
+            elif sensor_name == "windDirection":
+                self.data["wind_direction"].update(sensor_value)
             elif sensor_name in self.data.keys():
                 self.data[sensor_name].update(sensor_value)
 
