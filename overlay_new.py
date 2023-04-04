@@ -33,7 +33,7 @@ class OverlayNew(Overlay):
             self.width - 2 * (spacing + DataField.width),
             self.width - (spacing + DataField.width),
             # second column for top left rectangle for wind direction
-            2 * DataField.width,
+            1.5 * DataField.width,
         ]
 
         def data_field_coord(x, y):
