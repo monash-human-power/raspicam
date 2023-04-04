@@ -106,7 +106,7 @@ class OverlayNew(Overlay):
                 data_field_coord(0, 2),
             ),
             DataField(
-                "WIND DIRECTION",
+                "DIRECTION",
                 self.get_data_func("wind_direction"),
                 data_field_coord(0, 3),
             ),
