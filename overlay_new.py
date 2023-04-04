@@ -51,14 +51,14 @@ class OverlayNew(Overlay):
         # Dimensions of the top left Transparent rectangle
         top_left_rect = [
             (0, 0),
-            (self.width/2, DataField.height + 2 * spacing),
+            (self.width, DataField.height + 2 * spacing),
         ]
 
         # Create all overlay components
         self.components = [
             TransparentRectangle(*bottom_rect),
             TransparentRectangle(*top_right_rect),
-            TransparentRectangle(*top_left_rect),
+            # TransparentRectangle(*top_left_rect),
             DataField(
                 "RPM", self.get_data_func("cadence"), data_field_coord(0, 0)
             ),
