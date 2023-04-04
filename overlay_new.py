@@ -103,11 +103,11 @@ class OverlayNew(Overlay):
                 self.get_data_func("wind_speed"),
                 data_field_coord(0, 2),
             ),
-            # DataField(
-            #     "WIND DIRECTION",
-            #     self.get_data_func("wind_direction"),
-            #     data_field_coord(0, 2),
-            # ),
+            DataField(
+                "WIND DIRECTION",
+                self.get_data_func("wind_direction"),
+                data_field_coord(0, 2),
+            ),
         ]
 
     def _draw_base_layer(self):
