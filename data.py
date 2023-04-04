@@ -95,6 +95,7 @@ class Data(ABC):
             "ant_distance": DataValue(float),
             "reed_velocity": DataValue(float),
             "reed_distance": DataValue(float),
+            "wind_speed": DataValue(float),
             # Power model data
             "rec_power": DataValue(float),
             "rec_speed": DataValue(float),
