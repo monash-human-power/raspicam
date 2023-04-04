@@ -45,13 +45,13 @@ class OverlayNew(Overlay):
         # Dimensions of the top right Transparent rectangle
         top_right_rect = [
             (col_coords[3] + spacing, 0),
-            (self.width, DataField.height + 2 * spacing),
+            (self.width/2, DataField.height + 2 * spacing),
         ]
 
         # Dimensions of the top left Transparent rectangle
         top_left_rect = [
             (0, 0),
-            (self.width, DataField.height + 2 * spacing),
+            (self.width/2, DataField.height + 2 * spacing),
         ]
 
         # Create all overlay components
