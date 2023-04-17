@@ -56,7 +56,6 @@ class OverlayNew(Overlay):
         top_left_rect = [
             (0, 0),
             (spacing + DataField.width, 2 * (DataField.height + 2 * spacing)),
-            # (2 * (spacing + DataField.width), DataField.height + 2 * spacing),
         ]
 
         # Create all overlay components
@@ -112,7 +111,6 @@ class OverlayNew(Overlay):
                 "DIRECTION",
                 self.get_data_func("wind_direction"),
                 data_field_coord(0, 3),
-                # data_field_coord(4, 2),
             ),
         ]
 
