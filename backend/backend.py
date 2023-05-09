@@ -112,6 +112,11 @@ class Backend(ABC):
         if time() > self.prev_video_status_time + self.video_status_interval:
             self.send_video_status()
 
+        min_free_space = 200 * 1024 * 1024 # 200 MB
+        _, _, free_disk_space = disk_usage(Path(__file__).parent)
+        if free_disk_space < min_free_space:
+            self.stop_recording()
+
     @abstractmethod
     def _on_loop(self) -> None:
         """ Implemented by overlays to perform any necessary operations that
