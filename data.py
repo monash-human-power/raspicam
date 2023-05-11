@@ -264,8 +264,8 @@ class DataV3(Data):
                 print("windSpeed found")
                 self.data["wind_speed"].update(sensor_value)
             elif sensor_name == "windDirection":
-                print("windDirection found")
                 self.data["wind_direction"].update(sensor_value)
+                self.data["wind_direction"] = 10
             elif sensor_name in self.data.keys():
                 self.data[sensor_name].update(sensor_value)
 
