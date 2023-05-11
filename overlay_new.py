@@ -105,7 +105,7 @@ class OverlayNew(Overlay):
             ),
             DataField(
                 "WIND SPEED",
-                self.get_data_func("wind_speed"),
+                self.get_data_func("wind_speed", 2),
                 data_field_coord(0, 2),
             ),
             DataField(
