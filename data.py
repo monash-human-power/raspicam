@@ -261,11 +261,11 @@ class DataV3(Data):
             elif sensor_name == "reedDistance":
                 self.data["reed_distance"].update(sensor_value)
             elif sensor_name == "windSpeed":
-                print("windSpeed found")
-                self.data["wind_speed"].update(sensor_value)
+                avg_speed = sensor_value["avgSpeed"]
+                self.data["wind_speed"].update(avg_speed)
             elif sensor_name == "windDirection":
-                avgDirection = sensor_value["avgDirection"]
-                self.data["wind_direction"].update(avgDirection)
+                avg_direction = sensor_value["avgDirection"]
+                self.data["wind_direction"].update(avg_direction)
             elif sensor_name in self.data.keys():
                 self.data[sensor_name].update(sensor_value)
 
