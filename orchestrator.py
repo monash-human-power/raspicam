@@ -120,7 +120,7 @@ class Orchestrator:
 
     def on_message(self, client, userdata, msg):
         """The callback for when a PUBLISH message is received."""
-        print(msg.topic + " " + str(msg.payload))
+        #print(msg.topic + " " + str(msg.payload))
         if topics.Camera.get_overlays.matches(msg.topic):
             configs = config.read_configs()
             client.publish(
@@ -146,7 +146,8 @@ class Orchestrator:
 
     def on_log(self, client, userdata, level, buf):
         """The callback to log all MQTT information"""
-        print("\nlog: ", buf)
+        #print("\nlog: ", buf)
+        pass
 
     def on_disconnect(self, client, userdata, msg):
         """The callback called when user is disconnected from the broker."""
