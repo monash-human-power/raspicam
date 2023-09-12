@@ -64,15 +64,20 @@ class Orchestrator:
         self.hal.logging_button.create_interrupt(self.toggle_logging)
 
     def toggle_logging(self, _) -> None:
-        modules = [topics.WirelessModule.id(i) for i in range(1, 5)]
-        for module in modules:
-            topic = module.stop if self.currently_logging else module.start
-            self.mqtt_client.publish(str(topic))
+
+        # modules = [topics.WirelessModule.id(i) for i in range(1, 5)]
+        # for module in modules:
+        #     topic = module.stop if self.currently_logging else module.start
+        #     self.mqtt_client.publish(str(topic))
 
         # Publish to V3 start topic if button on display is pressed
         next_logging_state = not self.currently_logging
+
         msg = dumps({"start": next_logging_state})
         self.mqtt_client.publish(str(topics.V3.start), msg)
+
+        
+
         print(f"Set logging state to {next_logging_state}")
 
         # `self.currently_logging` will be updated when we receive the message
@@ -128,18 +133,18 @@ class Orchestrator:
             )
         elif topics.Camera.set_overlay.matches(msg.topic):
             config.set_overlay(json.loads(str(msg.payload.decode("utf-8"))))
-        elif topics.WirelessModule.all().start.matches(msg.topic):
-            self.data_messages_received = 0
-            self.set_logging_state(True)
-        elif topics.WirelessModule.all().data.matches(msg.topic):
-            self.data_messages_received += 1
-            # We have 3 WMs, so in the worst case we shouldn't receive more
-            # than four messages due to delay after logging stops. If we do,
-            # we know we missed the start message.
-            if not self.currently_logging and self.data_messages_received > 3:
-                self.set_logging_state(True)
-        elif topics.WirelessModule.all().stop.matches(msg.topic):
-            self.set_logging_state(False)
+        # elif topics.WirelessModule.all().start.matches(msg.topic):
+        #     self.data_messages_received = 0
+        #     self.set_logging_state(True)
+        # elif topics.WirelessModule.all().data.matches(msg.topic):
+        #     self.data_messages_received += 1
+        #     # We have 3 WMs, so in the worst case we shouldn't receive more
+        #     # than four messages due to delay after logging stops. If we do,
+        #     # we know we missed the start message.
+        #     if not self.currently_logging and self.data_messages_received > 3:
+        #         self.set_logging_state(True)
+        # elif topics.WirelessModule.all().stop.matches(msg.topic):
+        #     self.set_logging_state(False)
         elif msg.topic == topics.Camera.flip_video_feed / self.device:
             rotation = config.read_configs().get(config.ROTATION_KEY, 0) + 180
             config.set_rotation(rotation % 360)
