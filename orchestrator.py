@@ -64,10 +64,10 @@ class Orchestrator:
         self.hal.logging_button.create_interrupt(self.toggle_logging)
 
     def toggle_logging(self, _) -> None:
-        modules = [topics.WirelessModule.id(i) for i in range(1, 5)]
-        for module in modules:
-            topic = module.stop if self.currently_logging else module.start
-            self.mqtt_client.publish(str(topic))
+        # modules = [topics.WirelessModule.id(i) for i in range(1, 5)]
+        # for module in modules:
+        #     topic = module.stop if self.currently_logging else module.start
+        #     self.mqtt_client.publish(str(topic))
 
         # Publish to V3 start topic if button on display is pressed
         next_logging_state = not self.currently_logging
