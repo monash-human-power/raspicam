@@ -136,7 +136,7 @@ class Orchestrator:
             # We have 3 WMs, so in the worst case we shouldn't receive more
             # than four messages due to delay after logging stops. If we do,
             # we know we missed the start message.
-            if not self.currently_logging and self.data_messages_received > 3:
+            if not self.currently_logging and self.data_messages_received > 4:
                 self.set_logging_state(True)
         elif topics.WirelessModule.all().stop.matches(msg.topic):
             self.set_logging_state(False)
