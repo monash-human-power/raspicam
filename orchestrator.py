@@ -72,7 +72,7 @@ class Orchestrator:
         # Publish to V3 start topic if button on display is pressed
         next_logging_state = not self.currently_logging
         msg = dumps({"start": next_logging_state})
-        self.mqtt_client.publish(str(topics.V3.start), msg)
+        self.mqtt_client.publish(str("v3/start"), msg)
         print(f"Set logging state to {next_logging_state}")
 
         # `self.currently_logging` will be updated when we receive the message
@@ -136,8 +136,11 @@ class Orchestrator:
             # We have 3 WMs, so in the worst case we shouldn't receive more
             # than four messages due to delay after logging stops. If we do,
             # we know we missed the start message.
-            if not self.currently_logging and self.data_messages_received > 4:
-                self.set_logging_state(True)
+
+            #Maybe get rid of this to stop logging unreliability
+            #if not self.currently_logging and self.data_messages_received > 4:
+            #    self.set_logging_state(True)
+
         elif topics.WirelessModule.all().stop.matches(msg.topic):
             self.set_logging_state(False)
         elif msg.topic == topics.Camera.flip_video_feed / self.device:
