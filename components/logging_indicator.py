@@ -17,6 +17,7 @@ class LoggingIndicator(Component):
 
     def draw_data(self, canvas: Canvas, data: Data):
         if data.is_logging():
-            canvas.draw_circle(
-                self.center, LoggingIndicator.RADIUS, LoggingIndicator.COLOUR
-            )
+            # canvas.draw_circle(
+            #     self.center, LoggingIndicator.RADIUS, LoggingIndicator.COLOUR
+            # )
+            pass # Never shows logging indicator
