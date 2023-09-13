@@ -73,6 +73,13 @@ class Orchestrator:
         # Publish to V3 start topic if button on display is pressed
         next_logging_state = not self.currently_logging
         msg = dumps({"start": next_logging_state})
+
+        #Start or Stop camera recording
+        if next_logging_state:
+            self.mqtt_client.publish(str(topics.Camera.recording_start))
+        else:
+            self.mqtt_client.publish(str(topics.Camera.recording_stop)) 
+
         self.mqtt_client.publish("boost/start", msg) #New boost start topic 
         self.currently_logging = next_logging_state #Reset the logging state
         self.set_logging_state(self.currently_logging) #Set the LED        
